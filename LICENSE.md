@@ -19,3 +19,25 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+# Licencia MIT
+
+Copyright (c) 2024 gerMdz
+
+Por la presente se otorga permiso, de forma gratuita, a cualquier persona que obtenga una copia
+de este software y los archivos de documentación asociados (el "Software"), para tratar
+en el Software sin restricciones, incluyendo sin limitación los derechos
+de usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y/o vender
+copias del Software, y permitir a las personas a quienes se entrega el software
+proporcionado para ello, sujeto a las siguientes condiciones::
+
+La anterior notificación de derechos de autor y esta notificación de permiso deberán ser
+incluirse en todas las copias o partes sustanciales del Software.
+
+EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O
+IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD,
+APTITUD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS
+AUTORES O TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES POR CUALQUIER RECLAMACIÓN, DAÑOS U
+OTRAS RESPONSABILIDADES, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE OTRO MODO, DERIVADOS DE,
+FUERA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTROS NEGOCIOS EN EL
+SOFTWARE.
