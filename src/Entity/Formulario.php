@@ -17,6 +17,12 @@ class Formulario
     #[ORM\JoinColumn(nullable: false)]
     private ?Forma $forma = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pregunta = null;
+
+    #[ORM\Column(length: 510)]
+    private ?string $value = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -30,6 +36,30 @@ class Formulario
     public function setForma(?Forma $forma): static
     {
         $this->forma = $forma;
+
+        return $this;
+    }
+
+    public function getPregunta(): ?string
+    {
+        return $this->pregunta;
+    }
+
+    public function setPregunta(?string $pregunta): static
+    {
+        $this->pregunta = $pregunta;
+
+        return $this;
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function setValue(string $value): static
+    {
+        $this->value = $value;
 
         return $this;
     }
