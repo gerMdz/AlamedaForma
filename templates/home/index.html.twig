@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+    <section id="billboard" class="position-relative overflow-hidden bg-light-blue">
+
+        <div class="container">
+            <div class="row d-flex align-items-center">
+                <div class="col-md-6">
+                    <div class="banner-content">
+                        <h1 class="display-2 text-uppercase text-dark pb-5">Your Products Are Great.</h1>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="image-holder">
+                        <img src="{{ asset('images/fondo-camino-index-5fce8cc5b1ceb.jpeg') }}" alt="banner">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+{% endblock %}
