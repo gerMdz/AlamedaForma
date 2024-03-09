@@ -15,6 +15,7 @@
     ================================================== -->
 
     {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
         <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
@@ -24,17 +25,23 @@
               rel="stylesheet">
     {% endblock %}
 
-    {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
-        <script src="{{ asset('js/modernizr.js') }}"></script>
-    {% endblock %}
+
 </head>
 <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" tabindex="0">
 {% block header %}
     {{ include('_bases/_nav.html.twig') }}
 {% endblock %}
-{% block body %}
 
+{% block body %}
+    <div id="app">
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    {#        {% block importmap %}{{ importmap('app') }}{% endblock %}#}
+    <script src="{{ asset('js/modernizr.js') }}"></script>
 {% endblock %}
 </body>
 </html>
