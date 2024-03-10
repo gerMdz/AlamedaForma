@@ -1,0 +1,725 @@
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class='three'>
+            <h1>
+                Instrucciones
+                para la
+                prueba de
+                personalidad
+                de Gary
+                Smalley
+                *:</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+         style="text-align: justify">
+        <strong>Instrucciones: </strong>En
+        cada una de las 12
+        filas a
+        continuación, pon un
+        4 junto a la palabra
+        que mejor te
+        describa, luego un 3
+        junto a la palabra
+        que te describe en
+        segundo lugar, luego
+        un 2 ... luego un 1
+        para la palabra que
+        menos te describe.
+        Haz esto en toda la
+        página para cada
+        fila de
+        descripciones</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover"
+                   onClick='smalleyScoreForma()'>
+                <tr>
+                    <td style="width: 1%">
+                        1.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Likes_Control'
+                               value='1'
+                               name='smalley_Likes_Control'/>
+                        Me
+                        gusta
+                        el
+                        control
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Enthusiastic'
+                               value='1'
+                               name='smalley_Enthusiastic'/>
+                        Entusiasta
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Sensitive'
+                               value='1'
+                               name='smalley_Sensitive'/>
+                        Sensible
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Reserved'
+                               value='1'
+                               name='smalley_Reserved'/>
+                        Reservado
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        2.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Firm'
+                               value='1'
+                               name='smalley_Firm'/>
+                        Firme
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Energetic'
+                               value='1'
+                               name='smalley_Energetic'/>
+                        Enérgico
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Non_Demanding'
+                               value='1'
+                               name='smalley_Non_Demanding'/>
+                        No
+                        exigente
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Practical'
+                               value='1'
+                               name='smalley_Practical'/>
+                        Práctico
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        3.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Likes_Challenge'
+                               value='1'
+                               name='smalley_Likes_Challenge'/>
+                        Me
+                        gusta
+                        el
+                        desafío
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Promoter'
+                               value='1'
+                               name='smalley_Promoter'/>
+                        Promotor
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Enjoys_Routine'
+                               value='1'
+                               name='smalley_Enjoys_Routine'/>
+                        Disfruta
+                        las
+                        rutinas
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Factual'
+                               value='1'
+                               name='smalley_Factual'/>
+                        Hechos
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        4.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Problem_Solver'
+                               value='1'
+                               name='smalley_Problem_Solver'/>
+                        Solucionador
+                        de
+                        problemas
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Mixes_Easily'
+                               value='1'
+                               name='smalley_Mixes_Easily'/>
+                        Se
+                        relaciona
+                        fácilmente
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Relational'
+                               value='1'
+                               name='smalley_Relational'/>
+                        Relacional
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Perfectionistic'
+                               value='1'
+                               name='smalley_Perfectionistic'/>
+                        Perfeccionista
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        5.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Bold'
+                               value='1'
+                               name='smalley_Bold'/>
+                        Audaz
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Fun_Loving'
+                               value='1'
+                               name='smalley_Fun_Loving'/>
+                        Ama
+                        la
+                        diversión
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Thoughtful'
+                               value='1'
+                               name='smalley_Thoughtful'/>
+                        Pensativo
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Detailed'
+                               value='1'
+                               name='smalley_Detailed'/>
+                        Detallista
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        6.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Goal_Driven'
+                               value='1'
+                               name='smalley_Goal_Driven'/>
+                        Impulsado
+                        por
+                        objetivos
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Optimistic'
+                               value='1'
+                               name='smalley_Optimistic'/>
+                        Optimista
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Patient'
+                               value='1'
+                               name='smalley_Patient'/>
+                        Paciente
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Inquisitive'
+                               value='1'
+                               name='smalley_Inquisitive'/>
+                        Inquisitivo
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        7.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Strong_Willed'
+                               value='1'
+                               name='smalley_Strong_Willed'/>
+                        Voluntad
+                        Fuerte
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Motivator'
+                               value='1'
+                               name='smalley_Motivator'/>
+                        Motivador
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Good_Listener'
+                               value='1'
+                               name='smalley_Good_Listener'/>
+                        Buen
+                        oyente
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Accurate'
+                               value='1'
+                               name='smalley_Accurate'/>
+                        Preciso
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        8.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Takes_Charge'
+                               value='1'
+                               name='smalley_Takes_Charge'/>
+                        Se
+                        hace
+                        cargo
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Very_Verbal'
+                               value='1'
+                               name='smalley_Very_Verbal'/>
+                        Muy
+                        verbal
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Loyal'
+                               value='1'
+                               name='smalley_Loyal'/>
+                        Leal
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Predictable'
+                               value='1'
+                               name='smalley_Predictable'/>
+                        Predecible
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        9.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Determined'
+                               value='1'
+                               name='smalley_Determined'/>
+                        Determinado
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Popular'
+                               value='1'
+                               name='smalley_Popular'/>
+                        Popular
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Dislikes_Change'
+                               value='1'
+                               name='smalley_Dislikes_Change'/>
+                        No
+                        le
+                        gusta
+                        el
+                        cambio
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Orderly'
+                               value='1'
+                               name='smalley_Orderly'/>
+                        Ordenado
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        10.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Competitive'
+                               value='1'
+                               name='smalley_Competitive'/>
+                        Competitivo
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Group_Oriented'
+                               value='1'
+                               name='smalley_Group_Oriented'/>
+                        Orientado
+                        a
+                        los
+                        grupos
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Sympathetic'
+                               value='1'
+                               name='smalley_Sympathetic'/>
+                        Simpático
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Analytical'
+                               value='1'
+                               name='smalley_Analytical'/>
+                        Analítico
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        11.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Purposeful'
+                               value='1'
+                               name='smalley_Purposeful'/>Determinado
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Inspirational'
+                               value='1'
+                               name='smalley_Inspirational'/>
+                        Inspiracional
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Nurturing'
+                               value='1'
+                               name='smalley_Nurturing'/>
+                        Fomenta
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Precise'
+                               value='1'
+                               name='smalley_Precise'/>
+                        Preciso
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%">
+                        12.
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Action_Oriented'
+                               value='1'
+                               name='smalley_Action_Oriented'/>
+                        Orientado
+                        a la
+                        acción
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Likes_Change'
+                               value='1'
+                               name='smalley_Likes_Change'/>
+                        Me
+                        gusta
+                        el
+                        cambio
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Peace_Maker'
+                               value='1'
+                               name='smalley_Peace_Maker'/>
+                        Pacificador
+                    </td>
+                    <td>
+                        <input size="5"
+                               type="number"
+                               onkeyup="validarNumeroShape(this)"
+                               min='1'
+                               max='4'
+                               id='smalley_Scheduled'
+                               value='1'
+                               name='smalley_Scheduled'/>
+                        Planificador
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 1%"></td>
+                    <td style="text-align: center;">
+                        <input size="4"
+                               readonly='readonly'
+                               type='text'
+                               id='smalley_total_1'
+                               name='smalley_total_1'/>
+                        Total
+                    </td>
+                    <td style="text-align: center;">
+                        <input size="4"
+                               readonly='readonly'
+                               type='text'
+                               id='smalley_total_2'
+                               name='smalley_total_2'/>
+                        Total
+                    </td>
+                    <td style="text-align: center;">
+                        <input size="4"
+                               readonly='readonly'
+                               type='text'
+                               id='smalley_total_3'
+                               name='smalley_total_3'/>
+                        Total
+                    </td>
+                    <td style="text-align: center;">
+                        <input size="4"
+                               readonly='readonly'
+                               type='text'
+                               id='smalley_total_4'
+                               name='smalley_total_4'/>
+                        Total
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8"
+         style="text-align: center; color:#009C42;">
+        <strong>¡Ya casi
+            estamos
+            terminando,
+            estás haciendo
+            un gran
+            trabajo!</strong>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+         style="text-align: center;">
+        <br><br><input
+            type='button'
+            name="continuar4"
+            id="continuar4"
+            class="btn btn-primary"
+            value='Continuar'/>
+    </div>
+</div>

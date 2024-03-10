@@ -1,0 +1,68 @@
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class='three'><h1>Datos Personales</h1></div><br>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="text-align: left;">
+        Selecciona el punto al cual asistes:<br>
+        <select class="form-control" name="punto_id" id="punto_id" required>
+            <option value=""></option>
+            <optgroup label="Puntos Centrales">
+                <option value="978">
+                    Antigua                                            </option>
+                <option value="977">
+                    Ilumina                                            </option>
+                <option value="959">
+                    Norte                                            </option>
+                <option value="904">
+                    Próceres                                            </option>
+                <option value="982">
+                    Punto en Línea                                            </option>
+                <option value="979">
+                    Roosevelt                                            </option>
+                <option value="903">
+                    Villa Nueva                                            </option>
+            </optgroup>
+            <optgroup label="Puntos Departamentales e Internacionales">
+                <option value="974">
+                    Chiquimula                                            </option>
+                <option value="971">
+                    El Salvador                                            </option>
+                <option value="960">
+                    Escuintla                                            </option>
+                <option value="983">
+                    ISO - Vida Real                                            </option>
+                <option value="984">
+                    Ministerio Inhternacional - Vida Real - Rhode Island                                            </option>
+                <option value="981">
+                    Puerto Barrios                                            </option>
+                <option value="905">
+                    Xela                                            </option>
+            </optgroup>
+            <optgroup label="Cines">
+                <option value="973">
+                    Cayalá                                            </option>
+                <option value="906">
+                    Miraflores                                            </option>
+                <option value="969">
+                    Naranjo                                            </option>
+                <option value="970">
+                    Oakland                                            </option>
+                <option value="972">
+                    Sankris                                            </option>
+                <option value="980">
+                    Santa Clara                                            </option>
+            </optgroup>
+        </select><br>
+        <input class="form-control textareaES" type='text' name='userName' placeholder="Nombres" required /><br>
+        <input class="form-control textareaES" type='text' name='userLastName' placeholder="Apellidos" required /><br>
+        <div class="inner-addon left-addon">
+            <i class="glyphicon glyphicon-envelope" style="color:#0E344B; font-size: 17px; padding-top: 8px;"></i>
+            <input style="padding-left: 30px;" class="form-control textareaES" type='text' name='userEmailAddress' placeholder="Correo Electrónico" onchange="validarCorreoTest(this)" required /><br>
+        </div>
+        <p style='text-align: center; position: absolute; margin-left: -9999px'>
+            <input class="form-control" type='text' name='anotherField'/>
+        </p>
+    </div>
+</div>

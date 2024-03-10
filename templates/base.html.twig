@@ -16,8 +16,8 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
+{#        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">#}
+{#        <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">#}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,6 +33,7 @@
 {% endblock %}
 
 {% block body %}
+    <div {{ vue_component('Hello', { 'name': 'Ger' }) }}></div>
     <div id="app">
     </div>
 
