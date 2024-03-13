@@ -24,15 +24,16 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "dev-server": "encore dev-server",
-    "dev": "encore dev",
-    "watch": "encore dev --watch",
-    "build": "encore production --progress"
+    "dev": "vite",
+    "build": "vite build"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@vitejs/plugin-vue": "^5.0.4",
     "bootstrap": "^5.3.3",
     "unplugin-vue-components": "^0.26.0",
+    "vite": "^5.0",
+    "vite-plugin-symfony": "^6.4.3",
     "vue": "^3.4.21"
   }
 }

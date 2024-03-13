@@ -15,7 +15,8 @@
     ================================================== -->
 
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
+            {{ vite_entry_link_tags('app') }}
+{#        {{ encore_entry_link_tags('app') }}#}
 {#        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">#}
 {#        <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">#}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
@@ -40,7 +41,11 @@
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+    {{ vite_entry_script_tags('app') }}
+
+    {# if you are using React, you have to replace with this #}
+    {{ vite_entry_script_tags('app', { dependency: 'vue' }) }}
+{#    {{ encore_entry_script_tags('app') }}#}
     {#        {% block importmap %}{{ importmap('app') }}{% endblock %}#}
     <script src="{{ asset('js/modernizr.js') }}"></script>
 {% endblock %}
