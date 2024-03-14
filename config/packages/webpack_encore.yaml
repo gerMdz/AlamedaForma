@@ -32,7 +32,8 @@ webpack_encore:
 
 framework:
     assets:
-        json_manifest_path: '%kernel.project_dir%/public/build/.vite/manifest.json'
+#        json_manifest_path: '%kernel.project_dir%/public/build/.vite/manifest.json'
+        json_manifest_path: '%kernel.project_dir%/public/build/.vite/entrypoints.json'
 
 #when@prod:
 #    webpack_encore:

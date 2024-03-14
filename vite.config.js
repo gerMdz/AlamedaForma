@@ -1,6 +1,11 @@
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import symfonyPlugin from "vite-plugin-symfony";
 import vuePlugin from "@vitejs/plugin-vue";
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import vuetify from "vite-plugin-vuetify";
+const basicPlaygroundDir = dirname(fileURLToPath(import.meta.url));
+const sharedDir = resolve(basicPlaygroundDir, './assets/theme')
 
 /* if you're using React */
 // import react from '@vitejs/plugin-react';
@@ -10,6 +15,7 @@ export default defineConfig({
         /* react(), // if you're using React */
         vuePlugin(),
         symfonyPlugin(),
+        vuetify({ autoImport: true })
     ],
     build: {
         assetsInlineLimit: 512,
@@ -25,4 +31,25 @@ export default defineConfig({
             }
         }
     },
+    server: {
+        // origin: 'http://localhost:5173',
+        fs: {
+            allow: [
+                '.',
+                sharedDir
+            ]
+        },
+        watch: {
+            ignored: ['**/.idea/**', '**/tests/**', '**/var/**', '**/vendor/**'],
+        }
+    },
+
+    resolve: {
+        alias: {
+            '~': resolve(basicPlaygroundDir, 'assets'),
+            '~theme': sharedDir
+        }
+    },
+
+
 });
