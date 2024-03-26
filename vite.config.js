@@ -11,6 +11,7 @@ const sharedDir = resolve(basicPlaygroundDir, './assets/theme')
 // import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+    base: '/build/',
     plugins: [
         /* react(), // if you're using React */
         vuePlugin(),
@@ -18,6 +19,7 @@ export default defineConfig({
         vuetify({ autoImport: true })
     ],
     build: {
+        outDir: 'public/build',
         assetsInlineLimit: 512,
         manifest: true,
         rollupOptions: {

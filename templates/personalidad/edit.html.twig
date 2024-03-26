@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Personalidad{% endblock %}
+
+{% block body %}
+    <h1>Edit Personalidad</h1>
+
+    {{ include('personalidad/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_personalidad_index') }}">back to list</a>
+
+    {{ include('personalidad/_delete_form.html.twig') }}
+{% endblock %}

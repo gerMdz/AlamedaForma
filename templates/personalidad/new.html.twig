@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Personalidad{% endblock %}
+
+{% block body %}
+    <h1>Create new Personalidad</h1>
+
+    {{ include('personalidad/_form.html.twig') }}
+
+    <a href="{{ path('app_personalidad_index') }}">back to list</a>
+{% endblock %}

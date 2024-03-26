@@ -8,7 +8,8 @@
     <!--        <img :src="vueLogo" class="logo vue" alt="Vue logo" />-->
     <!--      </a>-->
     <!--    </div>-->
-        <HelloWorld msg="Hello Vue 3.0 + Vite" />
+<!--        <HelloWorld msg="Hello Vue 3.0 + Vite + Symfony" />-->
+    <FormPersonalidades />
   </div>
 </template>
 
@@ -16,6 +17,7 @@
 import HelloWorld from './components/HelloForma.vue'
 import vueLogo from '../../images/logo-vue.svg';
 import viteLogo from '../../images/logo-vite.svg'
+import FormPersonalidades from "./components/FormPersonalidades.vue";
 
 </script>
 

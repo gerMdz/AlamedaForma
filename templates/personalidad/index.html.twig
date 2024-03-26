@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Personalidad index{% endblock %}
+
+{% block body %}
+    <h1>Personalidad index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>D</th>
+                <th>I</th>
+                <th>S</th>
+                <th>C</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for personalidad in personalidads %}
+            <tr>
+                <td>{{ personalidad.id }}</td>
+                <td>{{ personalidad.D }}</td>
+                <td>{{ personalidad.I }}</td>
+                <td>{{ personalidad.S }}</td>
+                <td>{{ personalidad.C }}</td>
+                <td>
+                    <a href="{{ path('app_personalidad_show', {'id': personalidad.id}) }}">show</a>
+                    <a href="{{ path('app_personalidad_edit', {'id': personalidad.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_personalidad_new') }}">Create new</a>
+{% endblock %}

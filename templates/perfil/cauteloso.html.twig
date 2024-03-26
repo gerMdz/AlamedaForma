@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="py-3">
+        <div class="container px-3">
+            <div class="row gx-5">
+                <div class="col-lg-12">
+                    <article>
+                        <section class="py-5">
+                            <div class="container px-3 my-3">
+                                <div class="row gx-5">
+                                    <div class="col-lg-12">
+                                        <header class="mb-4 text-center">
+                                            <div class="mb-4">
+                                                <img src="{{asset('images/capa_perfil_cauteloso.jpg')}}" class="img-fluid rounded-3" alt="Perfil Cauteloso" width="800" height="400">
+                                            </div>
+                                            <div>
+                                                <h1 class="fw-bolder mb-1">Perfil DISC Cauteloso - El Analista!</h1>
+                                                <div class="text-muted fst-italic mb-2 text-center">Comprendiendo el Perfil Cauteloso</div>
+                                            </div>
+                                        </header>
+
+                                        <section class="mb-5">
+                                            <p class="fs-5 mb-4 text-justify-content-center">
+                                                🔍 <strong>Qué es:</strong><br>
+                                            <p class="fs-5 mb-4 text-justify-content-center">Si adoras el análisis, la organización y la precisión, podrías ser un "C". El perfil Cauteloso, o "C" en DISC, es como ese detective inteligente de las películas que analiza todos los detalles.</p>
+
+                                            <p class="fs-5 mb-4 text-justify-content-center">Este perfil es reconocido por su atención a los detalles, organización, cuidado y enfoque metódico. Eres como un analista meticuloso que valora la precisión.</p>
+
+                                            <p class="fs-5 mb-4 text-justify-content-center">Ya sea en el análisis minucioso de datos o en garantizar la calidad y precisión del trabajo, tus habilidades son muy valiosas para el equipo. Tu enfoque cauteloso puede ser el diferencial en proyectos complejos.</p>
+
+                                            <p class="fs-5 mb-4 text-justify-content-center">Tu pasión por sistemas, procesos y reglas te convierte en alguien que valora la consistencia y el orden en el entorno de trabajo.</p>
+
+                                        </section>
+
+                                        <section class="fs-5 mb-4 text-justify-content-center">
+                                            🧠 <strong>Características principales:</strong><br>
+                                            - <strong>Analítico:</strong> Le encantan los detalles y es meticuloso.<br>
+                                            - <strong>Organizado:</strong> Todo necesita estar en orden para ti.<br>
+                                            - <strong>Cuidadoso:</strong> Reflexivo y preciso en tus acciones.<br>
+                                            - <strong>Metódico:</strong> Valora sistemas, procesos y reglas.
+                                        </section>
+
+                                        <section class="fs-5 mb-4 text-jus">
+                                            📈 <strong>En el trabajo:</strong><br>
+                                            Como practicante o en tu primer trabajo, tu atención a los detalles y enfoque metódico son muy valiosos. Serás el que garantice la calidad y precisión del trabajo.
+                                        </section>
+
+                                        <section class="fs-5 mb-4 text-jus">
+                                            💡 <strong>Consejos de éxito:</strong><br>
+                                            1. <strong>Valora tu perfeccionismo:</strong> Es una cualidad distintiva, pero ten cuidado de que no se convierta en un obstáculo.<br>
+                                            2. <strong>Sé flexible:</strong> No todo tiene que ser perfecto. Aprende a adaptarte cuando sea necesario.<br>
+                                            3. <strong>Comparte tus análisis:</strong> Tus perspectivas pueden ser valiosas para el equipo. No tengas miedo de compartirlas.
+                                        </section>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <!-- Tabela de Pontos Fortes e Fracos -->
+                        <section>
+                            <table class="table table-info table-bordered text-center table-striped table-borderles" style="border-radius: 10px;">
+                                <thead class = "table-dark">
+                                <tr>
+                                    <th>Puntos Fuertes</th>
+                                    <th>Puntos Débiles</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Atención a los detalles</td>
+                                    <td>Puede ser perfeccionista</td>
+                                </tr>
+                                <tr>
+                                    <td>Organización y precisión</td>
+                                    <td>Resistencia al cambio</td>
+                                </tr>
+                                <tr>
+                                    <td>Prudencia y pensamiento crítico</td>
+                                    <td>Análisis excesivo de los detalles</td>
+                                </tr>
+                                <tr>
+                                    <td>Metódico y sistemático</td>
+                                    <td>Esfuerzo excesivo para la perfección</td>
+                                </tr>
+                                <tr>
+                                    <td>Énfasis en la precisión y calidad</td>
+                                    <td>Dificultad para delegar tareas</td>
+                                </tr>
+                                <tr>
+                                    <td>Enfoque analítico y reflexivo</td>
+                                    <td>Reluctancia a aceptar cambios rápidos</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+
+
+                    </article>
+
+
+
+                    <div class="text-center mt-3">
+                        <a href="{{ path('app_perfil') }}" class="btn btn-primary mt-5 text-center">Volver</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

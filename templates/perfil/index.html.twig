@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PerfileController!{% endblock %}
+
+{% block body %}
+
+    <h1>Create new Personalidad</h1>
+
+    {{ include('perfil/_form.html.twig') }}
+
+    <a href="{{ path('app_formulario_personalidad') }}">back to list</a>
+{% endblock %}

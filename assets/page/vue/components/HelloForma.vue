@@ -7,7 +7,7 @@
     <p>
       <code>assets/page/vue/components/HelloForma.vue</code>
     </p>
-    <p>Edit component to test hot module replacement.</p>
+    <p>Edit component to test hot module replacement, seee.</p>
   </v-app>
 </template>
 

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Personalidad{% endblock %}
+
+{% block body %}
+    <h1>Personalidad</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ personalidad.id }}</td>
+            </tr>
+            <tr>
+                <th>D</th>
+                <td>{{ personalidad.D }}</td>
+            </tr>
+            <tr>
+                <th>I</th>
+                <td>{{ personalidad.I }}</td>
+            </tr>
+            <tr>
+                <th>S</th>
+                <td>{{ personalidad.S }}</td>
+            </tr>
+            <tr>
+                <th>C</th>
+                <td>{{ personalidad.C }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_personalidad_index') }}">back to list</a>
+
+    <a href="{{ path('app_personalidad_edit', {'id': personalidad.id}) }}">edit</a>
+
+    {{ include('personalidad/_delete_form.html.twig') }}
+{% endblock %}
