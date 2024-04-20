@@ -1,7 +1,8 @@
 <template>
   <VForm @submit="handleSubmit" class="large-form">
     <VRow v-for="(question, index) in questions" :key="question.id">
-      <VCol cols="3">
+      <VCol cols="12"
+            sm="4" >
         <span> {{ question.d }}</span>
         <v-select
             :items="uniqueChoices(index, 'd').value"
@@ -10,7 +11,8 @@
             clearable
         ></v-select>
       </VCol>
-      <VCol cols="3">
+      <VCol cols="12"
+            sm="4">
         <span> {{ question.i }}</span>
         <v-select
             :items="uniqueChoices(index, 'i').value"
@@ -19,7 +21,8 @@
             clearable
         ></v-select>
       </VCol>
-      <VCol cols="3">
+      <VCol cols="12"
+            sm="4">
         <span> {{ question.s }}</span>
         <v-select
             :items="uniqueChoices(index, 's').value"
@@ -28,7 +31,8 @@
             clearable
         ></v-select>
       </VCol>
-      <VCol cols="3">
+      <VCol cols="12"
+            sm="4">
         <span> {{ question.c }}</span>
         <v-select
             :items="uniqueChoices(index, 'c').value"
