@@ -31,3 +31,4 @@
 /public/build/
 ###< pentatrion/vite-bundle ###
 /.php-version
+/datas/
