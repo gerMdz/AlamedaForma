@@ -1,49 +1,58 @@
 <template>
-  <VForm @submit="handleSubmit" class="large-form">
-    <VRow v-for="(question, index) in questions" :key="question.id">
-      <VCol cols="12"
-            sm="4" >
-        <span> {{ question.d }}</span>
-        <v-select
-            :items="uniqueChoices(index, 'd').value"
-            v-model="answers[index].d"
-            required
-            clearable
-        ></v-select>
-      </VCol>
-      <VCol cols="12"
-            sm="4">
-        <span> {{ question.i }}</span>
-        <v-select
-            :items="uniqueChoices(index, 'i').value"
-            v-model="answers[index].i"
-            required
-            clearable
-        ></v-select>
-      </VCol>
-      <VCol cols="12"
-            sm="4">
-        <span> {{ question.s }}</span>
-        <v-select
-            :items="uniqueChoices(index, 's').value"
-            v-model="answers[index].s"
-            required
-            clearable
-        ></v-select>
-      </VCol>
-      <VCol cols="12"
-            sm="4">
-        <span> {{ question.c }}</span>
-        <v-select
-            :items="uniqueChoices(index, 'c').value"
-            v-model="answers[index].c"
-            required
-            clearable
-        ></v-select>
-      </VCol>
-    </VRow>
-    <VBtn type="submit">Submit</VBtn>
-  </VForm>
+  <v-container fluid class="fill-height w-auto">
+    <VForm @submit="handleSubmit" class="large-form">
+      <VRow v-for="(question, index) in questions" :key="question.id" class="text-center">
+                  <VCol cols="12" sm="12" md="6" lg="3" xl="3">
+<!--        <v-col cols="12" class="d-flex justify-center align-items-center">-->
+          <v-sheet class="pa-2 ma-2">
+            <span> {{ question.d }}</span>
+            <v-select
+                :items="uniqueChoices(index, 'd').value"
+                v-model="answers[index].d"
+                required
+                clearable
+
+            ></v-select>
+          </v-sheet>
+<!--        </v-col>-->
+                  </VCol>
+        <VCol cols="12" sm="12" md="6" lg="3" xl="3">
+          <v-sheet class="pa-2 ma-2">
+          <span> {{ question.i }}</span>
+          <v-select
+              :items="uniqueChoices(index, 'i').value"
+              v-model="answers[index].i"
+              required
+              clearable
+          ></v-select>
+          </v-sheet>
+        </VCol>
+        <VCol cols="12" sm="12" md="6" lg="3" xl="3">
+          <v-sheet class="pa-2 ma-2">
+          <span> {{ question.s }}</span>
+          <v-select
+              :items="uniqueChoices(index, 's').value"
+              v-model="answers[index].s"
+              required
+              clearable
+          ></v-select>
+          </v-sheet>
+        </VCol>
+        <VCol cols="12" sm="12" md="6" lg="3" xl="3">
+          <v-sheet class="pa-2 ma-2">
+          <span> {{ question.c }}</span>
+          <v-select
+              :items="uniqueChoices(index, 'c').value"
+              v-model="answers[index].c"
+              required
+              clearable
+          ></v-select>
+            </v-sheet>
+        </VCol>
+      </VRow>
+      <VBtn type="submit">Submit</VBtn>
+    </VForm>
+  </v-container>
 </template>
 
 <script setup>
@@ -69,7 +78,7 @@ const uniqueChoices = (index, exceptKey) => computed(() => {
   const answer = answers.value[index];
   const excludeValue = answer[exceptKey];
   const otherValues = Object.values(answer).filter(val => val !== excludeValue && val !== null);
-  const allChoices = [1,2,3,4, ''];
+  const allChoices = [1, 2, 3, 4, ''];
   return allChoices.filter(choice => !otherValues.includes(choice));
 });
 
