@@ -1,0 +1,12 @@
+{
+  "controllers": {
+    "@symfony/ux-chartjs": {
+      "chart": {
+        "enabled": true,
+        "fetch": "eager",
+        "webpackMode": "eager"
+      }
+    }
+  },
+  "entrypoints": []
+}

@@ -13,7 +13,6 @@ final class ApiPersonalidadController extends AbstractController
     #[Route('/api/listado', name: 'app_api_personalidad')]
     public function listado(PersonalidadRepository $personalidadRepository): Response
     {
-
         return $this->json($personalidadRepository->findAll());
     }
 }
