@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -11,14 +12,11 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <!-- script
-    ================================================== -->
-
     {% block stylesheets %}
-            {{ vite_entry_link_tags('app') }}
-{#        {{ encore_entry_link_tags('app') }}#}
-{#        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">#}
-{#        <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">#}
+        {{ vite_entry_link_tags('app') }}
+        {#        {{ encore_entry_link_tags('app') }} #}
+        {#        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}"> #}
+        {#        <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}"> #}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,25 +26,26 @@
 
 
 </head>
-<body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" tabindex="0">
+<body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true"
+      tabindex="0">
 {% block header %}
     {{ include('_bases/_nav.html.twig') }}
 {% endblock %}
 
 {% block body %}
-    <div {{ vue_component('Hello', { 'name': 'Ger' }) }}></div>
+    {#    <div {{ vue_component('Hello', { 'name': 'Ger' }) }}></div> #}
     <div id="app">
     </div>
 
 {% endblock %}
 
 {% block javascripts %}
-{#            {% block importmap %}{{ importmap('app') }}{% endblock %}#}
+    {#            {% block importmap %}{{ importmap('app') }}{% endblock %} #}
     {{ vite_entry_script_tags('app') }}
 
     {# if you are using React, you have to replace with this #}
     {{ vite_entry_script_tags('app', { dependency: 'vue' }) }}
-{#    {{ encore_entry_script_tags('app') }}#}
+    {#    {{ encore_entry_script_tags('app') }} #}
     {#        #}
     <script src="{{ asset('js/modernizr.js') }}"></script>
 {% endblock %}
