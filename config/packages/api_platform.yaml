@@ -3,7 +3,6 @@ api_platform:
     version: 1.0.0
     formats:
         jsonld: ['application/ld+json']
-        json: ['application/json']
     docs_formats:
         jsonld: ['application/ld+json']
         jsonopenapi: ['application/vnd.openapi+json']
@@ -15,7 +14,17 @@ api_platform:
         extra_properties:
             standard_put: true
             rfc_7807_compliant_errors: true
-    event_listeners_backward_compatibility_layer: false
     keep_legacy_inflector: false
+    use_symfony_listeners: true
     resource_class_directories:
         - '%kernel.project_dir%/src/ApiResource'
+#    default_version: 1.0.0
+#    default_format: jsonld
+    default_timezone: UTC-3
+    default_locale: es
+    debug: false
+    enable_profiler: true
+    enable_swagger: true
+    enable_swagger_ui: true
+    enable_re_doc: true
+    enable_nelmio_api_doc: true
