@@ -14,17 +14,19 @@ api_platform:
         extra_properties:
             standard_put: true
             rfc_7807_compliant_errors: true
+        default_timezone: UTC-3
+        default_locale: es
+        debug: false
+        enable_profiler: true
+        enable_swagger: true
+        enable_swagger_ui: true
+        enable_re_doc: true
+        enable_nelmio_api_doc: true
     keep_legacy_inflector: false
     use_symfony_listeners: true
     resource_class_directories:
         - '%kernel.project_dir%/src/ApiResource'
 #    default_version: 1.0.0
 #    default_format: jsonld
-    default_timezone: UTC-3
-    default_locale: es
-    debug: false
-    enable_profiler: true
-    enable_swagger: true
-    enable_swagger_ui: true
-    enable_re_doc: true
-    enable_nelmio_api_doc: true
+
+
