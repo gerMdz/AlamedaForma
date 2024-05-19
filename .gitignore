@@ -32,3 +32,4 @@
 ###< pentatrion/vite-bundle ###
 /.php-version
 /datas/
+/src/DoctrineMigrations/

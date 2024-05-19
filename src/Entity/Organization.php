@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\Doctrine\CustomUuidType;
 use App\Repository\OrganizationRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
 class Organization
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'custom_uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
@@ -33,6 +34,17 @@ class Organization
 
     #[ORM\Column]
     private ?DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $identifier = null;
+
+
+    public function __construct()
+    {
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+        $this->isDisabled = false;
+    }
 
     public function getId(): Uuid
     {
@@ -56,7 +68,7 @@ class Organization
         return $this->isDisabled;
     }
 
-    public function setDisabled(bool $isDisabled): static
+    public function setDisabled(bool $isDisabled = false): static
     {
         $this->isDisabled = $isDisabled;
 
@@ -105,6 +117,18 @@ class Organization
     public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(string $identifier): static
+    {
+        $this->identifier = $identifier;
 
         return $this;
     }
