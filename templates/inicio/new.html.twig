@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Inicio{% endblock %}
+
+{% block body %}
+    <h1>Create new Inicio</h1>
+
+    {{ include('inicio/_form.html.twig') }}
+
+    <a href="{{ path('app_inicio_index') }}">back to list</a>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('../bundles/tinymce/ext/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('../bundles/tinymce/ext/tinymce-webcomponent.js') }}" type="module"></script>
+{% endblock %}

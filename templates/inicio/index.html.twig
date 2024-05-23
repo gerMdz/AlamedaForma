@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inicio index{% endblock %}
+
+{% block body %}
+    <h1>Inicio index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Terms</th>
+                <th>CreatedAt</th>
+                <th>UpdateAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for inicio in inicios %}
+            <tr>
+                <td>{{ inicio.id }}</td>
+                <td>{{ inicio.title }}</td>
+                <td>{{ inicio.content }}</td>
+                <td>{{ inicio.terms }}</td>
+                <td>{{ inicio.createdAt ? inicio.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ inicio.updateAt ? inicio.updateAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_inicio_show', {'id': inicio.id}) }}">show</a>
+                    <a href="{{ path('app_inicio_edit', {'id': inicio.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_inicio_new') }}">Create new</a>
+{% endblock %}

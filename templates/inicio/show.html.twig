@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block body %}
+    <h1>Inicio</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ inicio.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ inicio.title }}</td>
+            </tr>
+            <tr>
+                <th>Content</th>
+                <td>{{ inicio.content }}</td>
+            </tr>
+            <tr>
+                <th>Terms</th>
+                <td>{{ inicio.terms }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ inicio.createdAt ? inicio.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdateAt</th>
+                <td>{{ inicio.updateAt ? inicio.updateAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_inicio_index') }}">back to list</a>
+
+    <a href="{{ path('app_inicio_edit', {'id': inicio.id}) }}">edit</a>
+
+    {{ include('inicio/_delete_form.html.twig') }}
+{% endblock %}

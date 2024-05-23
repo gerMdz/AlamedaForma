@@ -52,6 +52,9 @@
             "migrations/.gitignore"
         ]
     },
+    "eckinox/tinymce-bundle": {
+        "version": "v5.0.0"
+    },
     "nelmio/cors-bundle": {
         "version": "2.4",
         "recipe": {
