@@ -1,0 +1,14 @@
+<script src="{{ asset('asset/vendor/editor/build/ckeditor.js') }}"></script>
+<script src="{{ asset('asset/vendor/editor/build/translations/es-co.js') }}"></script>
+<script>
+    ClassicEditor
+        .create( document.querySelector( '.editor_content' ) )
+        .catch( error => {
+            console.error( error );
+        } );
+    ClassicEditor
+        .create( document.querySelector( '.editor_terms' ) )
+        .catch( error => {
+            console.error( error );
+        } );
+</script>

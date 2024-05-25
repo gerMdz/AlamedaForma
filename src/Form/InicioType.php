@@ -7,6 +7,7 @@ use App\Entity\Organization;
 use Eckinox\TinymceBundle\Form\Type\TinymceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -16,19 +17,23 @@ class InicioType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('content', TinymceType::class, [
-                'attr' => ["toolbar" => "bold italic underline | bullist numlist",],
+            ->add('content', TextareaType::class, [
+                'required' => true,
+                'attr' => [
+                    'rows' => 10,
+                    'class' => 'editor_content',
+                ],
+                'label' => 'Contenido',
+
             ])
-            ->add('terms')
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updateAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('organization', EntityType::class, [
-                'class' => Organization::class,
-                'choice_label' => 'id',
+            ->add('terms', TextareaType::class, [
+                'required' => true,
+                'attr' => [
+                    'rows' => 10,
+                    'class' => 'editor_terms',
+                ],
+                'label' => 'Términos y condiciones',
+
             ])
         ;
     }

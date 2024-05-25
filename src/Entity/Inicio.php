@@ -41,6 +41,14 @@ class Inicio
 
 
 
+    public function __construct()
+    {
+        $this->id = Uuid::v4();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updateAt = new DateTimeImmutable();
+    }
+
+
     public function getId(): Uuid
     {
         return $this->id;

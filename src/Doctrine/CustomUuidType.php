@@ -25,9 +25,9 @@ class CustomUuidType extends Type
             return null;
         }
         if (is_string($value)) {
-            return Uuid::fromBinary($value);
+            return Uuid::fromRfc4122($value);
         }
-        if (! $value instanceof Uuid) {
+        if (!$value instanceof Uuid) {
             throw new Exception('Expected Uuid instance.');
         }
         return $value;

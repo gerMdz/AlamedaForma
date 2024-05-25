@@ -11,3 +11,8 @@
 
     {{ include('inicio/_delete_form.html.twig') }}
 {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% include '_bases/_editor.html.twig' %}
+
+{% endblock %}
