@@ -43,7 +43,6 @@ class PInicioFixtures extends Fixture
 Previo a realizar este test, le solicitamos proceda a leer los Términos y Condiciones; luego de haber finalizado con la lectura y si se encuentra de acuerdo, favor dar clic en ACEPTO LOS TÉRMINOS Y CONDICIONES.';
     private string $title = 'Descubre tu Propósito, conociendo tu F.O.R.M.A';
 
-
     public function load(ObjectManager $manager): void
     {
         $organization = $manager->getRepository(Organization::class)->findAll();
