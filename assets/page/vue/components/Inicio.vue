@@ -21,12 +21,12 @@ fetchData();
 
 <template>
   <v-container fluid class="fill-height w-auto">
-    <VCard v-for="(ini, index) in inicio" :key="ini.id" class="text-center">
-      <VCardTitle cols="12" sm="12" md="6" lg="3" xl="3">
+    <VCard v-for="(ini, index) in inicio" :key="ini.id" >
+      <VCardItem cols="12" sm="12" md="6" lg="3" xl="3">
         <v-col cols="12" class="d-flex justify-center align-items-center">
-          <h2 v-html="ini.Title"></h2>
+          <h2 v-html="ini.Title" class="text-center"></h2>
         </v-col>
-      </VCardTitle>
+      </VCardItem>
       <VCardItem cols="12" sm="12" md="6" lg="3" xl="3">
         <v-col cols="12" class="d-flex justify-center align-items-center">
           <p v-html="ini.Content"></p>
