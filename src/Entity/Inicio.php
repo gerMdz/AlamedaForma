@@ -5,12 +5,15 @@ namespace App\Entity;
 use AllowDynamicProperties;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\InicioRepository;
+use App\State\InicioStateProvider;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
+#[ApiResource(
+    provider: InicioStateProvider::class,
+)]
 #[AllowDynamicProperties] #[ORM\Entity(repositoryClass: InicioRepository::class)]
 class Inicio
 {
@@ -18,7 +21,7 @@ class Inicio
     #[ORM\Column(type: 'custom_uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid $id = null;
+    public ?Uuid $id = null;
 
 
     #[ORM\Column(length: 255)]

@@ -7,9 +7,7 @@ namespace App\ApiResource;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Inicio;
-use App\Entity\Personalidad;
 use App\State\InicioStateProvider;
-use App\State\PersonalidadStateProvider;
 
 
 #[ApiResource(

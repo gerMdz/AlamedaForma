@@ -9,6 +9,7 @@
     <!--      </a>-->
     <!--    </div>-->
 <!--        <HelloWorld msg="Hello Vue 3.0 + Vite + Symfony" />-->
+    <Inicio />
     <FormPersonalidades />
   </div>
 </template>
@@ -18,6 +19,7 @@ import HelloWorld from './components/HelloForma.vue'
 import vueLogo from '../../images/logo-vue.svg';
 import viteLogo from '../../images/logo-vite.svg'
 import FormPersonalidades from "./components/FormPersonalidades.vue";
+import Inicio from "./components/Inicio.vue";
 
 </script>
 
