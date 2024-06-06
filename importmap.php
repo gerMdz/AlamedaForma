@@ -53,4 +53,7 @@ return [
     '@symfony/ux-vue' => [
         'path' => './vendor/symfony/ux-vue/assets/dist/loader.js',
     ],
+    'axios' => [
+        'version' => '1.7.2',
+    ],
 ];
