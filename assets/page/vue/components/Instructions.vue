@@ -48,10 +48,9 @@ fetchData();
   <v-container fluid class="fill-height w-auto">
 
     <VCard v-for="(ini, index) in instrucciones" :key="ini.id" v-if="allTheRest">
-      <VCardItem cols="12" sm="12" md="6" lg="3" xl="3" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                 style="text-align: justify;">
+      <VCardItem cols="12" sm="12" md="6" lg="3" xl="3">
         <v-col cols="12" class="d-flex justify-center align-items-center">
-          <h2 v-html="ini.Title" class="text-center"></h2>
+          <div v-html="ini.Title" class="text-center"></div>
         </v-col>
       </VCardItem>
       <VCardItem cols="12" sm="12" md="6" lg="3" xl="3">
