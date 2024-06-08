@@ -10,6 +10,7 @@
     <!--    </div>-->
 <!--        <HelloWorld msg="Hello Vue 3.0 + Vite + Symfony" />-->
     <Inicio />
+    <Instructions />
     <FormPersonalidades />
   </div>
 </template>
@@ -20,6 +21,7 @@ import vueLogo from '../../images/logo-vue.svg';
 import viteLogo from '../../images/logo-vite.svg'
 import FormPersonalidades from "./components/FormPersonalidades.vue";
 import Inicio from "./components/Inicio.vue";
+import Instructions from "./components/Instructions.vue";
 
 </script>
 

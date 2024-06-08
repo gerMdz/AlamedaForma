@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Personalidad;
 use App\State\PersonalidadStateProvider;
 
-
 #[ApiResource(
     shortName: 'Personalidad',
     operations: [

@@ -38,6 +38,9 @@ class Organization
     #[ORM\Column(length: 100)]
     private ?string $identifier = null;
 
+    #[ORM\OneToOne(mappedBy: 'organization', cascade: ['persist', 'remove'])]
+    private ?Instructions $instructions = null;
+
 
     public function __construct()
     {
@@ -129,6 +132,28 @@ class Organization
     public function setIdentifier(string $identifier): static
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getInstructions(): ?Instructions
+    {
+        return $this->instructions;
+    }
+
+    public function setInstructions(?Instructions $instructions): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($instructions === null && $this->instructions !== null) {
+            $this->instructions->setOrganization(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($instructions !== null && $instructions->getOrganization() !== $this) {
+            $instructions->setOrganization($this);
+        }
+
+        $this->instructions = $instructions;
 
         return $this;
     }

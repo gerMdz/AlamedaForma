@@ -4,6 +4,9 @@ import vuePlugin from "@vitejs/plugin-vue";
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import vuetify from "vite-plugin-vuetify";
+
+
+
 const basicPlaygroundDir = dirname(fileURLToPath(import.meta.url));
 const sharedDir = resolve(basicPlaygroundDir, './assets/theme')
 
@@ -16,7 +19,12 @@ export default defineConfig({
         /* react(), // if you're using React */
         vuePlugin(),
         symfonyPlugin(),
-        vuetify({ autoImport: true })
+        vuetify({
+            autoImport: true,
+            icons: {
+                defaultSet: 'mdi',
+            }
+        })
     ],
     build: {
         outDir: 'public/build',
