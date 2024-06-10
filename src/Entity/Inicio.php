@@ -13,6 +13,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ApiResource(
     provider: InicioStateProvider::class,
+
 )]
 #[AllowDynamicProperties] #[ORM\Entity(repositoryClass: InicioRepository::class)]
 class Inicio

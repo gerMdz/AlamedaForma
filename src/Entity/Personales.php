@@ -5,7 +5,7 @@ namespace App\Entity;
 use App\Repository\PersonalesRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Bridge\Doctrine\Types\UuidType;
+
 
 #[ORM\Entity(repositoryClass: PersonalesRepository::class)]
 class Personales
@@ -28,12 +28,15 @@ class Personales
     #[ORM\Column(length: 255)]
     private ?string $observaciones = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $phone = null;
+
     public function __toString(): string
     {
      return $this->nombre . ' ' . $this->apellido;
     }
 
-    public function getId(): Uuid
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
@@ -43,7 +46,7 @@ class Personales
         return $this->nombre;
     }
 
-    public function setNombre(string $nombre): static
+    public function setNombre(string $nombre): self
     {
         $this->nombre = $nombre;
 
@@ -55,7 +58,7 @@ class Personales
         return $this->apellido;
     }
 
-    public function setApellido(string $apellido): static
+    public function setApellido(string $apellido): self
     {
         $this->apellido = $apellido;
 
@@ -67,7 +70,7 @@ class Personales
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -79,9 +82,21 @@ class Personales
         return $this->observaciones;
     }
 
-    public function setObservaciones(string $observaciones): static
+    public function setObservaciones(string $observaciones): self
     {
         $this->observaciones = $observaciones;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
 
         return $this;
     }

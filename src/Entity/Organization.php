@@ -41,6 +41,12 @@ class Organization
     #[ORM\OneToOne(mappedBy: 'organization', cascade: ['persist', 'remove'])]
     private ?Instructions $instructions = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $email_request = null;
+
 
     public function __construct()
     {
@@ -154,6 +160,30 @@ class Organization
         }
 
         $this->instructions = $instructions;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEmailRequest(): ?string
+    {
+        return $this->email_request;
+    }
+
+    public function setEmailRequest(?string $email_request): static
+    {
+        $this->email_request = $email_request;
 
         return $this;
     }
