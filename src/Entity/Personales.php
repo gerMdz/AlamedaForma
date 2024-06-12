@@ -31,6 +31,9 @@ class Personales
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $point = null;
+
     public function __toString(): string
     {
      return $this->nombre . ' ' . $this->apellido;
@@ -97,6 +100,18 @@ class Personales
     public function setPhone(?string $phone): static
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getPoint(): ?string
+    {
+        return $this->point;
+    }
+
+    public function setPoint(?string $point): static
+    {
+        $this->point = $point;
 
         return $this;
     }

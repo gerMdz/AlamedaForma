@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller\Admin;
 
 use App\Entity\Inicio;
 use App\Form\InicioType;
@@ -13,9 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 
+#[Route('/inicios')]
 class InicioApiController extends AbstractController
 {
 
+    #[Route('/', name: 'app_inicio_index', methods: ['GET', 'POST'])]
     public function index(InicioRepository $inicioRepository): JsonResponse
     {
 

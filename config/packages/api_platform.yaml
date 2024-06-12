@@ -3,29 +3,32 @@ api_platform:
     version: 1.0.0
     formats:
         jsonld: ['application/ld+json']
+        json: [ 'application/json' ]
+        html: [ 'text/html' ]
+        jsonhal: [ 'application/hal+json' ]
     docs_formats:
         jsonld: ['application/ld+json']
         jsonopenapi: ['application/vnd.openapi+json']
         html: ['text/html']
-    defaults:
-        stateless: true
-        cache_headers:
-            vary: ['Content-Type', 'Authorization', 'Origin']
-        extra_properties:
-            standard_put: true
-            rfc_7807_compliant_errors: true
-        default_timezone: UTC-3
-        default_locale: es
-        debug: false
-        enable_profiler: true
-        enable_swagger: true
-        enable_swagger_ui: true
-        enable_re_doc: true
-        enable_nelmio_api_doc: true
-    keep_legacy_inflector: false
-    use_symfony_listeners: true
-    resource_class_directories:
-        - '%kernel.project_dir%/src/ApiResource'
+#    defaults:
+#        stateless: true
+#        cache_headers:
+#            vary: ['Content-Type', 'Authorization', 'Origin']
+#        extra_properties:
+#            standard_put: true
+#            rfc_7807_compliant_errors: true
+#        default_timezone: UTC-3
+#        default_locale: es
+#        debug: false
+#        enable_profiler: true
+#        enable_swagger: false
+#        enable_swagger_ui: false
+#        enable_re_doc: false
+#        enable_nelmio_api_doc: true
+#    keep_legacy_inflector: false
+#    use_symfony_listeners: true
+#    resource_class_directories:
+#        - '%kernel.project_dir%/src/ApiResource'
 #    default_version: 1.0.0
 #    default_format: jsonld
 

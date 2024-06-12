@@ -49,7 +49,9 @@
         "symfony/web-link": "6.4.*",
         "symfony/yaml": "6.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "nesbot/carbon": "^2.64",
+        "symfonycasts/micro-mapper": "^0.1.0"
     },
     "config": {
         "allow-plugins": {
@@ -109,6 +111,9 @@
         "symfony/maker-bundle": "^1.52",
         "symfony/phpunit-bridge": "^7.0",
         "symfony/stopwatch": "6.4.*",
-        "symfony/web-profiler-bundle": "6.4.*"
+        "symfony/web-profiler-bundle": "6.4.*",
+        "mtdowling/jmespath.php": "^2.6",
+        "zenstruck/browser": "^1.2",
+        "zenstruck/foundry": "^1.26"
     }
 }

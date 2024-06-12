@@ -30,7 +30,7 @@ readonly class InicioStateProvider implements ProviderInterface
         /** @var array{entity: string} $extraProperties */
         $extraProperties = $operation->getExtraProperties();
 
-        $collection = $this->collectionFactory->create($extraProperties['entity'])->getOperation(forceCollection: true);
+        $collection = $this->collectionFactory->create(Inicio::class)->getOperation(forceCollection: true);
 
         /** @var Paginator $paginator */
         $paginator = $this->collectionProvider->provide($collection, $uriVariables, $context);

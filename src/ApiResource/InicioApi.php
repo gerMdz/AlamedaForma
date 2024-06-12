@@ -10,21 +10,8 @@ use App\Entity\Inicio;
 use App\State\InicioStateProvider;
 
 
-#[ApiResource(
-    shortName: 'Inicio',
-    operations: [
-        new GetCollection(
-            uriTemplate: '/inicio',
-            openapiContext: ['summary' => self::DESCRIPTION],
-            description: self::DESCRIPTION,
-            provider: InicioStateProvider::class,
-            extraProperties: [
-                'entity' => Inicio::class,
-            ],
-        ),
-    ]
-)]
-final class InicioResource
+
+final class InicioApi
 {
     final public const DESCRIPTION = 'Recuperar el texto, contenido y términos y condiciones del inicio.';
 
