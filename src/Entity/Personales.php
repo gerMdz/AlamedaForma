@@ -2,21 +2,38 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Repository\InicioRepository;
 use App\Repository\PersonalesRepository;
+use App\State\InicioStateProvider;
+use App\State\PersonalStateProvider;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 
-#[ORM\Entity(repositoryClass: PersonalesRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/personales',
+        )
+    ],
+    provider: PersonalStateProvider::class
+)]
+#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: PersonalesRepository::class)]
 class Personales
 {
     #[ORM\Id]
     #[ORM\Column(type: 'custom_uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups('personal:read')]
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['personal:read', 'personal:create'])]
     private ?string $nombre = null;
 
     #[ORM\Column(length: 255)]
