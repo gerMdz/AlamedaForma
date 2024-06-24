@@ -42,7 +42,7 @@ class InstructionsFixtures extends Fixture implements FixtureGroupInterface
     public function getDependencies(): array
     {
         return [
-            OrganizationFixtures::class,
+            HOrganizationFixtures::class,
         ];
     }
 

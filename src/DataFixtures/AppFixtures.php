@@ -10,7 +10,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $class = OrganizationFixtures::class;
+        $class = HOrganizationFixtures::class;
 
     }
 }

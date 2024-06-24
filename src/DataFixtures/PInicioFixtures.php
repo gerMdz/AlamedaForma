@@ -62,7 +62,12 @@ Previo a realizar este test, le solicitamos proceda a leer los Términos y Condi
     public function getDependencies(): array
     {
         return [
-            OrganizationFixtures::class,
+            HOrganizationFixtures::class,
         ];
+    }
+
+    public static function getGroups(): array
+    {
+        return ['groupInicio'];
     }
 }

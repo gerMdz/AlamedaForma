@@ -6,7 +6,7 @@ use App\Entity\Organization;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class OrganizationFixtures extends Fixture
+class HOrganizationFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {

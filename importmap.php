@@ -29,26 +29,25 @@ return [
         'version' => '3.9.1',
     ],
     'vue' => [
-        'version' => '3.4.21',
-        'package_specifier' => 'vue/dist/vue.esm-bundler.js',
+        'version' => '3.4.15',
     ],
     '@vue/runtime-dom' => [
-        'version' => '3.4.21',
+        'version' => '3.4.15',
     ],
     '@vue/compiler-dom' => [
         'version' => '3.4.21',
     ],
     '@vue/shared' => [
-        'version' => '3.4.21',
+        'version' => '3.4.15',
     ],
     '@vue/runtime-core' => [
-        'version' => '3.4.21',
+        'version' => '3.4.15',
     ],
     '@vue/compiler-core' => [
         'version' => '3.4.21',
     ],
     '@vue/reactivity' => [
-        'version' => '3.4.21',
+        'version' => '3.4.15',
     ],
     '@symfony/ux-vue' => [
         'path' => './vendor/symfony/ux-vue/assets/dist/loader.js',
@@ -58,5 +57,14 @@ return [
     ],
     'chart.js' => [
         'version' => '3.9.1',
+    ],
+    '@vuelidate/validators' => [
+        'version' => '2.0.4',
+    ],
+    'vue-demi' => [
+        'version' => '0.13.11',
+    ],
+    '@vuelidate/core' => [
+        'version' => '2.0.3',
     ],
 ];

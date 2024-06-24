@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
+import Personal from "./Personal.vue";
 
 const instrucciones = ref([]);
 const msg = ref('Hola Instructions');
@@ -58,8 +59,10 @@ fetchData();
           <p v-html="ini.Content"></p>
         </v-col>
       </VCardItem>
+      <Personal />
 
     </VCard>
+
   </v-container>
 
 </template>
