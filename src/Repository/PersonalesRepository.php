@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Personales;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,9 +17,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PersonalesRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Personales::class);
+        $this->entityManager = $entityManager;
     }
 
 //    /**
@@ -45,4 +50,19 @@ class PersonalesRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function save( $personales): void
+    {
+        $this->entityManager->persist($personales);
+        $this->entityManager->flush();
+    }
+
+
+    public function guardar($personales)
+    {
+        $this->entityManager->persist($personales);
+        $this->entityManager->flush();
+
+        return $personales;
+
+    }
 }

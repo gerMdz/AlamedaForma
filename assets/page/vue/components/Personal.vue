@@ -7,10 +7,13 @@
             md="6"
         >
           <v-text-field
-              v-model="state.nombre"
+              v-model="nombre"
               label="Nombre"
               hide-details
               required
+              placeholder = "Ingresar nombre"
+              @blur="v$.nombre.$touch"
+              @input="v$.nombre.$touch"
           ></v-text-field>
         </v-col>
 
@@ -19,7 +22,7 @@
             md="6"
         >
           <v-text-field
-              v-model="state.apellido"
+              v-model="apellido"
               label="Apellido"
               hide-details
               required
@@ -34,7 +37,7 @@
             md="6"
         >
           <v-text-field
-              v-model="state.email"
+              v-model="email"
               label="Email"
               hide-details
               required
@@ -49,7 +52,7 @@
             md="6"
         >
           <v-text-field
-              v-model="state.phone"
+              v-model="phone"
               label="Teléfono"
               hide-details
               required
@@ -64,7 +67,7 @@
             md="12"
         >
           <v-text-field
-              v-model="state.point"
+              v-model="point"
               label="Grupo"
               hide-details
               required
@@ -82,56 +85,63 @@
 
       <v-row>
         <v-col>
-          <VBtn @click="submit" color="primary" > Enviar</VBtn>
+          <VBtn @click="submit" color="primary" > Siguiente</VBtn>
         </v-col>
       </v-row>
     </v-container>
   </VForm>
+
 </template>
 
 <script setup>
-import {ref} from 'vue';
-import {reactive} from 'vue'
+import {ref, provide} from 'vue';
 import axios from 'axios';
 import {useVuelidate} from '@vuelidate/core'
-import {email as mail, required} from '@vuelidate/validators'
+import {email as emailValidator, required} from '@vuelidate/validators'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
+import {store}  from "../../assets/alamcen";
 
-const initialState = {
 
-  nombre: '',
-  apellido: '',
-  email: '',
-  phone: '',
-  point: ''
+const  nombre= ref('');
+const  apellido= ref('');
+const  email= ref('');
+const  phone= ref('');
+const  point= ref('');
+let responseData = ref(null);
+provide('responseData', responseData);
+
+const validationRules = {
+  nombre: { required },
+  email: { required, emailValidator },
+  apellido: { required },
+  phone: { required },
 }
 
-const state = reactive({
-  ...initialState,
-})
-const rules = {
-  nombre: {required},
-  email: {required, mail},
-  apellido: {required},
-  phone: {required}
-}
 
-const v$ = useVuelidate(rules, state)
+
+
+const v$ = useVuelidate(validationRules, { nombre, apellido, email, phone, point })
 
 const submit = async () => {
+  const data = {
+    nombre: nombre.value,
+    apellido: apellido.value,
+    email: email.value,
+    phone: phone.value,
+    point: point.value,
+  }
   try {
-    const response = await axios.post('/api/personal', {
-      nombre: state.nombre.value,
-      apellido: state.apellido.value,
-      email: state.email.value,
+    const response = await axios.post('/api/personal', data);
+    store.setResponseData(response.data);
 
-      phone: state.phone.value,
-      point: state.point.value,
-    });
-    console.log(response.data);
+console.log('Personal: rd -> ' + responseData)
+
+
   } catch (error) {
     console.error(error);
   }
 };
+
+
 </script>

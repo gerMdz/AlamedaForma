@@ -1,27 +1,21 @@
 <template>
   <div class="vue-app">
-    <!--    <div>-->
-    <!--      <a href="https://vitejs.dev" target="_blank">-->
-    <!--        <img :src="viteLogo" class="logo" alt="Vite logo" />-->
-    <!--      </a>-->
-    <!--      <a href="https://vuejs.org/" target="_blank">-->
-    <!--        <img :src="vueLogo" class="logo vue" alt="Vue logo" />-->
-    <!--      </a>-->
-    <!--    </div>-->
-<!--        <HelloWorld msg="Hello Vue 3.0 + Vite + Symfony" />-->
+
     <Inicio />
     <Instructions />
-    <FormPersonalidades />
+    <FormaContent />
+
+
   </div>
 </template>
 
 <script setup>
-import HelloWorld from './components/HelloForma.vue'
-import vueLogo from '../../images/logo-vue.svg';
-import viteLogo from '../../images/logo-vite.svg'
-import FormPersonalidades from "./components/FormPersonalidades.vue";
 import Inicio from "./components/Inicio.vue";
 import Instructions from "./components/Instructions.vue";
+import FormaContent from "./components/FormaContent.vue";
+
+import { inject } from 'vue'
+const responseData = inject('responseData');
 
 </script>
 

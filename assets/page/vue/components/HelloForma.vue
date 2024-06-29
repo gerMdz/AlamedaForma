@@ -1,31 +1,28 @@
 <template>
-  <v-app>
-    <v-btn color="primary">Botón</v-btn>
 
-    <h1>{{ msg }}</h1>
-    <VBtn color="primary" @click="incrementCount">{{ countMessage }}</VBtn>
-    <p>
-      <code>assets/page/vue/components/HelloForma.vue</code>
-    </p>
-    <p>Edit component to test hot module replacement, seee.</p>
-  </v-app>
+    <div v-if="responseData">
+      <h3> Gracias {{ responseData.nombre }} {{ responseData.apellido }} </h3>
+      <p>
+        A continuación encontrarás varias secciones, que están clasificadas según el acróstico F.O.R.M.A. Deberás ir
+        completando cada sección y de esta manera ir avanzando para completar el test. *
+      </p>
+    </div>
+
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {ref} from 'vue';
+import {inject} from 'vue'
+import {store} from "../../assets/alamcen";
 
-// Prop definition
-const props = defineProps({
-  msg: String,
-})
-
-const clickCount = ref(0)
-const countMessage = ref(`llevamos: ${clickCount.value}`)
-
-const incrementCount = () => {
-  clickCount.value++
-  countMessage.value = `llevamos: ${clickCount.value}`
+const responseData = store.responseData
+if (typeof responseData === 'undefined') {
+  console.log('responseData es undefined');
+} else {
+  console.log('responseData tiene un valor:', responseData);
 }
+
+console.log('HelloForma: rd -> ' + responseData)
 </script>
 
 <style scoped>
