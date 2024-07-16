@@ -34,6 +34,6 @@ class PersonalController extends AbstractController
 
         $persona = $this->personalesRepository->guardar($data);
 
-        return $this->json( $persona, 200);
+        return $this->json( $persona, 201);
     }
 }

@@ -2,10 +2,26 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\FormacionRepository;
+use App\Repository\InicioRepository;
+use App\State\FormationStateProvider;
+use App\State\InicioStateProvider;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: FormacionRepository::class)]
+#[ApiResource(
+
+    operations: [
+        new GetCollection(
+            uriTemplate: '/formation',
+
+        )
+    ],
+    provider: FormationStateProvider::class
+)]
+#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: FormacionRepository::class)]
 class Formacion
 {
     #[ORM\Id]
@@ -24,6 +40,9 @@ class Formacion
 
     #[ORM\Column(length: 255)]
     private ?string $parent = null;
+
+    #[ORM\ManyToOne]
+    private ?Dones $donAssociate = null;
 
     public function getId(): ?int
     {
@@ -74,6 +93,18 @@ class Formacion
     public function setParent(string $parent): static
     {
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function getDonAssociate(): ?Dones
+    {
+        return $this->donAssociate;
+    }
+
+    public function setDonAssociate(?Dones $donAssociate): static
+    {
+        $this->donAssociate = $donAssociate;
 
         return $this;
     }

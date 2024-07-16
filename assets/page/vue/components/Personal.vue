@@ -100,7 +100,7 @@ import {useVuelidate} from '@vuelidate/core'
 import {email as emailValidator, required} from '@vuelidate/validators'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
-import {store}  from "../../assets/alamcen";
+import {store}  from "../../assets/almacen";
 
 
 const  nombre= ref('');

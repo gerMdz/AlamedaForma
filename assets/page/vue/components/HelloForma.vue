@@ -13,7 +13,7 @@
 <script setup>
 import {ref} from 'vue';
 import {inject} from 'vue'
-import {store} from "../../assets/alamcen";
+import {store} from "../../assets/almacen";
 
 const responseData = store.responseData
 if (typeof responseData === 'undefined') {

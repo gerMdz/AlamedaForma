@@ -1,6 +1,6 @@
 <script setup>
 import HelloForma from "./HelloForma.vue";
-import {store} from "../../assets/alamcen";
+import {store} from "../../assets/almacen";
 import FormPersonalidades from "./FormPersonalidades.vue";
 
 const responseData = store.responseData
