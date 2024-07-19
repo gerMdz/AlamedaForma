@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
     operations: [
         new GetCollection(
             uriTemplate: '/formation',
+            paginationItemsPerPage: 18
 
         )
     ],

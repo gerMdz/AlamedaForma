@@ -146,7 +146,7 @@ class FormacionFixtures extends Fixture implements FixtureGroupInterface
             $formaciones = new Formacion();
             $formaciones->setOrden($formation[0])
                 ->setDescription($formation[1])
-                ->setIdentifier($formation[2].'-'.$formation[0])
+                ->setIdentifier(strtolower($formation[2]).'_'.$formation[0])
                 ->setDescription($formation[1])
                 ->setParent($formation[2])
                 ->setDonAssociate($donEntity)

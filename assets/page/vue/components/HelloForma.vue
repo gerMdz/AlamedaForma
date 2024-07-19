@@ -1,5 +1,5 @@
 <template>
-
+  <v-container fluid class="fill-height w-auto">
     <div v-if="responseData">
       <h3> Gracias {{ responseData.nombre }} {{ responseData.apellido }} </h3>
       <p>
@@ -7,6 +7,7 @@
         completando cada sección y de esta manera ir avanzando para completar el test. *
       </p>
     </div>
+  </v-container>
 
 </template>
 
