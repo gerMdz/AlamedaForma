@@ -9,6 +9,8 @@ use App\Repository\InicioRepository;
 use App\Repository\PersonalesRepository;
 use App\State\InicioStateProvider;
 use App\State\PersonalStateProvider;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
@@ -50,6 +52,17 @@ class Personales
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $point = null;
+
+    /**
+     * @var Collection<int, PersonalFormation>
+     */
+    #[ORM\OneToMany(mappedBy: 'person', targetEntity: PersonalFormation::class, orphanRemoval: true)]
+    private Collection $personalFormations;
+
+    public function __construct()
+    {
+        $this->personalFormations = new ArrayCollection();
+    }
 
     public function __toString(): string
     {
@@ -129,6 +142,36 @@ class Personales
     public function setPoint(?string $point): static
     {
         $this->point = $point;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PersonalFormation>
+     */
+    public function getPersonalFormations(): Collection
+    {
+        return $this->personalFormations;
+    }
+
+    public function addPersonalFormation(PersonalFormation $personalFormation): static
+    {
+        if (!$this->personalFormations->contains($personalFormation)) {
+            $this->personalFormations->add($personalFormation);
+            $personalFormation->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonalFormation(PersonalFormation $personalFormation): static
+    {
+        if ($this->personalFormations->removeElement($personalFormation)) {
+            // set the owning side to null (unless already changed)
+            if ($personalFormation->getPerson() === $this) {
+                $personalFormation->setPerson(null);
+            }
+        }
 
         return $this;
     }
