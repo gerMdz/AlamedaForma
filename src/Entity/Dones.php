@@ -2,9 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\DonesRepository;
+use App\State\DonesStateProvider;
+use App\State\FormationStateProvider;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/dones',
+        )
+    ],
+    provider: DonesStateProvider::class
+)]
 #[ORM\Entity(repositoryClass: DonesRepository::class)]
 class Dones
 {

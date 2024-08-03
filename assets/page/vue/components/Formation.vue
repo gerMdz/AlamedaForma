@@ -8,24 +8,28 @@ const items = ref([]);
 const items2 = ref([]);
 const items3 = ref([]);
 const items4 = ref([]);
-let ayuda = ref(0);
-let liderazgo = ref(0);
-let hospitalidad = ref(0);
-let servicio = ref(0);
-let administración = ref(0);
-let discernimiento = ref(0);
-let fe = ref(0);
-let dar = ref(0);
-let misericordia = ref(0);
-let sabiduría = ref(0);
-let exhortación = ref(0);
-let enseñanza = ref(0);
+let help = ref(0);
+let leadership = ref(0);
+let hospitality = ref(0);
+let service = ref(0);
+let administration = ref(0);
+let discernment = ref(0);
+let faith = ref(0);
+let give = ref(0);
+let mercy = ref(0);
+let wisdom = ref(0);
+let exhortation = ref(0);
+let teaching = ref(0);
 let pastor = ref(0);
-let apóstol = ref(0);
-let misionero = ref(0);
-let profecía = ref(0);
-let evangelismo = ref(0);
-let intercesión = ref(0);
+let apostle = ref(0);
+let missionary = ref(0);
+let prophetic = ref(0);
+let evangelism = ref(0);
+let intercession = ref(0);
+
+
+let service_loading = ref(false);
+let selection = 1;
 
 const indexSums = ref({});
 const selectedValues = ref({});
@@ -37,6 +41,8 @@ const isPanel2Complete = ref(false);
 const isPanel3Complete = ref(false);
 const isPanel4Complete = ref(false);
 const isAllPanelsComplete = ref(false);
+
+const percent = 6.25;
 
 const scores = ref([
   {label: 'Casi nunca', value: 0},
@@ -59,6 +65,9 @@ const fetchDataFormFormation = async () => {
 
     const response4 = await axios.get('api/formation?page=4');
     items4.value = response4.data['hydra:member'];
+
+    const dones = await axios.get('api/dones');
+    dones.value = dones.data['hydra:member'];
   } catch (err) {
     console.error(err);
   }
@@ -76,10 +85,24 @@ const checkComplete = (() => {
   isPanel2Complete.value = items2.value.every(item => item.selected !== undefined);
   isPanel3Complete.value = items3.value.every(item => item.selected !== undefined);
   isPanel4Complete.value = items4.value.every(item => item.selected !== undefined);
+  console.log(isPanel1Complete.value, isPanel2Complete.value, isPanel3Complete.value, isPanel4Complete.value);
   isAllPanelsComplete.value = isPanel1Complete.value && isPanel2Complete.value && isPanel3Complete.value && isPanel4Complete.value;
-
-
 });
+
+const reserve = (() => {
+  service_loading.value = !service_loading.value
+
+  setTimeout(() => {
+    service_loading.value = !service_loading.value
+
+  }, 5000)
+})
+
+
+
+const onCargar = () => {
+  isAllPanelsComplete.value = false;
+}
 const sumaDonPorcentaje = (item, valor) => {
 
   const key = `${item.identifier}-${item.don}`;
@@ -96,43 +119,43 @@ const sumaDonPorcentaje = (item, valor) => {
   indexSums.value[item.don] = sum;
 
 
-  ayuda = indexSums.value['ayuda'];
-  liderazgo = indexSums.value['liderazgo'];
-  hospitalidad = indexSums.value['hospitalidad'];
-  servicio = indexSums.value['servicio'];
-  administración = indexSums.value['administración'];
-  discernimiento = indexSums.value['discernimiento'];
-  fe = indexSums.value['fe'];
-  dar = indexSums.value['dar'];
-  misericordia = indexSums.value['misericordia'];
-  sabiduría = indexSums.value['sabiduría'];
-  exhortación = indexSums.value['exhortación'];
-  enseñanza = indexSums.value['enseñanza'];
-  pastor = indexSums.value['pastor'];
-  apóstol = indexSums.value['apóstol'];
-  misionero = indexSums.value['misionero'];
-  profecía = indexSums.value['profecía'];
-  evangelismo = indexSums.value['evangelismo'];
-  intercesión = indexSums.value['intercesión'];
+  help = indexSums.value['help'] *  percent;
+  leadership = indexSums.value['leadership'] *  percent;
+  hospitality = indexSums.value['hospitality'] *  percent;
+  service = indexSums.value['service'] *  percent;
+  administration = indexSums.value['administration'] *  percent;
+  discernment = indexSums.value['discernment'] *  percent;
+  faith = indexSums.value['faith'] *  percent;
+  give = indexSums.value['give'] *  percent;
+  mercy = indexSums.value['mercy'] *  percent;
+  wisdom = indexSums.value['wisdom'] *  percent;
+  exhortation = indexSums.value['exhortation'] *  percent;
+  teaching = indexSums.value['teaching'] *  percent;
+  pastor = indexSums.value['pastor'] *  percent;
+  apostle = indexSums.value['apostle'] *  percent;
+  missionary = indexSums.value['missionary'] *  percent;
+  prophetic = indexSums.value['prophetic'] *  percent;
+  evangelism = indexSums.value['evangelism'] *  percent;
+  intercession = indexSums.value['intercession'] *  percent;
 
-  console.log(ayuda)
-  console.log(liderazgo)
-  console.log(hospitalidad)
-  console.log(servicio)
-  console.log(administración)
-  console.log(discernimiento)
-  console.log(fe)
-  console.log(dar)
-  console.log(misericordia)
-  console.log(sabiduría)
-  console.log(exhortación)
-  console.log(enseñanza)
+  console.log(help)
+  console.log(leadership)
+  console.log(hospitality)
+  console.log(service)
+  console.log(administration)
+  console.log(discernment)
+  console.log(faith)
+  console.log(give)
+  console.log(mercy)
+  console.log(wisdom)
+  console.log(exhortation)
+  console.log(teaching)
   console.log(pastor)
-  console.log(apóstol)
-  console.log(misionero)
-  console.log(profecía)
-  console.log(evangelismo)
-  console.log(intercesión)
+  console.log(apostle)
+  console.log(missionary)
+  console.log(prophetic)
+  console.log(evangelism)
+  console.log(intercession)
 
 
 };
@@ -140,6 +163,7 @@ const sumaDonPorcentaje = (item, valor) => {
 onMounted(() => {
   fetchDataFormFormation();
   checkComplete(); // Verifica el estado de finalización después de obtener los datos
+  onCargar()
 });
 </script>
 
@@ -321,6 +345,51 @@ onMounted(() => {
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
+    <v-card
+        :disabled="service_loading"
+        :loading="service_loading"
+        class="mx-auto my-12"
+        max-width="374"
+    >
+      <template v-slot:loader="{ isActive }">
+        <v-progress-linear
+            :active="isActive"
+            color="deep-purple"
+            height="4"
+            indeterminate
+        ></v-progress-linear>
+      </template>
+
+      <v-card-item>
+        <v-card-title>Ayuda</v-card-title>
+
+<!--        <v-card-subtitle>-->
+<!--          <span class="me-1">Explicación</span>-->
+
+<!--          <v-icon color="blue" icon="mdi-information" size="small"></v-icon>-->
+<!--        </v-card-subtitle>-->
+      </v-card-item>
+
+      <v-card-text>
+      </v-card-text>
+
+      <v-divider class="mx-4 mb-1"></v-divider>
+
+      <v-card-title>Tonight's availability</v-card-title>
+
+      <div class="px-4 mb-2">
+        <v-chip-group
+            v-model="selection"
+            selected-class="bg-deep-purple-lighten-2"
+        >
+
+        </v-chip-group>
+      </div>
+
+      <v-card-actions>
+
+      </v-card-actions>
+    </v-card>
 
     <div v-if="isAllPanelsComplete">
       ¡Hemos terminado las preguntas para formación espiritual, felicidades porque vamos avanzando!
