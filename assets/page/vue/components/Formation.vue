@@ -1,5 +1,5 @@
 <script setup>
-import {nextTick, onMounted, ref, watchEffect} from 'vue';
+import {computed, nextTick, onMounted, ref, watchEffect} from 'vue';
 import axios from "../../../vendor/axios/axios.index";
 import {th} from "vuetify/locale";
 
@@ -119,7 +119,8 @@ const sumaDonPorcentaje = (item, valor) => {
   indexSums.value[item.don] = sum;
 
 
-  help = indexSums.value['help'] *  percent;
+  help.value = (indexSums.value['help'] ?? 0) * percent;
+
   leadership = indexSums.value['leadership'] *  percent;
   hospitality = indexSums.value['hospitality'] *  percent;
   service = indexSums.value['service'] *  percent;
@@ -138,7 +139,7 @@ const sumaDonPorcentaje = (item, valor) => {
   evangelism = indexSums.value['evangelism'] *  percent;
   intercession = indexSums.value['intercession'] *  percent;
 
-  console.log(help)
+  console.log(help.value)
   console.log(leadership)
   console.log(hospitality)
   console.log(service)
@@ -363,11 +364,7 @@ onMounted(() => {
       <v-card-item>
         <v-card-title>Ayuda</v-card-title>
 
-<!--        <v-card-subtitle>-->
-<!--          <span class="me-1">Explicación</span>-->
 
-<!--          <v-icon color="blue" icon="mdi-information" size="small"></v-icon>-->
-<!--        </v-card-subtitle>-->
       </v-card-item>
 
       <v-card-text>
@@ -382,7 +379,7 @@ onMounted(() => {
             v-model="selection"
             selected-class="bg-deep-purple-lighten-2"
         >
-
+{{help}}
         </v-chip-group>
       </div>
 
