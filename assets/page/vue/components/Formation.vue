@@ -26,6 +26,8 @@ let missionary = ref(0);
 let prophetic = ref(0);
 let evangelism = ref(0);
 let intercession = ref(0);
+let dones = ref([]);
+let getComputedValue = ref(() => 0);
 
 
 let service_loading = ref(false);
@@ -66,8 +68,8 @@ const fetchDataFormFormation = async () => {
     const response4 = await axios.get('api/formation?page=4');
     items4.value = response4.data['hydra:member'];
 
-    const dones = await axios.get('api/dones');
-    dones.value = dones.data['hydra:member'];
+    const donResponse = await axios.get('api/dones');
+    dones.value = donResponse.data['hydra:member'];
   } catch (err) {
     console.error(err);
   }
@@ -99,7 +101,6 @@ const reserve = (() => {
 })
 
 
-
 const onCargar = () => {
   isAllPanelsComplete.value = false;
 }
@@ -119,28 +120,8 @@ const sumaDonPorcentaje = (item, valor) => {
   indexSums.value[item.don] = sum;
 
 
-  help.value = (indexSums.value['help'] ?? 0) * percent;
-
-  leadership = indexSums.value['leadership'] *  percent;
-  hospitality = indexSums.value['hospitality'] *  percent;
-  service = indexSums.value['service'] *  percent;
-  administration = indexSums.value['administration'] *  percent;
-  discernment = indexSums.value['discernment'] *  percent;
-  faith = indexSums.value['faith'] *  percent;
-  give = indexSums.value['give'] *  percent;
-  mercy = indexSums.value['mercy'] *  percent;
-  wisdom = indexSums.value['wisdom'] *  percent;
-  exhortation = indexSums.value['exhortation'] *  percent;
-  teaching = indexSums.value['teaching'] *  percent;
-  pastor = indexSums.value['pastor'] *  percent;
-  apostle = indexSums.value['apostle'] *  percent;
-  missionary = indexSums.value['missionary'] *  percent;
-  prophetic = indexSums.value['prophetic'] *  percent;
-  evangelism = indexSums.value['evangelism'] *  percent;
-  intercession = indexSums.value['intercession'] *  percent;
-
   console.log(help.value)
-  console.log(leadership)
+  console.log(leadership.value)
   console.log(hospitality)
   console.log(service)
   console.log(administration)
@@ -157,13 +138,38 @@ const sumaDonPorcentaje = (item, valor) => {
   console.log(prophetic)
   console.log(evangelism)
   console.log(intercession)
-
-
 };
+getComputedValue.value = computed(() => {
+  const values = {
+    help: help.value = (indexSums.value['help'] ?? 0) * percent,
+    leadership: leadership.value = (indexSums.value['leadership'] ?? 0) * percent,
+    hospitality: hospitality.value = (indexSums.value['hospitality'] ?? 0) * percent,
+    service: service.value = (indexSums.value['service'] ?? 0) * percent,
+    administration: administration.value = (indexSums.value['administration'] ?? 0) * percent,
+    discernment: discernment.value = (indexSums.value['discernment'] ?? 0) * percent,
+    faith: faith.value = (indexSums.value['faith'] ?? 0) * percent,
+    give: give.value = (indexSums.value['give'] ?? 0) * percent,
+    mercy: mercy.value = (indexSums.value['mercy'] ?? 0) * percent,
+    wisdom: wisdom.value = (indexSums.value['wisdom'] ?? 0) * percent,
+    exhortation: exhortation.value = (indexSums.value['exhortation'] ?? 0) * percent,
+    teaching: teaching.value = (indexSums.value['teaching'] ?? 0) * percent,
+    pastor: pastor.value = (indexSums.value['pastor'] ?? 0) * percent,
+    apostle: apostle.value = (indexSums.value['apostle'] ?? 0) * percent,
+    missionary: missionary.value = (indexSums.value['missionary'] ?? 0) * percent,
+    prophetic: prophetic.value = (indexSums.value['prophetic'] ?? 0) * percent,
+    evangelism: evangelism.value = (indexSums.value['evangelism'] ?? 0) * percent,
+    intercession: intercession.value = (indexSums.value['intercession'] ?? 0) * percent
+  };
+  return (identifier) => {
+    return values[identifier] || 0;
+  };
 
-onMounted(() => {
-  fetchDataFormFormation();
-  checkComplete(); // Verifica el estado de finalización después de obtener los datos
+});
+
+
+onMounted(async () => {
+  await fetchDataFormFormation(); // Usa 'await' aquí para asegurarte de que los datos ya se llenaron antes de llamar a 'checkComplete'
+  checkComplete();
   onCargar()
 });
 </script>
@@ -201,8 +207,8 @@ onMounted(() => {
                             :id="item.identifier + '-' + score.value"
                             :value="score.value"
                             v-model="item.selected"
-                            :data-index = "item.don"
-                            :data-valor = "score.value"
+                            :data-index="item.don"
+                            :data-valor="score.value"
                             @change="selectItem(item, score.value)"
                         ></v-radio>
                       </v-col>
@@ -244,8 +250,8 @@ onMounted(() => {
                             :id="item.identifier + '-' + score.value"
                             :value="score.value"
                             v-model="item.selected"
-                            :data-index = "item.don"
-                            :data-valor = "score.value"
+                            :data-index="item.don"
+                            :data-valor="score.value"
                             @change="selectItem(item, score.value)"
                         ></v-radio>
                       </v-col>
@@ -288,8 +294,8 @@ onMounted(() => {
                             :id="item.identifier + '-' + score.value"
                             :value="score.value"
                             v-model="item.selected"
-                            :data-index = "item.don"
-                            :data-valor = "score.value"
+                            :data-index="item.don"
+                            :data-valor="score.value"
                             @change="selectItem(item, score.value)"
                         ></v-radio>
                       </v-col>
@@ -331,8 +337,8 @@ onMounted(() => {
                             :id="item.identifier + '-' + score.value"
                             :value="score.value"
                             v-model="item.selected"
-                            :data-index = "item.don"
-                            :data-valor = "score.value"
+                            :data-index="item.don"
+                            :data-valor="score.value"
                             @change="selectItem(item, score.value)"
                         ></v-radio>
                       </v-col>
@@ -346,25 +352,12 @@ onMounted(() => {
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-card
-        :disabled="service_loading"
-        :loading="service_loading"
-        class="mx-auto my-12"
-        max-width="374"
+    <v-card v-for="don in dones" :key="don.id"
+            class="mx-auto my-12 bg-blue-accent-1"
+            max-width="374"
     >
-      <template v-slot:loader="{ isActive }">
-        <v-progress-linear
-            :active="isActive"
-            color="deep-purple"
-            height="4"
-            indeterminate
-        ></v-progress-linear>
-      </template>
-
       <v-card-item>
-        <v-card-title>Ayuda</v-card-title>
-
-
+        <v-card-title>{{ don.name }}</v-card-title>
       </v-card-item>
 
       <v-card-text>
@@ -372,14 +365,18 @@ onMounted(() => {
 
       <v-divider class="mx-4 mb-1"></v-divider>
 
-      <v-card-title>Tonight's availability</v-card-title>
+      <v-card-text>
+        {{ don.description }}
+      </v-card-text>
 
       <div class="px-4 mb-2">
         <v-chip-group
             v-model="selection"
             selected-class="bg-deep-purple-lighten-2"
         >
-{{help}}
+          {{ getComputedValue.value(don.identifier) }}
+
+
         </v-chip-group>
       </div>
 
