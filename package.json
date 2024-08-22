@@ -39,7 +39,7 @@
     "bootstrap": "^5.3.3",
     "unplugin-vue-components": "^0.26.0",
     "vite": "^5.1",
-    "vite-plugin-symfony": "^4.3.3",
+    "vite-plugin-symfony": "^7.0.2",
     "vue": "^3.4.21"
   }
 }
