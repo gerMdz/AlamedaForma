@@ -40,11 +40,11 @@
 {% endblock %}
 
 {% block javascripts %}
-    {#            {% block importmap %}{{ importmap('app') }}{% endblock %} #}
     {{ vite_entry_script_tags('app') }}
+    }
 
     {# if you are using React, you have to replace with this #}
-    {{ vite_entry_script_tags('app', { dependency: 'vue' }) }}
+{#    {{ vite_entry_script_tags('app', { dependency: 'vue' }) }}#}
     {#    {{ encore_entry_script_tags('app') }} #}
     {#        #}
     <script src="{{ asset('js/modernizr.js') }}"></script>
