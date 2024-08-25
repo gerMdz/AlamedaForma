@@ -1,7 +1,6 @@
 <script setup>
 import {computed, nextTick, onMounted, ref, watchEffect} from 'vue';
 import axios from "../../../vendor/axios/axios.index";
-import {th} from "vuetify/locale";
 
 const headers = ref([]);
 const items = ref([]);
@@ -70,6 +69,16 @@ const fetchDataFormFormation = async () => {
 
     const donResponse = await axios.get('api/dones');
     dones.value = donResponse.data['hydra:member'];
+
+    dones.value.sort((a, b) => {
+      const aValue = getComputedValue.value[a.identifier] || 0;
+      const bValue = getComputedValue.value[b.identifier] || 0;
+
+      if (aValue > bValue) return -1;
+      if (bValue > aValue) return 1;
+
+      return 0;
+    });
   } catch (err) {
     console.error(err);
   }
@@ -119,27 +128,8 @@ const sumaDonPorcentaje = (item, valor) => {
   // Almacenamos la suma en indexSums.
   indexSums.value[item.don] = sum;
 
-
-  console.log(help.value)
-  console.log(leadership.value)
-  console.log(hospitality)
-  console.log(service)
-  console.log(administration)
-  console.log(discernment)
-  console.log(faith)
-  console.log(give)
-  console.log(mercy)
-  console.log(wisdom)
-  console.log(exhortation)
-  console.log(teaching)
-  console.log(pastor)
-  console.log(apostle)
-  console.log(missionary)
-  console.log(prophetic)
-  console.log(evangelism)
-  console.log(intercession)
 };
-getComputedValue.value = computed(() => {
+getComputedValue = computed(() => {
   const values = {
     help: help.value = (indexSums.value['help'] ?? 0) * percent,
     leadership: leadership.value = (indexSums.value['leadership'] ?? 0) * percent,
@@ -164,8 +154,20 @@ getComputedValue.value = computed(() => {
     return values[identifier] || 0;
   };
 
+
 });
 
+const orderedDones = computed(() => {
+  return [...dones.value].sort((a, b) => {
+    const aValue = getComputedValue.value(a.identifier);
+    const bValue = getComputedValue.value(b.identifier);
+
+    if (aValue > bValue) return -1;
+    if (bValue > aValue) return 1;
+
+    return 0;
+  });
+});
 
 onMounted(async () => {
   await fetchDataFormFormation(); // Usa 'await' aquí para asegurarte de que los datos ya se llenaron antes de llamar a 'checkComplete'
@@ -352,38 +354,40 @@ onMounted(async () => {
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-card v-for="don in dones" :key="don.id"
-            class="mx-auto my-12 bg-blue-accent-1"
-            max-width="374"
-    >
-      <v-card-item>
-        <v-card-title>{{ don.name }}</v-card-title>
-      </v-card-item>
 
-      <v-card-text>
-      </v-card-text>
+    <v-row>
+      <v-col cols="12">
 
-      <v-divider class="mx-4 mb-1"></v-divider>
+        <v-alert type="info" style="width: 100%;">
+          A continuación verás la clasificación de tus respuestas, en 18 dones
+          espirituales y su porcentaje de mayor a menor.
+        </v-alert>
 
-      <v-card-text>
-        {{ don.description }}
-      </v-card-text>
+      </v-col>
+    </v-row>
+    <v-row>
 
-      <div class="px-4 mb-2">
-        <v-chip-group
-            v-model="selection"
-            selected-class="bg-deep-purple-lighten-2"
-        >
-          {{ getComputedValue.value(don.identifier) }}
+      <v-card v-for="don in orderedDones" :key="don.id"
+              class="cardStyle mx-auto my-12 bg-blue-accent-3 d-flex
+            flex-column justify-space-between"
+              max-width="374"
+      >
+        <v-card-item class="bg-light-blue-accent-3">
+          <v-card-title>{{ don.name }}</v-card-title>
+        </v-card-item>
+        <div class="d-flex flex-column align-center">
+          <v-card-text>
+            {{ don.description }}
+          </v-card-text>
+        </div>
 
-
-        </v-chip-group>
-      </div>
-
-      <v-card-actions>
-
-      </v-card-actions>
-    </v-card>
+        <div class="d-flex justify-center align-center mb-0 bg-light-blue-accent-3">
+          <v-chip-group v-model="selection">
+            {{ getComputedValue(don.identifier) }}
+          </v-chip-group>
+        </div>
+      </v-card>
+    </v-row>
 
     <div v-if="isAllPanelsComplete">
       ¡Hemos terminado las preguntas para formación espiritual, felicidades porque vamos avanzando!
@@ -393,5 +397,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+
+.cardStyle {
+  flex-direction: column;
+  min-height: 270px;
+}
 
 </style>
