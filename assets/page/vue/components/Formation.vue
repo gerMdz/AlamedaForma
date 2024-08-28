@@ -366,27 +366,56 @@ onMounted(async () => {
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="12" sm="6" md="4" v-for="don in orderedDones.slice(0, 3)" :key="don.id">
+        <v-card class="cardStyle mx-auto my-12 bg-light-blue-accent-3 d-flex
+                flex-column justify-space-between"
+                max-width="374"
+        >
+          <v-card-item class="bg-blue-accent-3">
+            <v-card-title>{{ don.name }}</v-card-title>
+          </v-card-item>
+          <div class="d-flex flex-column align-center">
+            <v-card-text>
+              {{ don.description }}
+            </v-card-text>
+          </div>
 
-      <v-card v-for="don in orderedDones" :key="don.id"
-              class="cardStyle mx-auto my-12 bg-blue-accent-3 d-flex
-            flex-column justify-space-between"
-              max-width="374"
+          <div class="d-flex justify-center align-center mb-0 bg-blue-accent-3">
+            <v-chip-group v-model="selection">
+              {{ getComputedValue(don.identifier) }}
+            </v-chip-group>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row>
+
+      <v-col cols="12" sm="6" md="3" v-for="don in orderedDones.slice(3)" :key="don.id"
+             class="mx-auto"
       >
-        <v-card-item class="bg-light-blue-accent-3">
-          <v-card-title>{{ don.name }}</v-card-title>
-        </v-card-item>
-        <div class="d-flex flex-column align-center">
-          <v-card-text>
-            {{ don.description }}
-          </v-card-text>
-        </div>
 
-        <div class="d-flex justify-center align-center mb-0 bg-light-blue-accent-3">
-          <v-chip-group v-model="selection">
-            {{ getComputedValue(don.identifier) }}
-          </v-chip-group>
-        </div>
-      </v-card>
+        <v-card class="cardStyle mx-auto my-12 bg-blue-accent-3 d-flex
+                flex-column justify-space-between"
+                max-width="374"
+        >
+          <v-card-item class="bg-light-blue-accent-3">
+            <v-card-title>{{ don.name }}</v-card-title>
+          </v-card-item>
+          <div class="d-flex flex-column align-center">
+            <v-card-text>
+              {{ don.description }}
+            </v-card-text>
+          </div>
+
+          <div class="d-flex justify-center align-center mb-0 bg-light-blue-accent-3">
+            <v-chip-group v-model="selection">
+              {{ getComputedValue(don.identifier) }}
+            </v-chip-group>
+          </div>
+        </v-card>
+      </v-col>
+
     </v-row>
 
     <div v-if="isAllPanelsComplete">
