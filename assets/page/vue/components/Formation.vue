@@ -55,20 +55,19 @@ const scores = ref([
 
 const fetchDataFormFormation = async () => {
   try {
-    const response = await axios.get('api/formation?page=1');
-    items.value = response.data['hydra:member'];
+    const response = await Promise.all([
+      axios.get('api/formation?page=1'),
+      axios.get('api/formation?page=2'),
+      axios.get('api/formation?page=3'),
+      axios.get('api/formation?page=4'),
+      axios.get('api/dones')
+    ]);
 
-    const response2 = await axios.get('api/formation?page=2');
-    items2.value = response2.data['hydra:member'];
-
-    const response3 = await axios.get('api/formation?page=3');
-    items3.value = response3.data['hydra:member'];
-
-    const response4 = await axios.get('api/formation?page=4');
-    items4.value = response4.data['hydra:member'];
-
-    const donResponse = await axios.get('api/dones');
-    dones.value = donResponse.data['hydra:member'];
+    items.value = response[0].data['hydra:member'];
+    items2.value = response[1].data['hydra:member'];
+    items3.value = response[2].data['hydra:member'];
+    items4.value = response[3].data['hydra:member'];
+    dones.value = response[4].data['hydra:member'];
 
     dones.value.sort((a, b) => {
       const aValue = getComputedValue.value[a.identifier] || 0;
