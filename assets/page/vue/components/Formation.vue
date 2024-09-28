@@ -27,6 +27,7 @@ let evangelism = ref(0);
 let intercession = ref(0);
 let dones = ref([]);
 let getComputedValue = ref(() => 0);
+let don = ref(null)
 
 
 let service_loading = ref(false);
@@ -167,6 +168,12 @@ const orderedDones = computed(() => {
     return 0;
   });
 });
+
+const dialog = ref(false);
+let openDialog = (donData) => {
+  don.value = donData;
+  dialog.value = true;
+}
 
 onMounted(async () => {
   await fetchDataFormFormation(); // Usa 'await' aquí para asegurarte de que los datos ya se llenaron antes de llamar a 'checkComplete'
@@ -357,6 +364,7 @@ onMounted(async () => {
     <v-row>
       <v-col cols="12">
 
+
         <v-alert type="info" style="width: 100%;">
           A continuación verás la clasificación de tus respuestas, en 18 dones
           espirituales y su porcentaje de mayor a menor.
@@ -364,62 +372,103 @@ onMounted(async () => {
 
       </v-col>
     </v-row>
+<!--    <v-row>-->
+<!--      <v-col cols="12" sm="6" md="4" v-for="don in orderedDones.slice(0, 3)" :key="don.id">-->
+<!--        <v-card class="mx-auto my-12 bg-light-blue-accent-3 d-flex-->
+<!--                flex-column justify-space-between"-->
+<!--                max-width="374"-->
+<!--        >-->
+<!--          <v-card-item class="bg-blue-accent-3">-->
+<!--            <v-card-title>{{ don.name }}</v-card-title>-->
+<!--          </v-card-item>-->
+<!--          <div class="d-flex flex-column align-center">-->
+<!--            <v-card-text>-->
+<!--              {{ don.description }}-->
+<!--            </v-card-text>-->
+<!--          </div>-->
+
+<!--          <div class="d-flex justify-center align-center mb-0 bg-blue-accent-3">-->
+<!--            <v-chip-group v-model="selection">-->
+<!--              {{ getComputedValue(don.identifier) }} %-->
+<!--            </v-chip-group>-->
+<!--          </div>-->
+<!--          <v-btn outlined color="primary" @click="openDialog(don)">-->
+<!--            <v-icon small class="mr-1">$info</v-icon>-->
+<!--            Ver descripción del don-->
+<!--          </v-btn>-->
+<!--        </v-card>-->
+<!--      </v-col>-->
+<!--    </v-row>-->
+
     <v-row>
-      <v-col cols="12" sm="6" md="4" v-for="don in orderedDones.slice(0, 3)" :key="don.id">
-        <v-card class="cardStyle mx-auto my-12 bg-light-blue-accent-3 d-flex
-                flex-column justify-space-between"
-                max-width="374"
-        >
-          <v-card-item class="bg-blue-accent-3">
-            <v-card-title>{{ don.name }}</v-card-title>
-          </v-card-item>
-          <div class="d-flex flex-column align-center">
-            <v-card-text>
-              {{ don.description }}
-            </v-card-text>
-          </div>
 
-          <div class="d-flex justify-center align-center mb-0 bg-blue-accent-3">
-            <v-chip-group v-model="selection">
-              {{ getComputedValue(don.identifier) }}
-            </v-chip-group>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row>
-
-      <v-col cols="12" sm="6" md="3" v-for="don in orderedDones.slice(3)" :key="don.id"
+      <v-col cols="12" sm="6" md="3" v-for="donElement in orderedDones" :key="donElement.id"
              class="mx-auto"
       >
 
-        <v-card class="cardStyle mx-auto my-12 bg-blue-accent-3 d-flex
-                flex-column justify-space-between"
-                max-width="374"
-        >
+        <v-card class="mx-auto my-12 bg-blue-accent-3 d-flex flex-column justify-space-between"
+                max-width="374">
           <v-card-item class="bg-light-blue-accent-3">
-            <v-card-title>{{ don.name }}</v-card-title>
+            <v-card-title>{{ donElement.name }}</v-card-title>
           </v-card-item>
-          <div class="d-flex flex-column align-center">
-            <v-card-text>
-              {{ don.description }}
-            </v-card-text>
-          </div>
-
           <div class="d-flex justify-center align-center mb-0 bg-light-blue-accent-3">
-            <v-chip-group v-model="selection">
-              {{ getComputedValue(don.identifier) }}
-            </v-chip-group>
+            <v-chip-group v-model="selection"> {{ getComputedValue(donElement.identifier) }} %</v-chip-group>
           </div>
+          <v-btn outlined color="primary" @click="openDialog(donElement)">
+            <v-icon small class="mr-1">mdi-comment-eye-outline</v-icon>
+            Ver descripción del don
+          </v-btn>
+
         </v-card>
       </v-col>
 
     </v-row>
+    <v-dialog v-model="dialog" max-width="500">
+      <v-card>
+        <v-card-title class="headline">{{ don.name }}</v-card-title>
+        <v-card-text>{{ don.description }}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="dialog = false">Cerrar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-    <div v-if="isAllPanelsComplete">
-      ¡Hemos terminado las preguntas para formación espiritual, felicidades porque vamos avanzando!
-      <h4>Te presentamos un resumen de tus resultados obtenidos:</h4>
+    <div v-if="isAllPanelsComplete" class="mx-auto">
+      <v-alert type="success" style="width: 100%;" class="text-center">
+        ¡Hemos terminado las preguntas para formación espiritual, felicidades porque vamos avanzando!
+      </v-alert>
+      <p>
+        A continuación encontrarás los 3 dones espírituales con los que más te identificas:
+      </p>
+      <v-row>
+        <v-col cols="12" sm="6" md="4" v-for="don in orderedDones.slice(0, 3)" :key="don.id">
+          <v-card class="cardStyle mx-auto my-12 bg-light-blue-accent-3 d-flex
+                flex-column justify-space-between"
+                  max-width="374"
+          >
+            <v-card-item class="bg-blue-accent-3">
+              <v-card-title>{{ don.name }}</v-card-title>
+            </v-card-item>
+            <div class="d-flex flex-column align-center">
+              <v-card-text>
+                {{ don.description }}
+              </v-card-text>
+            </div>
+
+            <div class="d-flex justify-center align-center mb-0 bg-blue-accent-3">
+              <v-chip-group v-model="selection">
+                {{ getComputedValue(don.identifier) }} %
+              </v-chip-group>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+    <div v-else class="mx-auto">
+      <v-alert type="warning" style="width: 100%;" class="text-center">
+        Aún no has completado todas las preguntas para formación espiritual
+      </v-alert>
     </div>
   </v-container>
 </template>
