@@ -2,18 +2,21 @@
 
 namespace App\Repository;
 
+use AllowDynamicProperties;
 use App\Entity\PersonalFormation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<PersonalFormation>
  */
-class PersonalFormationRepository extends ServiceEntityRepository
+#[AllowDynamicProperties] class PersonalFormationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, PersonalFormation::class);
+        $this->entityManager = $entityManager;
     }
 
     //    /**
@@ -40,4 +43,13 @@ class PersonalFormationRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function guardar($personalesFormation)
+    {
+        $this->entityManager->persist($personalesFormation);
+        $this->entityManager->flush();
+
+        return $personalesFormation;
+
+    }
 }

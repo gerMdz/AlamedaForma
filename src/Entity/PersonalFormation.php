@@ -2,9 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\PersonalFormationRepository;
+use App\State\PersonalFormationStateProvider;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/personal-formation',
+        )
+    ],
+    provider: PersonalFormationStateProvider::class
+)]
 #[ORM\Entity(repositoryClass: PersonalFormationRepository::class)]
 class PersonalFormation
 {
@@ -28,10 +40,10 @@ class PersonalFormation
     private ?Personales $person = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -86,24 +98,24 @@ class PersonalFormation
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
