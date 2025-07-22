@@ -6,7 +6,7 @@
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@hotwired/stimulus": "^3.0.0",
     "@mdi/font": "^7.4.47",
-    "@symfony/webpack-encore": "^4.6.1",
+    "@symfony/webpack-encore": "^5.1.0",
     "@vue/compiler-sfc": "^3.4.35",
     "chartjs-plugin-zoom": "^2.0.1",
     "core-js": "^3.23.0",
