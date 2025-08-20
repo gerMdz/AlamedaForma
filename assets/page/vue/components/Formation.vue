@@ -1,6 +1,7 @@
 <script setup>
-import {computed, nextTick, onMounted, ref, watchEffect} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import axios from "../../../vendor/axios/axios.index";
+import PersonalFormation from './PersonalFormation.vue';
 
 const headers = ref([]);
 const items = ref([]);
@@ -26,7 +27,7 @@ let prophetic = ref(0);
 let evangelism = ref(0);
 let intercession = ref(0);
 let dones = ref([]);
-let getComputedValue = ref(() => 0);
+// let getComputedValue = ref(() => 0);
 let don = ref(null)
 
 
@@ -129,7 +130,7 @@ const sumaDonPorcentaje = (item, valor) => {
   indexSums.value[item.don] = sum;
 
 };
-getComputedValue = computed(() => {
+const getComputedValue = computed(() => {
   const values = {
     help: help.value = (indexSums.value['help'] ?? 0) * percent,
     leadership: leadership.value = (indexSums.value['leadership'] ?? 0) * percent,
@@ -150,8 +151,11 @@ getComputedValue = computed(() => {
     evangelism: evangelism.value = (indexSums.value['evangelism'] ?? 0) * percent,
     intercession: intercession.value = (indexSums.value['intercession'] ?? 0) * percent
   };
+  console.log(`Calculated values: ${JSON.stringify(values)}`);
   return (identifier) => {
-    return values[identifier] || 0;
+    const value = values[identifier] || 0;
+    console.log(`Return value for identifier ${identifier}: ${value}`);
+    return value;
   };
 
 
@@ -441,30 +445,7 @@ onMounted(async () => {
       <p>
         A continuación encontrarás los 3 dones espírituales con los que más te identificas:
       </p>
-      <v-row>
-        <v-col cols="12" sm="6" md="4" v-for="don in orderedDones.slice(0, 3)" :key="don.id">
-          <v-card class="cardStyle mx-auto my-12 bg-light-blue-accent-3 d-flex
-                flex-column justify-space-between"
-                  max-width="374"
-          >
-            <v-card-item class="bg-blue-accent-3">
-              <v-card-title>{{ don.name }}</v-card-title>
-            </v-card-item>
-            <div class="d-flex flex-column align-center">
-              <v-card-text>
-                {{ don.description }}
-              </v-card-text>
-            </div>
-
-            <div class="d-flex justify-center align-center mb-0 bg-blue-accent-3">
-              <v-chip-group v-model="selection">
-                {{ getComputedValue(don.identifier) }} %
-              </v-chip-group>
-            </div>
-          </v-card>
-        </v-col>
-
-      </v-row>
+      <PersonalFormation :dones="orderedDones.slice(0, 3)" :getComputedValue="getComputedValue"/>
     </div>
     <div v-else class="mx-auto">
       <v-alert type="warning" style="width: 100%;" class="text-center">
@@ -473,12 +454,3 @@ onMounted(async () => {
     </div>
   </v-container>
 </template>
-
-<style scoped>
-
-.cardStyle {
-  flex-direction: column;
-  min-height: 270px;
-}
-
-</style>

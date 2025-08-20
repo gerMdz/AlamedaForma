@@ -8,13 +8,14 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Personalidad;
 use App\State\PersonalidadStateProvider;
+use ApiPlatform\OpenApi\Model\Operation as OpenApiOperation;
 
 #[ApiResource(
     shortName: 'Personalidad',
     operations: [
         new GetCollection(
             uriTemplate: '/personalidad',
-            openapiContext: ['summary' => self::DESCRIPTION],
+            openapi: new OpenApiOperation(summary: self::DESCRIPTION),
             description: self::DESCRIPTION,
             provider: PersonalidadStateProvider::class,
             extraProperties: [

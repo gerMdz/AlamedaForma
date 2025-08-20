@@ -10,13 +10,14 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Controller\Api\PersonalController;
 use App\Entity\Personales;
+use ApiPlatform\OpenApi\Model\Operation as OpenApiOperation;
 
 #[ApiResource(
     shortName: 'Personal',
     operations: [
         new Get (
             uriTemplate: '/personal',
-            openapiContext: ['summary' => self::DESCRIPTION],
+            openapi: new OpenApiOperation(summary: self::DESCRIPTION),
             description: self::DESCRIPTION,
         ),
         new GetCollection(
@@ -26,7 +27,7 @@ use App\Entity\Personales;
             uriTemplate: '/personal',
             controller: PersonalController::class,
 
-            openapiContext: ['summary' => self::DESCRIPTION],
+            openapi: new OpenApiOperation(summary: self::DESCRIPTION),
             description: self::DESCRIPTION,
             extraProperties: [
                 'entity' => Personales::class,

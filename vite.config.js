@@ -32,7 +32,8 @@ export default defineConfig({
         manifest: true,
         rollupOptions: {
             input: {
-                app: "./assets/app.js"
+                app: "./assets/app.js",
+                login: "./assets/login.js"
             },
             output: {
                 manualChunks: {

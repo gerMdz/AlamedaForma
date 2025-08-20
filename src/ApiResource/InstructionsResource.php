@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Instructions;
 use App\Entity\Personalidad;
+use ApiPlatform\OpenApi\Model\Operation as OpenApiOperation;
 use App\State\InstructionsStateProvider;
 use App\State\PersonalidadStateProvider;
 
@@ -15,7 +16,7 @@ use App\State\PersonalidadStateProvider;
     operations: [
         new GetCollection(
             uriTemplate: '/instructions',
-            openapiContext: ['summary' => self::DESCRIPTION],
+            openapi: new OpenApiOperation(summary: self::DESCRIPTION),
             description: self::DESCRIPTION,
             provider: InstructionsStateProvider::class,
             extraProperties: [

@@ -12,13 +12,14 @@ use App\Controller\Api\PersonalController;
 use App\Controller\Api\PersonalFormationController;
 use App\Entity\Personales;
 use App\Entity\PersonalFormation;
+use ApiPlatform\OpenApi\Model\Operation as OpenApiOperation;
 
 #[ApiResource(
     shortName: 'PersonalFormation',
     operations: [
         new Get (
             uriTemplate: '/personal-formation',
-            openapiContext: ['summary' => self::DESCRIPTION],
+            openapi: new OpenApiOperation(summary: self::DESCRIPTION),
             description: self::DESCRIPTION,
         ),
         new GetCollection(
@@ -28,7 +29,7 @@ use App\Entity\PersonalFormation;
             uriTemplate: '/personal-formation',
             controller: PersonalFormationController::class,
 
-            openapiContext: ['summary' => self::DESCRIPTION],
+            openapi: new OpenApiOperation(summary: self::DESCRIPTION),
             description: self::DESCRIPTION,
             extraProperties: [
                 'entity' => PersonalFormation::class,
