@@ -12,6 +12,11 @@ class LoginPageController extends AbstractController
     #[Route('/login', name: 'app_login_page', methods: ['GET'])]
     public function loginPage(): Response
     {
+        // If already authenticated, skip login form and go to admin
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_admin_page');
+        }
+
         return $this->render('security/login.html.twig');
     }
 }

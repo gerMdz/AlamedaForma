@@ -14,8 +14,9 @@ const hideDialog = () => {
 const fetchData = async () => {
   try {
     const response = await axios.get('api/inicios');
-    inicio.value = response.data['hydra:member'];
-    console.log(inicio.value);
+    inicio.value = response.data['member'];
+    console.log('18')
+    console.log(inicio);
   } catch (err) {
     console.error(err);
   }

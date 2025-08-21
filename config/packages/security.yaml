@@ -17,7 +17,7 @@ security:
             provider: app_user_provider
             # Session-based auth (default). For API JSON login, enable json_login below.
             json_login:
-                check_path: /login
+                check_path: app_login_check
                 username_path: email
                 password_path: password
                 # success & failure handlers are default (204 + error JSON in modern versions)
@@ -26,9 +26,11 @@ security:
                 target: /
 
     access_control:
-        - { path: ^/api/me, roles: ROLE_USER }
-        # Allow anonymous to login
         - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/login_check$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/me, roles: ROLE_USER }
+        - { path: ^/admin$, roles: ROLE_USER }
+        - { path: ^/(personalidad|inicios)(/|$), roles: ROLE_USER }
 
 when@test:
     security:

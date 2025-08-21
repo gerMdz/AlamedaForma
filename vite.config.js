@@ -33,7 +33,8 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 app: "./assets/app.js",
-                login: "./assets/login.js"
+                login: "./assets/login.js",
+                admin: "./assets/admin.js"
             },
             output: {
                 manualChunks: {

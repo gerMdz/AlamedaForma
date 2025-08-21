@@ -85,7 +85,7 @@
 
       <v-row>
         <v-col>
-          <VBtn @click="submit" color="primary" > Siguiente</VBtn>
+          <VBtn v-if="isRequiredFilled" @click="submit" color="primary"> Siguiente</VBtn>
         </v-col>
       </v-row>
     </v-container>
@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import {ref, provide} from 'vue';
+import {ref, provide, computed} from 'vue';
 import axios from 'axios';
 import {useVuelidate} from '@vuelidate/core'
 import {email as emailValidator, required} from '@vuelidate/validators'
@@ -111,6 +111,14 @@ const  point= ref('');
 let responseData = ref(null);
 provide('responseData', responseData);
 
+// Computed to check if all required fields are filled (ignores email format)
+const isRequiredFilled = computed(() =>
+  Boolean(nombre.value && nombre.value.toString().trim()) &&
+  Boolean(apellido.value && apellido.value.toString().trim()) &&
+  Boolean(email.value && email.value.toString().trim()) &&
+  Boolean(phone.value && phone.value.toString().trim())
+);
+
 const validationRules = {
   nombre: { required },
   email: { required, emailValidator },
@@ -124,6 +132,19 @@ const validationRules = {
 const v$ = useVuelidate(validationRules, { nombre, apellido, email, phone, point })
 
 const submit = async () => {
+  // Prevent submit if required fields are not filled
+  if (!isRequiredFilled.value) {
+    // Touch fields to show validation feedback, if any
+    v$.value.$touch();
+    return;
+  }
+
+  // Optional: validate using Vuelidate; if invalid, stop
+  if (typeof v$.value?.$validate === 'function') {
+    const isValid = await v$.value.$validate();
+    if (!isValid) return;
+  }
+
   const data = {
     nombre: nombre.value,
     apellido: apellido.value,

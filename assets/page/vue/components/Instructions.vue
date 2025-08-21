@@ -19,7 +19,7 @@ const changeAllTheRest = () => {
 const fetchData = async () => {
   try {
     const response = await axios.get('api/instructions');
-    instrucciones.value = response.data['hydra:member'];
+    instrucciones.value = response.data['member'];
     console.log(instrucciones.value);
   } catch (err) {
     console.error(err);

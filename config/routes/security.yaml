@@ -1,3 +1,8 @@
 _security_logout:
     resource: security.route_loader.logout
     type: service
+
+# Route matched by the router; handled by Security's json_login authenticator
+app_login_check:
+    path: /login_check
+    methods: [POST]

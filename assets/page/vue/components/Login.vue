@@ -46,7 +46,7 @@ async function onSubmit() {
 
   loading.value = true
   try {
-    const resp = await fetch('/login', {
+    const resp = await fetch('/login_check', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -65,9 +65,24 @@ async function onSubmit() {
       }
       // redirect to a protected area
       setTimeout(() => {
-        window.location.href = '/personalidad'
+        window.location.href = '/admin'
       }, 600)
     } else {
+      // Fallback: sometimes the POST may not return 2xx even though the session was created.
+      // Verify authentication by pinging /api/me; if 200, proceed to redirect.
+      try {
+        const meResp = await fetch('/api/me', { credentials: 'same-origin' })
+        if (meResp.ok) {
+          success.value = true
+          setTimeout(() => {
+            window.location.href = '/admin'
+          }, 300)
+          return
+        }
+      } catch (e) {
+        // ignore and continue to show error
+      }
+
       let msg = 'No se pudo iniciar sesión.'
       try {
         const data = await resp.json()
