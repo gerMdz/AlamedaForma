@@ -9,6 +9,10 @@ security:
                 property: email
 
     firewalls:
+        # Disable security for static assets so they are always served publicly
+        assets:
+            pattern: ^/(build|bundles|css|images|js|fonts)/
+            security: false
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -26,6 +30,8 @@ security:
                 target: /
 
     access_control:
+        # Public asset paths (in case requests still hit Symfony)
+        - { path: ^/build/, roles: PUBLIC_ACCESS }
         - { path: ^/login$, roles: PUBLIC_ACCESS }
         - { path: ^/login_check$, roles: PUBLIC_ACCESS }
         - { path: ^/api/me, roles: ROLE_USER }
