@@ -1,22 +1,41 @@
 <template>
   <div class="vue-app">
-
-    <Inicio />
-    <Instructions />
-    <FormaContent />
-
-
+    <SaludoForma />
+    <template v-if="loaded && hasActive">
+      <Inicio />
+      <Instructions />
+      <FormaContent />
+    </template>
   </div>
 </template>
 
 <script setup>
+import SaludoForma from "./components/SaludoForma.vue";
 import Inicio from "./components/Inicio.vue";
 import Instructions from "./components/Instructions.vue";
 import FormaContent from "./components/FormaContent.vue";
 
-import { inject } from 'vue'
+import { inject, ref, onMounted } from 'vue'
+import axios from 'axios'
+
 const responseData = inject('responseData');
 
+const hasActive = ref(false)
+const loaded = ref(false)
+
+const fetchEstado = async () => {
+  try {
+    const res = await axios.get('/api/formularios-habilitacion/activo')
+    hasActive.value = !!res.data?.hasActive
+  } catch (e) {
+    console.error('Error consultando formularios habilitados', e)
+    hasActive.value = false
+  } finally {
+    loaded.value = true
+  }
+}
+
+onMounted(fetchEstado)
 </script>
 
 <style>
