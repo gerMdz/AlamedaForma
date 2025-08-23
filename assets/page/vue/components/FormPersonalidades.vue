@@ -65,7 +65,7 @@ const answers = ref([]);
 const fetchData = async () => {
   try {
     const response = await axios.get('api/personalidad');
-    questions.value = response.data['hydra:member'];
+    questions.value = response.data['member'];
     answers.value = questions.value.map(_ => ({d: null, i: null, s: null, c: null}));
   } catch (err) {
     console.error(err);

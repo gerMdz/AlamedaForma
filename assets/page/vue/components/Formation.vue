@@ -65,11 +65,11 @@ const fetchDataFormFormation = async () => {
       axios.get('api/dones')
     ]);
 
-    items.value = response[0].data['hydra:member'];
-    items2.value = response[1].data['hydra:member'];
-    items3.value = response[2].data['hydra:member'];
-    items4.value = response[3].data['hydra:member'];
-    dones.value = response[4].data['hydra:member'];
+    items.value = response[0].data['member'];
+    items2.value = response[1].data['member'];
+    items3.value = response[2].data['member'];
+    items4.value = response[3].data['member'];
+    dones.value = response[4].data['member'];
 
     dones.value.sort((a, b) => {
       const aValue = getComputedValue.value[a.identifier] || 0;
