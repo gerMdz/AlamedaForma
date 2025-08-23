@@ -12,6 +12,24 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
 
+    {# Open Graph & Twitter metadata for FORMA #}
+    {% set app_title = block('title')|striptags %}
+    {% set app_description = 'Herramienta FORMA de la Iglesia de La Alameda para descubrir tu diseño dado por Dios (F.O.R.M.A).' %}
+    {% set og_image = absolute_url(asset('images/logo-con-nombre.png')) %}
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ app_title }}">
+    <meta property="og:site_name" content="FORMA - Iglesia de La Alameda">
+    <meta property="og:description" content="{{ app_description }}">
+    <meta property="og:url" content="{{ absolute_url(app.request.uri) }}">
+    <meta property="og:image" content="{{ og_image }}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="FORMA - Iglesia de La Alameda">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ app_title }}">
+    <meta name="twitter:description" content="{{ app_description }}">
+    <meta name="twitter:image" content="{{ og_image }}">
+
     {% block stylesheets %}
         {{ vite_entry_link_tags('app') }}
         {#        {{ encore_entry_link_tags('app') }} #}
