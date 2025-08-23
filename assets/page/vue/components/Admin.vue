@@ -4,7 +4,7 @@
     <p class="subtitle">Acceso a las distintas configuraciones</p>
 
     <div class="cards">
-      <a class="card" href="/inicios">
+      <a class="card" href="/inicios/list">
         <div class="card-body">
           <h2>Inicios</h2>
           <p>Gestionar contenidos de Inicio (InicioApiController)</p>
