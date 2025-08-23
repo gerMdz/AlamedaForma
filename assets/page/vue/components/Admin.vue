@@ -1,33 +1,66 @@
 <template>
   <div class="admin-wrapper">
-    <h1 class="title">Panel de Administración</h1>
-    <p class="subtitle">Acceso a las distintas configuraciones</p>
+    <template v-if="isFHRoute">
+      <FormulariosHabilitacion />
+    </template>
+    <template v-else>
+      <h1 class="title">Panel de Administración</h1>
+      <p class="subtitle">Acceso a las distintas configuraciones</p>
 
-    <div class="cards">
-      <a class="card" href="/inicios/list">
-        <div class="card-body">
-          <h2>Inicios</h2>
-          <p>Gestionar contenidos de Inicio (InicioApiController)</p>
-        </div>
-      </a>
+      <div class="cards">
+        <a class="card" href="/inicios/list">
+          <div class="card-body">
+            <h2>Inicios</h2>
+            <p>Gestionar contenidos de Inicio (InicioApiController)</p>
+          </div>
+        </a>
 
-      <a class="card" href="/personalidad">
-        <div class="card-body">
-          <h2>Personalidad</h2>
-          <p>Administrar configuraciones de Personalidad (PersonalidadController)</p>
-        </div>
-      </a>
-    </div>
+        <a class="card" href="/personalidad">
+          <div class="card-body">
+            <h2>Personalidad</h2>
+            <p>Administrar configuraciones de Personalidad (PersonalidadController)</p>
+          </div>
+        </a>
+
+        <a class="card" href="/admin#formularios-habilitacion">
+          <div class="card-body">
+            <h2>Formularios de Habilitación</h2>
+            <p>Crear, editar y deshabilitar formularios habilitados (FormularioHabilitacion)</p>
+          </div>
+        </a>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup>
-// No special logic needed for simple navigation cards.
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import FormulariosHabilitacion from "../admin/FormulariosHabilitacion.vue"
+
+const currentHash = ref(typeof window !== 'undefined' ? window.location.hash : '')
+
+function onHashChange() {
+  currentHash.value = window.location.hash
+}
+
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('hashchange', onHashChange)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('hashchange', onHashChange)
+  }
+})
+
+const isFHRoute = computed(() => currentHash.value === '#formularios-habilitacion')
 </script>
 
 <style scoped>
 .admin-wrapper {
-  max-width: 1000px;
+  max-width: 1280px;
   margin: 2rem auto;
   padding: 1rem;
 }
