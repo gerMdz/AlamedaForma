@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Instrucción{% endblock %}
+
+{% block body %}
+  <h1>Instrucción</h1>
+
+  <table class="table">
+    <tbody>
+    <tr>
+      <th>Id</th>
+      <td>{{ item.id }}</td>
+    </tr>
+    <tr>
+      <th>Título</th>
+      <td>{{ item.title }}</td>
+    </tr>
+    <tr>
+      <th>Contenido</th>
+      <td>{{ item.content|raw }}</td>
+    </tr>
+    <tr>
+      <th>Habilitado</th>
+      <td>{{ item.enabled ? 'Sí' : 'No' }}</td>
+    </tr>
+    <tr>
+      <th>Creado</th>
+      <td>{{ item.createdAt ? item.createdAt|date('Y-m-d H:i') : '' }}</td>
+    </tr>
+    <tr>
+      <th>Actualizado</th>
+      <td>{{ item.updateAt ? item.updateAt|date('Y-m-d H:i') : '' }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a href="{{ path('app_instructions_edit', {id: item.id}) }}">Editar</a>
+  <a href="{{ path('app_instructions_index') }}">Volver al listado</a>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nueva Instrucción{% endblock %}
+
+{% block body %}
+  <h1>Nueva Instrucción</h1>
+
+  {{ include('instructions/_form.html.twig') }}
+
+  <a href="{{ path('app_instructions_index') }}">Volver al listado</a>
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  {% include '_bases/_editor.html.twig' %}
+{% endblock %}

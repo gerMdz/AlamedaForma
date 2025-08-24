@@ -1,6 +1,7 @@
 <script src="{{ asset('asset/vendor/editor/build/ckeditor.js') }}"></script>
 <script src="{{ asset('asset/vendor/editor/build/translations/es-co.js') }}"></script>
 <script>
+    // Revert: simple initialization without font-size or CDN fallback
     ClassicEditor
         .create( document.querySelector( '.editor_content' ) )
         .catch( error => {

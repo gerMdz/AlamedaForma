@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Instrucción{% endblock %}
+
+{% block body %}
+  <h1>Editar Instrucción</h1>
+
+  {{ include('instructions/_form.html.twig', { button_label: 'Actualizar' }) }}
+
+  {{ include('instructions/_delete_form.html.twig') }}
+
+  <a href="{{ path('app_instructions_index') }}">Volver al listado</a>
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  {% include '_bases/_editor.html.twig' %}
+{% endblock %}

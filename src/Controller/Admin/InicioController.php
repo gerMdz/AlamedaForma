@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Inicio;
 use App\Form\InicioType;
@@ -10,8 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/inicio')]
+#[Route('/admin/inicio')]
+#[IsGranted('ROLE_USER')]
 class InicioController extends AbstractController
 {
     #[Route('/', name: 'app_inicio_index', methods: ['GET'])]

@@ -1,11 +1,19 @@
 <script setup>
-import {ref, computed} from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
+import Instructions from './Instructions.vue';
 
 const inicio = ref([]);
 const msg = ref('Hola Inicio');
 console.log(msg)
 let dialog = ref(false);
+
+// Checkbox state moved here from Instructions.vue
+const allTheRest = ref(false);
+const changeAllTheRest = () => {
+  allTheRest.value = !allTheRest.value
+  console.log('allTheRest ', allTheRest.value)
+}
 
 const hideDialog = () => {
   dialog.value = false
@@ -39,11 +47,14 @@ fetchData();
         </v-col>
       </VCardItem>
       <VCardText cols="12" sm="12" md="6" lg="3" xl="3">
-        <v-col cols="8" class="d-flex text-left align-items-star mx-auto">
+        <v-col cols="8" class="d-flex text-left align-items-star mx-auto" style="gap: 12px; align-items: center;">
           <v-btn color="primary" @click="dialog = true" >
-            <span class="d-none d-sm-inline">Ver términos y condiciones</span>
-            <span class="d-inline d-sm-none">Ver T. y C.</span>
+            <span class="d-none d-sm-inline">Ver</span>
+            <span class="d-inline d-sm-none">Ver</span>
           </v-btn>
+          <span class="d-none d-sm-inline">Acepto términos y condiciones</span>
+          <span class="d-inline d-sm-none">Acepto T. y C.</span>
+          <VCheckboxBtn @change="changeAllTheRest" value="allTheRest"></VCheckboxBtn>
           <v-dialog v-model="dialog" max-width="900px" class="mx-12">
             <v-card>
               <v-card-title class="text-right">
@@ -55,6 +66,7 @@ fetchData();
             </v-card>
           </v-dialog>
         </v-col>
+        <Instructions :allTheRest="allTheRest" />
       </VCardText>
     </VCard>
   </v-container>

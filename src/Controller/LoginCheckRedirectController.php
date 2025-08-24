@@ -13,9 +13,9 @@ class LoginCheckRedirectController extends AbstractController
     #[Route('/login/redirect', name: 'app_login_redirect', methods: ['GET'])]
     public function redirectAfterLoginCheck(): RedirectResponse
     {
-        // If user is authenticated, send them to admin dashboard; otherwise back to login page.
+        // If user is authenticated, send them to admin dashboard; otherwise back to admin login page.
         return $this->getUser()
             ? $this->redirect('/admin')
-            : $this->redirect('/login');
+            : $this->redirect('/admin/login');
     }
 }

@@ -32,10 +32,9 @@ security:
     access_control:
         # Public asset paths (in case requests still hit Symfony)
         - { path: ^/build/, roles: PUBLIC_ACCESS }
-        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login$, roles: PUBLIC_ACCESS }
         - { path: ^/login_check$, roles: PUBLIC_ACCESS }
         - { path: ^/api/me, roles: ROLE_USER }
-        - { path: ^/admin(/|$), roles: ROLE_USER }
         - { path: ^/(personalidad|inicios)(/|$), roles: ROLE_USER }
 
 when@test:

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Instrucciones{% endblock %}
+
+{% block body %}
+  <h1>Listado de Instrucciones</h1>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Título</th>
+      <th>Habilitado</th>
+      <th>Creado</th>
+      <th>Actualizado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+      <tr>
+        <td>{{ item.title }}</td>
+        <td>{{ item.enabled ? 'Sí' : 'No' }}</td>
+        <td>{{ item.createdAt ? item.createdAt|date('Y-m-d H:i') : '' }}</td>
+        <td>{{ item.updateAt ? item.updateAt|date('Y-m-d H:i') : '' }}</td>
+        <td>
+          {# Vista "ver" y "editar" quedan en Vue (SPA). Enlace apunta al hash del panel admin. #}
+          <a href="/admin#instrucciones-editar:{{ item.id }}">editar</a>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="5">No hay registros.</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{{ path('app_instructions_new') }}">Crear nuevo</a>
+{% endblock %}

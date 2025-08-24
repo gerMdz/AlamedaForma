@@ -8,8 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LoginPageController extends AbstractController
 {
-    // GET /login will render the login page (POST /login is handled by Security json_login)
-    #[Route('/login', name: 'app_login_page', methods: ['GET'])]
+    // GET /admin/login will render the login page (POST /login_check is handled by Security json_login)
+    #[Route('/admin/login', name: 'app_login_page', methods: ['GET'])]
     public function loginPage(): Response
     {
         // If already authenticated, skip login form and go to admin
