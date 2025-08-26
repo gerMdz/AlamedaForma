@@ -17,6 +17,10 @@ class FormularioHabilitacion
     #[ORM\Column(type: 'string', length: 36, unique: true)]
     private ?string $id = null;
 
+    // Identificador estable del formulario (ej.: "T" para Términos y condiciones)
+    #[ORM\Column(length: 50, nullable: true, unique: true)]
+    private ?string $identifier = null;
+
     // Nombre del formulario a habilitar
     #[ORM\Column(length: 255)]
     private ?string $nombreFormulario = null;
@@ -38,6 +42,17 @@ class FormularioHabilitacion
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(?string $identifier): self
+    {
+        $this->identifier = $identifier;
+        return $this;
     }
 
     public function getNombreFormulario(): ?string

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
-import Personal from "./Personal.vue";
+
 
 // Accept control from parent (Inicio.vue)
 const props = defineProps({
@@ -29,7 +29,7 @@ fetchData();
 </script>
 
 <template>
-  <v-container fluid class="fill-height w-auto">
+  <v-container fluid class="fill-height">
     <VCard v-for="(ini, index) in instrucciones" :key="ini.id" v-if="props.allTheRest">
       <VCardItem cols="12" sm="12" md="6" lg="3" xl="3">
         <v-col cols="12" class="d-flex justify-center align-items-center">
@@ -41,7 +41,6 @@ fetchData();
           <p v-html="ini.Content"></p>
         </v-col>
       </VCardItem>
-      <Personal />
     </VCard>
   </v-container>
 </template>

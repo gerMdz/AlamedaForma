@@ -21,19 +21,32 @@ class PersonalController extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-
-        $data = $request->getContent();
-
-        if (empty($data)) {
+        $raw = $request->getContent();
+        if (empty($raw)) {
             return $this->json(['error' => 'No Se recibieron datos'], 400);
         }
 
-        $data = new PersonalesDataTransformer(json_decode($data, true));
+        $input = json_decode($raw, true);
+        if (!is_array($input)) {
+            return $this->json(['error' => 'JSON inválido'], 400);
+        }
 
-        $data = $data->transform();
+        // Buscar existente por email+phone (email case-insensitive)
+        $email = isset($input['email']) ? trim((string)$input['email']) : '';
+        $phone = isset($input['phone']) ? trim((string)$input['phone']) : '';
+        if ($email !== '' && $phone !== '') {
+            $existing = $this->personalesRepository->findOneByEmailPhone($email, $phone);
+            if ($existing) {
+                // 200 OK: ya existía. Frontend puede mostrar aviso y continuar.
+                return $this->json($existing, 200);
+            }
+        }
 
-        $persona = $this->personalesRepository->guardar($data);
+        // Crear nuevo si no existía
+        $transformer = new PersonalesDataTransformer($input);
+        $entity = $transformer->transform();
+        $persona = $this->personalesRepository->guardar($entity);
 
-        return $this->json( $persona, 201);
+        return $this->json($persona, 201);
     }
 }

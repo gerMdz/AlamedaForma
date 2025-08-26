@@ -9,8 +9,11 @@
       <v-card-title>Nueva habilitación</v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="4">
             <v-text-field v-model="form.nombreFormulario" label="Nombre" class="name-input" />
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.identifier" label="Identificador (opcional)" class="id-input" />
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field v-model="form.activoDesde" type="datetime-local" label="Activo desde" class="date-input" />
@@ -30,6 +33,7 @@
           <thead>
           <tr>
             <th>Nombre</th>
+            <th>Identificador</th>
             <th>Desde</th>
             <th>Hasta</th>
             <th>Activo</th>
@@ -40,6 +44,9 @@
           <tr v-for="item in items" :key="item.id">
             <td>
               <v-text-field v-model="item.edit.nombreFormulario" density="compact" hide-details class="name-input" />
+            </td>
+            <td>
+              <v-text-field v-model="item.edit.identifier" density="compact" hide-details class="id-input" />
             </td>
             <td>
               <v-text-field v-model="item.edit.activoDesde" type="datetime-local" density="compact" hide-details class="date-input" />
@@ -77,6 +84,7 @@
           <div v-if="dialogLoading">Cargando...</div>
           <div v-else-if="dialogItem">
             <p><strong>ID:</strong> {{ dialogItem.id }}</p>
+            <p><strong>Identificador:</strong> {{ dialogItem.identifier || defaultIdentifier(dialogItem.nombreFormulario) }}</p>
             <p><strong>Nombre:</strong> {{ dialogItem.nombreFormulario }}</p>
             <p><strong>Activo desde:</strong> {{ formatEs(dialogItem.activoDesde) }}</p>
             <p><strong>Activo hasta:</strong> {{ formatEs(dialogItem.activoHasta) || '—' }}</p>
@@ -108,6 +116,7 @@ const dialogItem = ref(null)
 
 const form = ref({
   nombreFormulario: '',
+  identifier: '',
   activoDesde: '', // datetime-local
   activoHasta: '', // datetime-local
 })
@@ -140,11 +149,18 @@ function formatEs(iso) {
   }
 }
 
+function defaultIdentifier(nombre) {
+  if (!nombre) return ''
+  const s = String(nombre).trim()
+  return s.length ? s.charAt(0).toUpperCase() : ''
+}
+
 function applyEditFields(entity) {
   return {
     ...entity,
     edit: {
       nombreFormulario: entity.nombreFormulario,
+      identifier: entity.identifier || '',
       activoDesde: toLocalInputValue(entity.activoDesde),
       activoHasta: toLocalInputValue(entity.activoHasta),
     },
@@ -169,14 +185,18 @@ async function crear() {
   notice.value = ''
   loading.value = true
   try {
+    const idn = form.value.identifier && form.value.identifier.trim() !== ''
+      ? form.value.identifier.trim()
+      : defaultIdentifier(form.value.nombreFormulario)
     const payload = {
       nombreFormulario: form.value.nombreFormulario,
+      identifier: idn || null,
       activoDesde: toIso(form.value.activoDesde),
       activoHasta: toIso(form.value.activoHasta),
     }
     await axios.post('/admin/formularios-habilitacion', payload, { headers: { 'Content-Type': 'application/json' } })
     notice.value = 'Creado correctamente.'
-    form.value = { nombreFormulario: '', activoDesde: '', activoHasta: '' }
+    form.value = { nombreFormulario: '', identifier: '', activoDesde: '', activoHasta: '' }
     await cargar()
   } catch (e) {
     console.error(e)
@@ -188,6 +208,7 @@ async function crear() {
 
 function resetEdits(item) {
   item.edit.nombreFormulario = item.nombreFormulario
+  item.edit.identifier = item.identifier || ''
   item.edit.activoDesde = toLocalInputValue(item.activoDesde)
   item.edit.activoHasta = toLocalInputValue(item.activoHasta)
 }
@@ -197,8 +218,12 @@ async function guardar(item) {
   error.value = ''
   notice.value = ''
   try {
+    const idn = item.edit.identifier && item.edit.identifier.trim() !== ''
+      ? item.edit.identifier.trim()
+      : defaultIdentifier(item.edit.nombreFormulario)
     const payload = {
       nombreFormulario: item.edit.nombreFormulario,
+      identifier: idn || null,
       activoDesde: toIso(item.edit.activoDesde),
       activoHasta: item.edit.activoHasta ? toIso(item.edit.activoHasta) : null,
     }
@@ -267,4 +292,5 @@ onMounted(cargar)
 .mr-2 { margin-right: 0.5rem; }
 .name-input { min-width: 360px; }
 .date-input { max-width: 200px; }
+.id-input { max-width: 120px; }
 </style>

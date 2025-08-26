@@ -24,7 +24,9 @@ use Symfony\Component\Uid\Uuid;
     ],
     provider: PersonalStateProvider::class
 )]
-#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: PersonalesRepository::class)]
+#[AllowDynamicProperties]
+#[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_personales_email_phone', columns: ['email','phone'])])]
+#[ORM\Entity(repositoryClass: PersonalesRepository::class)]
 class Personales
 {
     #[ORM\Id]

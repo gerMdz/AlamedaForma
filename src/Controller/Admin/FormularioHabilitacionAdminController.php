@@ -60,6 +60,12 @@ class FormularioHabilitacionAdminController extends AbstractController
             ->setActivoDesde($activoDesde)
             ->setActivoHasta($activoHasta);
 
+        // identifier es opcional para compatibilidad; si viene, se setea
+        if (array_key_exists('identifier', $data)) {
+            $idn = $data['identifier'];
+            $entity->setIdentifier($idn !== '' ? $idn : null);
+        }
+
         $this->em->persist($entity);
         $this->em->flush();
 
@@ -115,6 +121,11 @@ class FormularioHabilitacionAdminController extends AbstractController
             }
         }
 
+        if (array_key_exists('identifier', $data)) {
+            $idn = $data['identifier'];
+            $entity->setIdentifier($idn !== '' ? $idn : null);
+        }
+
         $this->em->flush();
 
         return new JsonResponse($this->serialize($entity));
@@ -138,6 +149,7 @@ class FormularioHabilitacionAdminController extends AbstractController
     {
         return [
             'id' => $f->getId(),
+            'identifier' => $f->getIdentifier(),
             'nombreFormulario' => $f->getNombreFormulario(),
             'activoDesde' => $f->getActivoDesde()?->format(DATE_ATOM),
             'activoHasta' => $f->getActivoHasta()?->format(DATE_ATOM),

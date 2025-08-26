@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height w-auto">
+  <v-container fluid class="fill-height">
     <div v-if="responseData">
       <h3> Gracias {{ responseData.nombre }} {{ responseData.apellido }} </h3>
       <p>

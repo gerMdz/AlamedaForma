@@ -20,6 +20,19 @@ class PersonalesRepository extends ServiceEntityRepository
 
     private EntityManagerInterface $entityManager;
 
+    public function findOneByEmailPhone(string $email, string $phone): ?Personales
+    {
+        $qb = $this->createQueryBuilder('p');
+        return $qb
+            ->andWhere('LOWER(p.email) = :email')
+            ->andWhere('p.phone = :phone')
+            ->setMaxResults(1)
+            ->setParameter('email', mb_strtolower(trim($email)))
+            ->setParameter('phone', trim($phone))
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Personales::class);

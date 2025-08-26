@@ -2,8 +2,7 @@
   <div class="vue-app">
     <SaludoForma />
     <template v-if="loaded && hasActive">
-      <Inicio />
-      <Instructions />
+      <Personal />
       <FormaContent />
     </template>
   </div>
@@ -11,14 +10,11 @@
 
 <script setup>
 import SaludoForma from "./components/SaludoForma.vue";
-import Inicio from "./components/Inicio.vue";
-import Instructions from "./components/Instructions.vue";
+import Personal from "./components/Personal.vue";
 import FormaContent from "./components/FormaContent.vue";
 
-import { inject, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
-
-const responseData = inject('responseData');
 
 const hasActive = ref(false)
 const loaded = ref(false)
@@ -43,6 +39,7 @@ onMounted(fetchEstado)
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .logo {

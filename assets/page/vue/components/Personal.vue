@@ -1,7 +1,12 @@
 <template>
-  <VForm @submit.prevent="submit">
-    <v-container>
+  <v-container fluid class="personal-container">
+    <VForm @submit.prevent="submit">
       <v-row>
+        <v-col cols="12">
+          <v-alert v-if="existsNotice" type="warning" density="comfortable" class="mb-3">
+            {{ existsNotice }}
+          </v-alert>
+        </v-col>
         <v-col
             cols="12"
             md="6"
@@ -88,9 +93,8 @@
           <VBtn v-if="isRequiredFilled" @click="submit" color="primary"> Siguiente</VBtn>
         </v-col>
       </v-row>
-    </v-container>
-  </VForm>
-
+    </VForm>
+  </v-container>
 </template>
 
 <script setup>
@@ -108,6 +112,7 @@ const  apellido= ref('');
 const  email= ref('');
 const  phone= ref('');
 const  point= ref('');
+const existsNotice = ref('');
 let responseData = ref(null);
 provide('responseData', responseData);
 
@@ -156,7 +161,15 @@ const submit = async () => {
     const response = await axios.post('/api/personal', data);
     store.setResponseData(response.data);
 
-console.log('Personal: rd -> ' + responseData)
+    if (response && response.status === 200) {
+      existsNotice.value = 'Ya existe una persona con ese email y teléfono. Continuamos con su registro.';
+    } else {
+      existsNotice.value = '';
+    }
+
+    // No registramos términos automáticamente; el usuario debe aceptarlos en el paso de Términos.
+
+    console.log('Personal: rd -> ' + responseData)
 
 
   } catch (error) {
@@ -166,3 +179,11 @@ console.log('Personal: rd -> ' + responseData)
 
 
 </script>
+
+<style scoped>
+.personal-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+</style>

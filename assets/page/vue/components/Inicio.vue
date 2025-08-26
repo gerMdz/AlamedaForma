@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import axios from 'axios';
 import Instructions from './Instructions.vue';
+import { store } from '../../assets/almacen';
 
 const inicio = ref([]);
 const msg = ref('Hola Inicio');
@@ -10,9 +11,20 @@ let dialog = ref(false);
 
 // Checkbox state moved here from Instructions.vue
 const allTheRest = ref(false);
-const changeAllTheRest = () => {
+const changeAllTheRest = async () => {
   allTheRest.value = !allTheRest.value
   console.log('allTheRest ', allTheRest.value)
+  try {
+    if (allTheRest.value) {
+      const personalId = store.responseData?.value?.id || store.responseData?.value?.ID || store.responseData?.value?.Id
+      if (personalId) {
+        await axios.post('/api/forma/aceptar-terminos', { personalId }, { headers: { 'Content-Type': 'application/json' } })
+        store.setTermsAccepted(true)
+      }
+    }
+  } catch (e) {
+    console.warn('No se pudo registrar la aceptación de términos desde Inicio.vue', e)
+  }
 }
 
 const hideDialog = () => {
@@ -34,7 +46,7 @@ fetchData();
 </script>
 
 <template>
-  <v-container fluid class="fill-height w-auto">
+  <v-container fluid class="fill-height">
     <VCard v-for="(ini, index) in inicio" :key="ini.id">
       <VCardItem cols="12" sm="12" md="6" lg="3" xl="3">
         <v-col cols="12" class="d-flex justify-center align-items-center">
