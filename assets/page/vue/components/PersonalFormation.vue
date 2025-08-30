@@ -1,7 +1,7 @@
 <template>
   <v-container>
 
-    <v-form v-if="!showSavedView" ref="form" @submit.prevent="submitForm">
+    <v-form v-if="!showSavedView" ref="formEl" @submit.prevent="submitForm">
       <v-row>
         <v-col :cols="12" :sm="6" :md="4" v-for="don in dones.slice(0,3)" :key="don.identifier || don.id">
           <v-card class="cardStyle mx-auto my-12 bg-light-blue-accent-3 d-flex flex-column justify-space-between"
@@ -13,7 +13,7 @@
               {{ don.description }}
             </v-card-text>
             <v-textarea
-              v-model="form.donComments[don.identifier || don.id]"
+              v-model="formState.donComments[don.identifier || don.id]"
               :label="`¿Cómo te sientes con el don “${don.name}”?`"
               placeholder="Escribe aquí tu comentario..."
               counter="200"
@@ -29,18 +29,24 @@
               prepend-inner-icon="mdi-pencil"
             />
             <v-chip-group v-model="selection">
-              {{ getComputedValue(don.identifier) }} %
+              {{ gv(don.identifier) }} %
             </v-chip-group>
           </v-card>
         </v-col>
       </v-row>
-      <v-btn color="primary" @click="submitForm">
+      <v-btn color="primary" :loading="saving" :disabled="saving" @click="submitForm">
         Guardar resultado
       </v-btn>
         <v-snackbar v-model="snackbarSaved" timeout="4000" color="success" location="top">
           Datos guardados correctamente.
           <template #actions>
             <v-btn variant="text" @click="snackbarSaved = false">Cerrar</v-btn>
+          </template>
+        </v-snackbar>
+        <v-snackbar v-model="snackbarError" timeout="5000" color="error" location="top">
+          Ocurrió un error al guardar los resultados. Inténtalo nuevamente.
+          <template #actions>
+            <v-btn variant="text" @click="snackbarError = false">Cerrar</v-btn>
           </template>
         </v-snackbar>
 
@@ -50,15 +56,45 @@
 
 </template>
 <script setup>
-import {ref, reactive, onMounted, watch} from 'vue';
+import {ref, reactive, onMounted, watch, computed} from 'vue';
 import {defineProps} from 'vue';
 import axios from 'axios';
 import { store } from '../../assets/almacen';
 import SavedResults from './SavedResults.vue';
 
 const snackbarSaved = ref(false)
+const snackbarError = ref(false)
+const saving = ref(false)
 const showSavedView = ref(false)
 const savedData = ref({})
+
+// Helper para obtener el porcentaje desde getComputedValue (soporta function o computed)
+const gv = (id) => {
+  try {
+    if (props.getComputedValue && typeof props.getComputedValue === 'function') {
+      return Math.round(props.getComputedValue(id) || 0)
+    }
+    if (props.getComputedValue && typeof props.getComputedValue.value === 'function') {
+      return Math.round(props.getComputedValue.value(id) || 0)
+    }
+  } catch(e) { /* noop */ }
+  return 0
+}
+
+// Habilita guardar solo si existe una referencia válida a la persona
+const canSave = computed(() => {
+  const personData = store.responseData?.value || null;
+  if (personData && typeof personData === 'object') {
+    if (typeof personData['@id'] === 'string' && personData['@id'].length > 0) {
+      return true;
+    }
+    if (personData.id !== undefined && personData.id !== null) {
+      const n = typeof personData.id === 'string' ? Number(personData.id) : personData.id;
+      return Number.isFinite(n) && n > 0;
+    }
+  }
+  return false;
+})
 
 // console.log de depuración movido para evitar ReferenceError en script-setup
 // Nota: use props.dones si se requiere loggear desde script
@@ -70,7 +106,7 @@ const props = defineProps({
 });
 
 
-let form = reactive({
+let formState = reactive({
   donComments: {},
 });
 
@@ -79,8 +115,8 @@ const initComments = () => {
   const top3 = props.dones?.slice(0,3) || [];
   for (const d of top3) {
     const key = d?.identifier || d?.id;
-    if (key && form.donComments[key] === undefined) {
-      form.donComments[key] = '';
+    if (key && formState.donComments[key] === undefined) {
+      formState.donComments[key] = '';
     }
   }
 };
@@ -90,13 +126,24 @@ watch(() => props.dones, () => initComments(), { immediate: false });
 
 const submitForm = async () => {
   const personData = store.responseData?.value || null;
-  const personId = personData?.id || personData?.['@id'] || null;
+  // Accept '@id', numeric id, or numeric string id
+  let personRef = null;
+  if (personData && typeof personData === 'object') {
+    if (typeof personData['@id'] === 'string' && personData['@id'].length > 0) {
+      personRef = personData['@id'];
+    } else if (personData.id !== undefined && personData.id !== null) {
+      const n = typeof personData.id === 'string' ? Number(personData.id) : personData.id;
+      if (Number.isFinite(n) && n > 0) {
+        personRef = n; // backend accepts numeric id
+      }
+    }
+  }
 
-  // Guardas tempranas
-  if (!personId) {
+  // Guardas tempranas (no usar alert intrusivo)
+  if (!personRef) {
     console.warn('No se encontró la persona en el store; no se puede guardar.');
-    snackbarSaved.value = false;
-    try { alert('Antes de guardar, completa tus datos personales.'); } catch(e) {}
+    // No mostrar snackbar de error porque no se realizó ninguna petición
+    // Simplemente salir silenciosamente. El botón ya está deshabilitado si no hay persona.
     return;
   }
 
@@ -104,8 +151,8 @@ const submitForm = async () => {
   const payloads = [];
 
   // Asegurar estructura segura de comentarios
-  const comments = (form && typeof form === 'object' && form.donComments && typeof form.donComments === 'object')
-    ? form.donComments
+  const comments = (formState && typeof formState === 'object' && formState.donComments && typeof formState.donComments === 'object')
+    ? formState.donComments
     : {};
 
   for (const donObj of top3) {
@@ -116,22 +163,29 @@ const submitForm = async () => {
     }
     const raw = donKey ? comments[donKey] : '';
     const commentDon = (raw ?? '').toString().slice(0, 200);
-    const percentDon = (typeof props.getComputedValue === 'function' && donObj?.identifier)
-      ? Math.round(props.getComputedValue(donObj.identifier))
-      : null;
+    let percentDon = null;
+    if (donObj?.identifier) {
+      // getComputedValue is a ComputedRef that returns a function; handle both cases
+      if (props.getComputedValue && typeof props.getComputedValue === 'function') {
+        percentDon = Math.round(props.getComputedValue(donObj.identifier));
+      } else if (props.getComputedValue && typeof props.getComputedValue.value === 'function') {
+        percentDon = Math.round(props.getComputedValue.value(donObj.identifier));
+      }
+    }
     const donId = donObj?.id || donObj?.['@id'] || donKey;
 
     // Solo enviar si hay persona y don identificable
-    if (personId && donId) {
-      payloads.push({ percentDon, commentDon, don: donId, person: personId });
+    if (personRef && donId) {
+      payloads.push({ percentDon, commentDon, don: donId, person: personRef });
     }
   }
 
-  try {
+  saving.value = true;
+try {
     // Enviar solo los datos de los 3 primeros
     const results = [];
     for (const p of payloads) {
-      const res = await axios.post('api/personal-formation', p);
+      const res = await axios.post('/api/personal-formation', p);
       results.push(res?.data);
     }
 
@@ -143,6 +197,9 @@ const submitForm = async () => {
     showSavedView.value = true;
   } catch (e) {
     console.error('Error guardando PersonalFormation', e);
+    snackbarError.value = true;
+  } finally {
+    saving.value = false;
   }
 };
 </script>
