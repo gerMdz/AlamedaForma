@@ -25,19 +25,33 @@
                   <strong>Don:</strong>
                   <v-tooltip location="top" open-delay="200" :offset="[0,8]" v-model:opened="openedTooltips[idx]" close-on-content-click="false" eager>
                     <template #activator="{ props: tip }">
-                      <span
-                        v-bind="tip"
-                        class="text-primary don-name-activator"
-                        role="button"
-                        tabindex="0"
-                        :aria-label="`Ver descripción de ${getDonName(pf)}`"
-                        :aria-expanded="!!openedTooltips[idx]"
-                        @touchstart.prevent.stop="toggleTooltip(idx)"
-                        @click="toggleTooltip(idx)"
-                        @keydown.enter.prevent="toggleTooltip(idx)"
-                        @keydown.space.prevent="toggleTooltip(idx)"
-                      >
-                        {{ getDonName(pf) }}
+                      <span class="d-flex align-center" style="gap: 4px;">
+                        <span
+                          v-bind="tip"
+                          class="text-primary don-name-activator"
+                          role="button"
+                          tabindex="0"
+                          :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                          :aria-expanded="!!openedTooltips[idx]"
+                          @touchstart.prevent.stop="toggleTooltip(idx)"
+                          @click="toggleTooltip(idx)"
+                          @keydown.enter.prevent="toggleTooltip(idx)"
+                          @keydown.space.prevent="toggleTooltip(idx)"
+                        >
+                          {{ getDonName(pf) }}
+                        </span>
+                        <v-btn
+                          v-bind="tip"
+                          icon="mdi-information-outline"
+                          size="x-small"
+                          variant="text"
+                          density="comfortable"
+                          class="don-info-icon"
+                          :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                          :aria-expanded="!!openedTooltips[idx]"
+                          @touchstart.prevent.stop="toggleTooltip(idx)"
+                          @click.stop.prevent="toggleTooltip(idx)"
+                        />
                       </span>
                     </template>
                     <v-card class="don-tooltip-card" max-width="360">
@@ -199,6 +213,9 @@ const formatDescription = (text) => {
 .don-tooltip-card {
   padding-right: 4px;
   z-index: 3000;
+}
+.don-info-icon :deep(.v-btn__content) {
+  pointer-events: none; /* allow button wrapper to handle events uniformly */
 }
 .don-tooltip-card :deep(.v-card-text) {
   white-space: normal;
