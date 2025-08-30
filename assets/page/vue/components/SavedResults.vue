@@ -23,9 +23,19 @@
               <v-list-item-title>
                 <div class="d-flex align-center" style="gap: 6px;">
                   <strong>Don:</strong>
-                  <v-tooltip location="top" open-delay="200" :offset="[0,8]">
+                  <v-tooltip location="top" open-delay="200" :offset="[0,8]" v-model:opened="openedTooltips[idx]">
                     <template #activator="{ props: tip }">
-                      <span v-bind="tip" class="text-primary don-name-activator" role="button" :aria-label="`Ver descripción de ${getDonName(pf)}`">
+                      <span
+                        v-bind="tip"
+                        class="text-primary don-name-activator"
+                        role="button"
+                        tabindex="0"
+                        :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                        :aria-expanded="!!openedTooltips[idx]"
+                        @click="toggleTooltip(idx)"
+                        @keydown.enter.prevent="toggleTooltip(idx)"
+                        @keydown.space.prevent="toggleTooltip(idx)"
+                      >
                         {{ getDonName(pf) }}
                       </span>
                     </template>
@@ -64,6 +74,30 @@ const props = defineProps({
 
 const person = computed(() => props.data?.person || {})
 const formations = computed(() => props.data?.formations || [])
+
+// Estado de tooltips abiertos por índice para soportar pantallas táctiles
+const openedTooltips = ref({})
+const autoCloseTimers = ref({})
+const AUTO_CLOSE_MS = 7000
+
+const ensureState = (idx) => {
+  if (!openedTooltips.value) openedTooltips.value = {}
+  if (openedTooltips.value[idx] === undefined) openedTooltips.value[idx] = false
+}
+
+const toggleTooltip = (idx) => {
+  ensureState(idx)
+  openedTooltips.value[idx] = !openedTooltips.value[idx]
+  if (openedTooltips.value[idx]) {
+    // autohide para evitar que quede pegado en móviles
+    try {
+      clearTimeout(autoCloseTimers.value[idx])
+    } catch (e) { /* noop */ }
+    autoCloseTimers.value[idx] = setTimeout(() => {
+      openedTooltips.value[idx] = false
+    }, AUTO_CLOSE_MS)
+  }
+}
 
 // Mapa local de dones para resolver IRI/ID -> nombre y descripción
 const donInfoMap = ref({})
