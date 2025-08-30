@@ -23,7 +23,8 @@
               <v-list-item-title>
                 <div class="d-flex align-center" style="gap: 6px;">
                   <strong>Don:</strong>
-                  <v-tooltip location="top" open-delay="200" :offset="[0,8]" v-model:opened="openedTooltips[idx]" close-on-content-click="false" eager>
+                  <span>{{ getDonName(pf) }}</span>
+                  <v-tooltip v-if="false" location="top" open-delay="200" :offset="[0,8]" v-model:opened="openedTooltips[idx]" close-on-content-click="false" eager>
                     <template #activator="{ props: tip }">
                       <span class="d-flex align-center" style="gap: 4px;">
                         <span
@@ -63,6 +64,32 @@
                       </v-card-text>
                     </v-card>
                   </v-tooltip>
+                  <!-- Modal compacto para descripción del don -->
+                  <v-btn
+                    icon="mdi-information-outline"
+                    size="x-small"
+                    variant="text"
+                    color="primary"
+                    density="comfortable"
+                    class="don-info-icon"
+                    :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                    @touchstart.prevent.stop="openDialog(idx)"
+                    @click.stop.prevent="openDialog(idx)"
+                  />
+                  <v-dialog v-model="openedDialogs[idx]" max-width="420" :scrim="true">
+                    <v-card>
+                      <v-card-title class="text-subtitle-1">
+                        {{ getDonName(pf) }}
+                      </v-card-title>
+                      <v-card-text>
+                        <div v-html="formatDescription(getDonDescription(pf))"></div>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="primary" variant="text" @click="closeDialog(idx)">Cerrar</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </div>
                 <div><strong>Porcentaje:</strong> {{ pf?.percentDon }} %</div>
               </v-list-item-title>
@@ -90,28 +117,29 @@ const props = defineProps({
 const person = computed(() => props.data?.person || {})
 const formations = computed(() => props.data?.formations || [])
 
-// Estado de tooltips abiertos por índice para soportar pantallas táctiles
+// Estado (legacy) de tooltips – desactivados; usamos diálogos
 const openedTooltips = ref({})
-const autoCloseTimers = ref({})
-const AUTO_CLOSE_MS = 7000
+const openedDialogs = ref({})
 
 const ensureState = (idx) => {
   if (!openedTooltips.value) openedTooltips.value = {}
   if (openedTooltips.value[idx] === undefined) openedTooltips.value[idx] = false
+  if (!openedDialogs.value) openedDialogs.value = {}
+  if (openedDialogs.value[idx] === undefined) openedDialogs.value[idx] = false
 }
 
 const toggleTooltip = (idx) => {
+  // En vez de tooltips, abrimos el modal
+  openDialog(idx)
+}
+
+const openDialog = (idx) => {
   ensureState(idx)
-  openedTooltips.value[idx] = !openedTooltips.value[idx]
-  if (openedTooltips.value[idx]) {
-    // autohide para evitar que quede pegado en móviles
-    try {
-      clearTimeout(autoCloseTimers.value[idx])
-    } catch (e) { /* noop */ }
-    autoCloseTimers.value[idx] = setTimeout(() => {
-      openedTooltips.value[idx] = false
-    }, AUTO_CLOSE_MS)
-  }
+  openedDialogs.value[idx] = true
+}
+const closeDialog = (idx) => {
+  ensureState(idx)
+  openedDialogs.value[idx] = false
 }
 
 // Mapa local de dones para resolver IRI/ID -> nombre y descripción
