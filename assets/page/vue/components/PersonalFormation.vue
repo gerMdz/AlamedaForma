@@ -129,12 +129,25 @@ const submitForm = async () => {
   // Accept '@id', numeric id, or numeric string id
   let personRef = null;
   if (personData && typeof personData === 'object') {
-    if (typeof personData['@id'] === 'string' && personData['@id'].length > 0) {
-      personRef = personData['@id'];
-    } else if (personData.id !== undefined && personData.id !== null) {
-      const n = typeof personData.id === 'string' ? Number(personData.id) : personData.id;
-      if (Number.isFinite(n) && n > 0) {
-        personRef = n; // backend accepts numeric id
+    // Accept IRI like /api/personal/{id}
+    const iri = typeof personData['@id'] === 'string' ? personData['@id'] : null;
+    if (iri && iri.length > 0) {
+      personRef = iri;
+    } else {
+      // Accept id in any common casing (id, ID, Id) and as UUID string or number
+      const rawId = personData.id ?? personData.ID ?? personData.Id ?? null;
+      if (rawId !== undefined && rawId !== null) {
+        if (typeof rawId === 'string') {
+          const trimmed = rawId.trim();
+          // If it looks like a UUID or any non-empty string, send as-is
+          if (trimmed.length > 0) {
+            personRef = trimmed;
+          }
+        } else if (typeof rawId === 'number') {
+          if (Number.isFinite(rawId) && rawId > 0) {
+            personRef = rawId;
+          }
+        }
       }
     }
   }
