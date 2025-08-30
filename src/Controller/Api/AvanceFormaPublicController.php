@@ -19,6 +19,50 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api/forma')]
 class AvanceFormaPublicController extends AbstractController
 {
+    /**
+     * Registra avance para el formulario de Formación (identifier = "F").
+     * Idempotente: si ya existe AvanceForma para la persona y el formulario F, responde 200.
+     */
+    #[Route('/registrar-avance-f', name: 'api_forma_registrar_avance_f', methods: ['POST'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function registrarAvanceF(Request $request): JsonResponse
+    {
+        $payload = json_decode((string) $request->getContent(), true);
+        if (!is_array($payload)) {
+            return new JsonResponse(['error' => 'JSON inválido'], 400);
+        }
+        $personalId = $payload['personalId'] ?? null;
+        if (!$personalId) {
+            return new JsonResponse(['error' => 'personalId es requerido'], 400);
+        }
+        $persona = $this->personalesRepo->find($personalId);
+        if (!$persona) {
+            return new JsonResponse(['error' => 'Persona no encontrada'], 404);
+        }
+        $formF = $this->formRepo->findOneBy(['identifier' => 'F'], ['activoDesde' => 'DESC']);
+        if (!$formF) {
+            return new JsonResponse(['error' => 'Formulario de Formación (F) no configurado'], 404);
+        }
+        $existing = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formF]);
+        if ($existing) {
+            return new JsonResponse([
+                'ok' => true,
+                'alreadyRegistered' => true,
+                'fechaEtapa' => $existing->getFechaEtapa()?->format(DATE_ATOM),
+            ], 200);
+        }
+        $avance = (new AvanceForma())
+            ->setPersona($persona)
+            ->setFormulario($formF)
+            ->setFechaEtapa(new \DateTimeImmutable());
+        $this->em->persist($avance);
+        $this->em->flush();
+        return new JsonResponse([
+            'ok' => true,
+            'alreadyRegistered' => false,
+            'fechaEtapa' => $avance->getFechaEtapa()->format(DATE_ATOM),
+        ], 201);
+    }
     public function __construct(
         private readonly PersonalesRepository $personalesRepo,
         private readonly FormularioHabilitacionRepository $formRepo,

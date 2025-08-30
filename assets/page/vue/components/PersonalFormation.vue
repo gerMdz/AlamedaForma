@@ -205,6 +205,17 @@ try {
     // Aviso de datos guardados
     snackbarSaved.value = true;
 
+    // Registrar avance F (formación) de manera idempotente
+    try {
+      const personalId = personData?.id || personData?.ID || personData?.Id
+      if (personalId) {
+        await axios.post('/api/forma/registrar-avance-f', { personalId }, { headers: { 'Content-Type': 'application/json' } })
+      }
+    } catch (e2) {
+      // No bloquear el flujo si falla el registro del avance; solo loguear
+      console.warn('No se pudo registrar avance F', e2)
+    }
+
     // Redirigir a la nueva vista de confirmación con los datos guardados
     savedData.value = { person: personData, formations: results };
     showSavedView.value = true;
