@@ -2,8 +2,10 @@
   <div class="vue-app">
     <SaludoForma />
     <template v-if="loaded && hasActive">
+      <!-- Mostrar únicamente el formulario de datos personales por solicitud -->
       <Personal />
-      <FormaContent />
+      <!-- FormaContent temporalmente oculto: Términos e instrucciones no deben mostrarse aún -->
+      <!-- <FormaContent v-if="false" /> -->
     </template>
   </div>
 </template>
@@ -11,13 +13,15 @@
 <script setup>
 import SaludoForma from "./components/SaludoForma.vue";
 import Personal from "./components/Personal.vue";
-import FormaContent from "./components/FormaContent.vue";
 
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { store } from '../assets/almacen'
 
 const hasActive = ref(false)
 const loaded = ref(false)
+
+// expose store to template (script setup exposes imports by default)
 
 const fetchEstado = async () => {
   try {
@@ -31,7 +35,10 @@ const fetchEstado = async () => {
   }
 }
 
-onMounted(fetchEstado)
+onMounted(() => {
+  try { store.hydrate(); } catch(e) { /* noop */ }
+  fetchEstado()
+})
 </script>
 
 <style>
