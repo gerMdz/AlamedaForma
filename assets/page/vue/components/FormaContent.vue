@@ -13,6 +13,8 @@ const termsAccepted = store.termsAccepted
 const checking = ref(false)
 const checkingF = ref(false)
 const hasAvanceF = ref(false)
+// resultsMode is true either if backend says there is avance F or if user just saved
+const resultsMode = store.resultsMode
 
 async function checkTerms() {
   const personalId = responseData?.value?.id || responseData?.value?.ID || responseData?.value?.Id
@@ -42,9 +44,16 @@ async function checkAvanceF() {
   try {
     const res = await axios.get(`/api/forma/avance-f-estado/${encodeURIComponent(personalId)}`)
     hasAvanceF.value = !!res?.data?.hasAvanceF
+    if (hasAvanceF.value) {
+      try { store.setResultsMode(true) } catch(_) {}
+    } else {
+      // Si no tiene Avance F, aseguramos que no quede en modo resultados
+      try { store.setResultsMode(false) } catch(_) {}
+    }
   } catch (e) {
     console.warn('No se pudo verificar avance F', e)
     hasAvanceF.value = false
+    try { store.setResultsMode(false) } catch(_) {}
   } finally {
     checkingF.value = false
   }
@@ -67,22 +76,26 @@ watch(responseData, (val) => {
 
 <template>
   <v-container fluid class="fill-height">
-    <HelloForma/>
-
-    <v-container v-if="responseData" fluid class="text-center">
-      <div v-if="checking">Verificando términos...</div>
-      <template v-else>
-        <template v-if="!termsAccepted">
-          <!-- Paso 2: Términos y condiciones + instrucciones -->
-          <Inicio />
-        </template>
+    <template v-if="resultsMode || hasAvanceF">
+      <!-- Resultados reemplazan a las otras pantallas -->
+      <CompletedFormation />
+    </template>
+    <template v-else>
+      <HelloForma/>
+      <v-container v-if="responseData" fluid class="text-center">
+        <div v-if="checking">Verificando términos...</div>
         <template v-else>
-          <!-- Paso 3: Si ya avanzó F, mostrar resumen; si no, mostrar formulario de dones -->
-          <CompletedFormation v-if="hasAvanceF" />
-          <Formation v-else />
+          <template v-if="!termsAccepted">
+            <!-- Paso 2: Términos y condiciones + instrucciones -->
+            <Inicio />
+          </template>
+          <template v-else>
+            <!-- Paso 3: Formulario de dones -->
+            <Formation />
+          </template>
         </template>
-      </template>
-    </v-container>
+      </v-container>
+    </template>
   </v-container>
 
 </template>

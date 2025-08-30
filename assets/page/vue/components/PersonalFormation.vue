@@ -229,6 +229,7 @@ try {
       savedData.value = { person: personData, formations: results }
     }
     showSavedView.value = true;
+    try { store.setResultsMode(true); } catch(e4) { /* noop */ }
   } catch (e) {
     console.error('Error guardando PersonalFormation', e);
     snackbarError.value = true;

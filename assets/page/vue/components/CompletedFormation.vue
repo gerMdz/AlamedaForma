@@ -39,5 +39,6 @@ async function loadLatest() {
 
 onMounted(() => {
   loadLatest()
+  try { store.setResultsMode(true) } catch(e) { /* noop */ }
 })
 </script>

@@ -2,10 +2,18 @@
   <div class="vue-app">
     <SaludoForma />
     <template v-if="loaded && hasActive">
-      <!-- Paso 1: formulario de datos personales -->
-      <Personal />
-      <!-- Paso 2: mostrar términos si no han sido aceptados; o Formation si ya están aceptados -->
-      <FormaContent v-if="store.responseData && store.responseData.value" />
+      <!-- Si está en modo resultados, mostramos solo la pantalla de resultados (dentro de FormaContent) -->
+      <template v-if="store.resultsMode && store.resultsMode.value">
+        <FormaContent v-if="store.responseData && store.responseData.value" />
+      </template>
+      <template v-else>
+        <!-- Mostrar formulario de datos personales solo si NO hay persona activa -->
+        <template v-if="!(store.responseData && store.responseData.value)">
+          <Personal />
+        </template>
+        <!-- Si ya hay persona activa, no mostrar el formulario y continuar con el flujo -->
+        <FormaContent v-if="store.responseData && store.responseData.value" />
+      </template>
     </template>
   </div>
 </template>
