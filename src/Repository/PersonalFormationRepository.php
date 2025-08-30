@@ -54,8 +54,31 @@ use Doctrine\Persistence\ManagerRegistry;
             $personalesFormation->setUpdatedAt(new \DateTimeImmutable());
         }
 
+        // Persist new record
         $this->entityManager->persist($personalesFormation);
         $this->entityManager->flush();
+
+        // Enforce: a person must not have more than 3 PersonalFormation rows.
+        // Keep the 3 most recent by createdAt, delete older ones.
+        try {
+            $person = method_exists($personalesFormation, 'getPerson') ? $personalesFormation->getPerson() : null;
+            if ($person) {
+                $qb = $this->createQueryBuilder('pf')
+                    ->andWhere('pf.person = :person')
+                    ->setParameter('person', $person)
+                    ->orderBy('pf.createdAt', 'DESC');
+                $all = $qb->getQuery()->getResult();
+                if (\is_array($all) && \count($all) > 3) {
+                    $toDelete = \array_slice($all, 3);
+                    foreach ($toDelete as $old) {
+                        $this->entityManager->remove($old);
+                    }
+                    $this->entityManager->flush();
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fail-safe: do not break saving flow if pruning fails; could log
+        }
 
         return $personalesFormation;
 

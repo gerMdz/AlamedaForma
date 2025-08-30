@@ -216,8 +216,18 @@ try {
       console.warn('No se pudo registrar avance F', e2)
     }
 
-    // Redirigir a la nueva vista de confirmación con los datos guardados
-    savedData.value = { person: personData, formations: results };
+    // Obtener desde backend los 3 más recientes para asegurar consistencia y orden
+    try {
+      const pid = personData?.id || personData?.ID || personData?.Id
+      if (pid) {
+        const latest = await axios.get(`/api/personal-formation/ultimos/${encodeURIComponent(pid)}`)
+        savedData.value = { person: personData, formations: latest?.data || results }
+      } else {
+        savedData.value = { person: personData, formations: results }
+      }
+    } catch(e3) {
+      savedData.value = { person: personData, formations: results }
+    }
     showSavedView.value = true;
   } catch (e) {
     console.error('Error guardando PersonalFormation', e);
