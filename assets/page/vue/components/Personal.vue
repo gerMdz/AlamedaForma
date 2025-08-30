@@ -90,10 +90,26 @@
 
       <v-row>
         <v-col>
-          <VBtn v-if="isRequiredFilled" @click="submit" color="primary"> Siguiente</VBtn>
+          <VBtn
+                      :disabled="!isRequiredFilled || submitting || submittedSuccessfully"
+                      :loading="submitting"
+                      @click="submit"
+                      color="primary"
+                    >
+                      {{ submittedSuccessfully ? 'Guardado' : 'Siguiente' }}
+                    </VBtn>
         </v-col>
       </v-row>
     </VForm>
+
+    <!-- Saludo debajo del formulario cuando ya tenemos una persona grabada -->
+    <v-row v-if="store.responseData && store.responseData.value" class="mt-4">
+      <v-col cols="12">
+        <v-alert type="success" variant="tonal" density="comfortable">
+          Gracias {{ (store.responseData.value?.nombre || nombre) }} {{ (store.responseData.value?.apellido || apellido) }} por ingresar al test F.O.R.M.A.
+        </v-alert>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -116,6 +132,10 @@ const existsNotice = ref('');
 let responseData = ref(null);
 provide('responseData', responseData);
 
+// Control de envío para desactivar el botón tras éxito y evitar doble envío
+const submitting = ref(false)
+const submittedSuccessfully = ref(false)
+
 // Computed to check if all required fields are filled (ignores email format)
 const isRequiredFilled = computed(() =>
   Boolean(nombre.value && nombre.value.toString().trim()) &&
@@ -137,17 +157,23 @@ const validationRules = {
 const v$ = useVuelidate(validationRules, { nombre, apellido, email, phone, point })
 
 const submit = async () => {
+  if (submittedSuccessfully.value || submitting.value) return;
+  submitting.value = true;
   // Prevent submit if required fields are not filled
   if (!isRequiredFilled.value) {
     // Touch fields to show validation feedback, if any
     v$.value.$touch();
+    submitting.value = false;
     return;
   }
 
   // Optional: validate using Vuelidate; if invalid, stop
   if (typeof v$.value?.$validate === 'function') {
     const isValid = await v$.value.$validate();
-    if (!isValid) return;
+    if (!isValid) {
+      submitting.value = false;
+      return;
+    }
   }
 
   const data = {
@@ -167,13 +193,13 @@ const submit = async () => {
       existsNotice.value = '';
     }
 
-    // No registramos términos automáticamente; el usuario debe aceptarlos en el paso de Términos.
-
-    console.log('Personal: rd -> ' + responseData)
-
+    // Éxito: desactivar el botón "Siguiente" en adelante
+    submittedSuccessfully.value = true;
 
   } catch (error) {
     console.error(error);
+  } finally {
+    submitting.value = false;
   }
 };
 

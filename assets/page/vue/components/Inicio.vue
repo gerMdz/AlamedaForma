@@ -78,7 +78,7 @@ fetchData();
             </v-card>
           </v-dialog>
         </v-col>
-        <Instructions :allTheRest="allTheRest" />
+        <Instructions v-if="store.termsAccepted && store.termsAccepted.value" :allTheRest="allTheRest" />
       </VCardText>
     </VCard>
   </v-container>

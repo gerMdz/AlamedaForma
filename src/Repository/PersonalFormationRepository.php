@@ -46,6 +46,14 @@ use Doctrine\Persistence\ManagerRegistry;
 
     public function guardar($personalesFormation)
     {
+        // Ensure timestamps are set to avoid NOT NULL DB constraint errors
+        if (method_exists($personalesFormation, 'getCreatedAt') && $personalesFormation->getCreatedAt() === null) {
+            $personalesFormation->setCreatedAt(new \DateTimeImmutable());
+        }
+        if (method_exists($personalesFormation, 'setUpdatedAt')) {
+            $personalesFormation->setUpdatedAt(new \DateTimeImmutable());
+        }
+
         $this->entityManager->persist($personalesFormation);
         $this->entityManager->flush();
 
