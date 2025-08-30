@@ -28,7 +28,7 @@ class PersonalFormation
     #[ORM\Column]
     private ?int $percentDon = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 200)]
     private ?string $commentDon = null;
 
     #[ORM\ManyToOne]

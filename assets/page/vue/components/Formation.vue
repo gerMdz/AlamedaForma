@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, ref, nextTick} from 'vue';
 import axios from "../../../vendor/axios/axios.index";
 import PersonalFormation from './PersonalFormation.vue';
 
@@ -44,6 +44,25 @@ const isPanel2Complete = ref(false);
 const isPanel3Complete = ref(false);
 const isPanel4Complete = ref(false);
 const isAllPanelsComplete = ref(false);
+// Snackbar de finalización y control para evitar avisos repetidos
+const snackbarComplete = ref(false);
+const hasShownCompleteNotice = ref(false);
+const resultsSectionRef = ref(null);
+
+// NEW: tracking remaining unanswered and listing last 5 missing
+const totalQuestions = 72;
+const remainingCount = computed(() => {
+  const answered = [...items.value, ...items2.value, ...items3.value, ...items4.value]
+      .filter(q => q && q.selected !== undefined).length;
+  return Math.max(totalQuestions - answered, 0);
+});
+const lastFiveMissing = computed(() => {
+  const all = [...items.value, ...items2.value, ...items3.value, ...items4.value];
+  const missing = all.filter(q => q && q.selected === undefined);
+  // sort by orden ascending to be clear and pick first 5
+  missing.sort((a,b) => (a.orden||0) - (b.orden||0));
+  return missing.slice(0, 5);
+});
 
 const percent = 6.25;
 
@@ -72,8 +91,8 @@ const fetchDataFormFormation = async () => {
     dones.value = response[4].data['member'];
 
     dones.value.sort((a, b) => {
-      const aValue = getComputedValue.value[a.identifier] || 0;
-      const bValue = getComputedValue.value[b.identifier] || 0;
+      const aValue = getComputedValue.value(a.identifier) || 0;
+      const bValue = getComputedValue.value(b.identifier) || 0;
 
       if (aValue > bValue) return -1;
       if (bValue > aValue) return 1;
@@ -93,12 +112,26 @@ const selectItem = (item, value) => {
 };
 
 const checkComplete = (() => {
+  const prevAllComplete = isAllPanelsComplete.value;
   isPanel1Complete.value = items.value.every(item => item.selected !== undefined);
   isPanel2Complete.value = items2.value.every(item => item.selected !== undefined);
   isPanel3Complete.value = items3.value.every(item => item.selected !== undefined);
   isPanel4Complete.value = items4.value.every(item => item.selected !== undefined);
   console.log(isPanel1Complete.value, isPanel2Complete.value, isPanel3Complete.value, isPanel4Complete.value);
   isAllPanelsComplete.value = isPanel1Complete.value && isPanel2Complete.value && isPanel3Complete.value && isPanel4Complete.value;
+
+  // Aviso inmediato cuando se complete por primera vez
+  if (!prevAllComplete && isAllPanelsComplete.value && !hasShownCompleteNotice.value) {
+    snackbarComplete.value = true;
+    hasShownCompleteNotice.value = true;
+    // Desplazar la vista a la sección de resultados cuando exista en el DOM
+    nextTick(() => {
+      const el = resultsSectionRef.value || document.getElementById('results-section');
+      if (el && el.scrollIntoView) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
 });
 
 const reserve = (() => {
@@ -113,6 +146,7 @@ const reserve = (() => {
 
 const onCargar = () => {
   isAllPanelsComplete.value = false;
+  snackbarComplete.value = false;
 }
 const sumaDonPorcentaje = (item, valor) => {
 
@@ -180,9 +214,10 @@ let openDialog = (donData) => {
 }
 
 onMounted(async () => {
-  await fetchDataFormFormation(); // Usa 'await' aquí para asegurarte de que los datos ya se llenaron antes de llamar a 'checkComplete'
+  await fetchDataFormFormation(); // Cargar datos
   checkComplete();
-  onCargar()
+  // No resetear estado de finalización aquí; esto ocultaba las cards finales
+  // onCargar()
 });
 </script>
 
@@ -365,13 +400,24 @@ onMounted(async () => {
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <v-row>
+    <v-row v-if="!isAllPanelsComplete">
       <v-col cols="12">
 
 
         <v-alert type="info" style="width: 100%;">
           A continuación verás la clasificación de tus respuestas, en 18 dones
           espirituales y su porcentaje de mayor a menor.
+          <div class="mt-2">
+            <strong>Preguntas sin responder:</strong> {{ remainingCount }}
+            <template v-if="remainingCount > 0">
+              <span v-if="remainingCount <= 5"> — Falta(n):
+                <span>
+                  {{ lastFiveMissing.map(q => q.orden).join(', ') }}
+                </span>
+              </span>
+              <span v-else> — Cuando falten 5, mostraremos cuáles son.</span>
+            </template>
+          </div>
         </v-alert>
 
       </v-col>
@@ -404,9 +450,9 @@ onMounted(async () => {
 <!--      </v-col>-->
 <!--    </v-row>-->
 
-    <v-row>
+    <v-row v-if="!isAllPanelsComplete">
 
-      <v-col cols="12" sm="6" md="3" v-for="donElement in orderedDones" :key="donElement.id"
+      <v-col cols="12" sm="6" md="3" v-for="donElement in orderedDones" :key="donElement.identifier || donElement.id"
              class="mx-auto"
       >
 
@@ -438,13 +484,14 @@ onMounted(async () => {
       </v-card>
     </v-dialog>
 
-    <div v-if="isAllPanelsComplete" class="mx-auto">
+    <div v-if="isAllPanelsComplete" class="mx-auto" id="results-section" ref="resultsSectionRef">
       <v-alert type="success" style="width: 100%;" class="text-center">
         ¡Hemos terminado las preguntas para formación espiritual, felicidades porque vamos avanzando!
       </v-alert>
       <p>
         A continuación encontrarás los 3 dones espírituales con los que más te identificas:
       </p>
+      <!-- Textareas y botón de guardar -->
       <PersonalFormation :dones="orderedDones.slice(0, 3)" :getComputedValue="getComputedValue"/>
     </div>
     <div v-else class="mx-auto">
@@ -452,5 +499,12 @@ onMounted(async () => {
         Aún no has completado todas las preguntas para formación espiritual
       </v-alert>
     </div>
+    <!-- Snackbar de finalización -->
+    <v-snackbar v-model="snackbarComplete" timeout="6000" color="success" location="top">
+      ¡Has completado todas las preguntas! Revisa tus 3 dones principales más abajo.
+      <template #actions>
+        <v-btn variant="text" @click="snackbarComplete = false">Cerrar</v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
