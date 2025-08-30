@@ -23,7 +23,7 @@
               <v-list-item-title>
                 <div class="d-flex align-center" style="gap: 6px;">
                   <strong>Don:</strong>
-                  <v-tooltip location="top" open-delay="200" :offset="[0,8]" v-model:opened="openedTooltips[idx]">
+                  <v-tooltip location="top" open-delay="200" :offset="[0,8]" v-model:opened="openedTooltips[idx]" close-on-content-click="false" eager>
                     <template #activator="{ props: tip }">
                       <span
                         v-bind="tip"
@@ -32,6 +32,7 @@
                         tabindex="0"
                         :aria-label="`Ver descripción de ${getDonName(pf)}`"
                         :aria-expanded="!!openedTooltips[idx]"
+                        @touchstart.prevent.stop="toggleTooltip(idx)"
                         @click="toggleTooltip(idx)"
                         @keydown.enter.prevent="toggleTooltip(idx)"
                         @keydown.space.prevent="toggleTooltip(idx)"
@@ -191,11 +192,13 @@ const formatDescription = (text) => {
 
 <style scoped>
 .don-name-activator {
+  display: inline-block;
   cursor: help;
   text-decoration: underline dotted;
 }
 .don-tooltip-card {
   padding-right: 4px;
+  z-index: 3000;
 }
 .don-tooltip-card :deep(.v-card-text) {
   white-space: normal;
