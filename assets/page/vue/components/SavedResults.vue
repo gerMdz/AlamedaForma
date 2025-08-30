@@ -21,7 +21,24 @@
           <v-list>
             <v-list-item v-for="(pf, idx) in formations" :key="idx">
               <v-list-item-title>
-                <div><strong>Don:</strong> {{ getDonName(pf) }}</div>
+                <div class="d-flex align-center" style="gap: 6px;">
+                  <strong>Don:</strong>
+                  <v-tooltip location="top" open-delay="200" :offset="[0,8]">
+                    <template #activator="{ props: tip }">
+                      <span v-bind="tip" class="text-primary don-name-activator" role="button" :aria-label="`Ver descripción de ${getDonName(pf)}`">
+                        {{ getDonName(pf) }}
+                      </span>
+                    </template>
+                    <v-card class="don-tooltip-card" max-width="360">
+                      <v-card-title class="text-subtitle-1">
+                        Descripción de {{ getDonName(pf) }}
+                      </v-card-title>
+                      <v-card-text>
+                        <div v-html="formatDescription(getDonDescription(pf))"></div>
+                      </v-card-text>
+                    </v-card>
+                  </v-tooltip>
+                </div>
                 <div><strong>Porcentaje:</strong> {{ pf?.percentDon }} %</div>
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -48,8 +65,8 @@ const props = defineProps({
 const person = computed(() => props.data?.person || {})
 const formations = computed(() => props.data?.formations || [])
 
-// Mapa local de dones para resolver IRI/ID -> nombre
-const donMap = ref({})
+// Mapa local de dones para resolver IRI/ID -> nombre y descripción
+const donInfoMap = ref({})
 
 const buildDonKeyVariants = (don) => {
   const keys = []
@@ -77,8 +94,8 @@ const getDonName = (pf) => {
   // Caso contrario: intentar resolver contra el mapa local
   const variants = buildDonKeyVariants(pf?.don)
   for (const k of variants) {
-    const hit = donMap.value[k]
-    if (hit) return hit
+    const hit = donInfoMap.value[k]
+    if (hit && hit.name) return hit.name
   }
   // Fallback: si era una IRI, mostrar solo el identificador final; si no, mostrar literal
   if (typeof pf?.don === 'string' && pf.don.startsWith('/')) {
@@ -88,22 +105,67 @@ const getDonName = (pf) => {
   return pf?.don || 'Don'
 }
 
+const getDonDescription = (pf) => {
+  // Preferir descripción embebida si viene del backend
+  if (pf?.don && typeof pf.don === 'object') {
+    const desc = pf.don.description || ''
+    if (desc && desc.trim().length > 0) return desc
+  }
+  // Buscar en el mapa local por cualquiera de las variantes de llave
+  const variants = buildDonKeyVariants(pf?.don)
+  for (const k of variants) {
+    const hit = donInfoMap.value[k]
+    if (hit && typeof hit.description === 'string' && hit.description.trim().length > 0) {
+      return hit.description
+    }
+  }
+  return 'Sin descripción disponible'
+}
+
 onMounted(async () => {
   try {
-    // Cargar catálogo de dones para mapear IDs/IRIs a nombres
+    // Cargar catálogo de dones para mapear IDs/IRIs a nombre y descripción
     const res = await axios.get('api/dones')
     const list = Array.isArray(res?.data?.member) ? res.data.member : []
     const map = {}
     for (const d of list) {
+      const info = { name: d?.name || d?.identifier || '', description: d?.description || '' }
       // aceptar varias llaves para resolver
-      if (d?.id != null) map[String(d.id)] = d.name || d.identifier || String(d.id)
-      if (d?.identifier) map[String(d.identifier)] = d.name || d.identifier
-      if (d?.['@id']) map[String(d['@id'])] = d.name || d.identifier
+      if (d?.id != null) map[String(d.id)] = info
+      if (d?.identifier) map[String(d.identifier)] = info
+      if (d?.['@id']) map[String(d['@id'])] = info
     }
-    donMap.value = map
+    donInfoMap.value = map
   } catch (e) {
     // silenciar errores de catálogo; el UI igual muestra fallback legible
     console.warn('No se pudo cargar el catálogo de dones', e)
   }
 })
+// Formatea la descripción respetando saltos de línea y espacios básicos
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+const formatDescription = (text) => {
+  const safe = escapeHtml(text || '')
+  // Convertir saltos de línea a <br> para mantener formato básico
+  return safe.replace(/\n/g, '<br>')
+}
 </script>
+
+<style scoped>
+.don-name-activator {
+  cursor: help;
+  text-decoration: underline dotted;
+}
+.don-tooltip-card {
+  padding-right: 4px;
+}
+.don-tooltip-card :deep(.v-card-text) {
+  white-space: normal;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+</style>
