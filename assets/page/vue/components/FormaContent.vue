@@ -20,7 +20,12 @@ async function checkTerms() {
     store.setTermsAccepted(!!res?.data?.accepted)
   } catch (e) {
     console.warn('No se pudo verificar estado de Términos', e)
-    // Por seguridad, si falla la verificación mostramos Términos
+    // Si la persona no existe en el backend, limpiar el caché local y volver a paso Personal
+    const status = e?.response?.status || e?.status || null;
+    if (status === 404) {
+      try { store.setResponseData(null); } catch(_) {}
+    }
+    // Por seguridad, si falla la verificación mostramos Términos como no aceptados
     store.setTermsAccepted(false)
   } finally {
     checking.value = false

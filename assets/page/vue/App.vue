@@ -2,10 +2,10 @@
   <div class="vue-app">
     <SaludoForma />
     <template v-if="loaded && hasActive">
-      <!-- Mostrar únicamente el formulario de datos personales por solicitud -->
+      <!-- Paso 1: formulario de datos personales -->
       <Personal />
-      <!-- FormaContent temporalmente oculto: Términos e instrucciones no deben mostrarse aún -->
-      <!-- <FormaContent v-if="false" /> -->
+      <!-- Paso 2: mostrar términos si no han sido aceptados; o Formation si ya están aceptados -->
+      <FormaContent v-if="store.responseData && store.responseData.value" />
     </template>
   </div>
 </template>
@@ -13,6 +13,7 @@
 <script setup>
 import SaludoForma from "./components/SaludoForma.vue";
 import Personal from "./components/Personal.vue";
+import FormaContent from "./components/FormaContent.vue";
 
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
