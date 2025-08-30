@@ -91,15 +91,16 @@
       <!--      </div>-->
 
       <v-row>
-        <v-col>
+        <v-col class="d-flex" style="gap: 12px;">
           <VBtn
                       :disabled="!isRequiredFilled || submitting || submittedSuccessfully"
                       :loading="submitting"
                       @click="submit"
                       color="primary"
                     >
-                      {{ submittedSuccessfully ? 'Guardado' : 'Siguiente' }}
+                      {{ isEditMode ? (submittedSuccessfully ? 'Guardado' : 'Guardar cambios') : (submittedSuccessfully ? 'Guardado' : 'Siguiente') }}
                     </VBtn>
+          <VBtn v-if="isEditMode" variant="text" color="secondary" @click="cancelEdit" :disabled="submitting">Cancelar</VBtn>
         </v-col>
       </v-row>
     </VForm>
@@ -116,7 +117,7 @@
 </template>
 
 <script setup>
-import {ref, provide, computed} from 'vue';
+import {ref, provide, computed, onMounted} from 'vue';
 import axios from 'axios';
 import {useVuelidate} from '@vuelidate/core'
 import {email as emailValidator, required} from '@vuelidate/validators'
@@ -130,6 +131,21 @@ const  apellido= ref('');
 const  email= ref('');
 const  phone= ref('');
 const  point= ref('');
+
+const isEditMode = computed(() => !!(store.editPersonalMode && store.editPersonalMode.value));
+
+onMounted(() => {
+  try {
+    if (isEditMode.value && store.responseData && store.responseData.value) {
+      const p = store.responseData.value;
+      nombre.value = p?.nombre || '';
+      apellido.value = p?.apellido || '';
+      email.value = p?.email || '';
+      phone.value = p?.phone || '';
+      point.value = p?.point || '';
+    }
+  } catch(e) { /* noop */ }
+});
 const existsNotice = ref('');
 let responseData = ref(null);
 provide('responseData', responseData);
@@ -157,6 +173,10 @@ const validationRules = {
 
 
 const v$ = useVuelidate(validationRules, { nombre, apellido, email, phone, point })
+
+const cancelEdit = () => {
+  try { if (store.editPersonalMode) store.editPersonalMode.value = false } catch(e) { /* noop */ }
+}
 
 const submit = async () => {
   if (submittedSuccessfully.value || submitting.value) return;
@@ -186,7 +206,13 @@ const submit = async () => {
     point: point.value,
   }
   try {
-    const response = await axios.post('/api/personal', data);
+    let response;
+    if (isEditMode.value && store.responseData && store.responseData.value && (store.responseData.value.id || store.responseData.value.ID || store.responseData.value.Id)) {
+      const pid = store.responseData.value.id || store.responseData.value.ID || store.responseData.value.Id
+      response = await axios.patch(`/api/personal/${encodeURIComponent(pid)}`, data, { headers: { 'Content-Type': 'application/json' } });
+    } else {
+      response = await axios.post('/api/personal', data);
+    }
     store.setResponseData(response.data);
 
     if (response && response.status === 200) {
@@ -195,11 +221,20 @@ const submit = async () => {
       existsNotice.value = '';
     }
 
-    // Éxito: desactivar el botón "Siguiente" en adelante
-    submittedSuccessfully.value = true;
+    // Éxito: si es edición, salir del modo edición y no bloquear el botón; si es creación, marcar como enviado
+    if (isEditMode.value) {
+      try { if (store.editPersonalMode) store.editPersonalMode.value = false } catch(e) { /* noop */ }
+      submittedSuccessfully.value = false;
+    } else {
+      submittedSuccessfully.value = true;
+    }
 
   } catch (error) {
     console.error(error);
+    const status = error?.response?.status || error?.status || null;
+    if (status === 409) {
+      existsNotice.value = 'Ya existe otra persona con ese email y teléfono. Por favor verifique los datos.';
+    }
   } finally {
     submitting.value = false;
   }

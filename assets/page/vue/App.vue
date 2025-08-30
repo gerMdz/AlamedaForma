@@ -8,11 +8,12 @@
       </template>
       <template v-else>
         <!-- Mostrar formulario de datos personales solo si NO hay persona activa -->
-        <template v-if="!(store.responseData && store.responseData.value)">
+        <!-- Mostrar formulario si no hay persona activa o si estamos corrigiendo datos personales -->
+        <template v-if="!(store.responseData && store.responseData.value) || (store.editPersonalMode && store.editPersonalMode.value)">
           <Personal />
         </template>
-        <!-- Si ya hay persona activa, no mostrar el formulario y continuar con el flujo -->
-        <FormaContent v-if="store.responseData && store.responseData.value" />
+        <!-- Si ya hay persona activa y no estamos corrigiendo, continuar con el flujo -->
+        <FormaContent v-if="store.responseData && store.responseData.value && !(store.editPersonalMode && store.editPersonalMode.value)" />
       </template>
     </template>
   </div>

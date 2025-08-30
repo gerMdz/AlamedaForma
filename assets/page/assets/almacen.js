@@ -5,6 +5,7 @@ export const store = {
     responseData: ref(null),
     termsAccepted: ref(false),
     resultsMode: ref(false),
+    editPersonalMode: ref(false),
     hydrate() {
         try {
             const ta = localStorage.getItem('termsAccepted');

@@ -59,7 +59,7 @@ fetchData();
         </v-col>
       </VCardItem>
       <VCardText cols="12" sm="12" md="6" lg="3" xl="3">
-        <v-col cols="8" class="d-flex text-left align-items-star mx-auto" style="gap: 12px; align-items: center;">
+        <v-col cols="8" class="d-flex text-left align-items-star mx-auto" style="gap: 12px; align-items: center; flex-wrap: wrap;">
           <v-btn color="primary" @click="dialog = true" >
             <span class="d-none d-sm-inline">Ver</span>
             <span class="d-inline d-sm-none">Ver</span>
@@ -67,6 +67,13 @@ fetchData();
           <span class="d-none d-sm-inline">Acepto términos y condiciones</span>
           <span class="d-inline d-sm-none">Acepto T. y C.</span>
           <VCheckboxBtn @change="changeAllTheRest" value="allTheRest"></VCheckboxBtn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn color="secondary" variant="text" v-if="store.responseData && store.responseData.value && !(store.termsAccepted && store.termsAccepted.value)" @click="store.editPersonalMode.value = true">
+            Corregir datos personales
+          </v-btn>
+
           <v-dialog v-model="dialog" max-width="900px" class="mx-12">
             <v-card>
               <v-card-title class="text-right">
