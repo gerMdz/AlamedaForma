@@ -71,6 +71,25 @@ class AvanceFormaPublicController extends AbstractController
     ) {}
 
     /**
+     * Consulta si la persona ya avanzó en Formación (identifier = "F").
+     */
+    #[Route('/avance-f-estado/{personalId}', name: 'api_forma_avance_f_estado', methods: ['GET'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function avanceFEstado(string $personalId): JsonResponse
+    {
+        $persona = $this->personalesRepo->find($personalId);
+        if (!$persona) {
+            return new JsonResponse(['error' => 'Persona no encontrada'], 404);
+        }
+        $formF = $this->formRepo->findOneBy(['identifier' => 'F'], ['activoDesde' => 'DESC']);
+        if (!$formF) {
+            return new JsonResponse(['hasAvanceF' => false], 200);
+        }
+        $existing = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formF]);
+        return new JsonResponse(['hasAvanceF' => (bool)$existing], 200);
+    }
+
+    /**
      * Consulta si la persona ya aceptó los Términos (identifier = "T").
      */
     #[Route('/terminos-estado/{personalId}', name: 'api_forma_terminos_estado', methods: ['GET'])]

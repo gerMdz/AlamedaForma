@@ -4,12 +4,15 @@ import HelloForma from "./HelloForma.vue";
 import {store} from "../../assets/almacen";
 import FormPersonalidades from "./FormPersonalidades.vue";
 import Formation from "./Formation.vue";
+import CompletedFormation from "./CompletedFormation.vue";
 import Inicio from "./Inicio.vue";
 import axios from 'axios'
 
 const responseData = store.responseData
 const termsAccepted = store.termsAccepted
 const checking = ref(false)
+const checkingF = ref(false)
+const hasAvanceF = ref(false)
 
 async function checkTerms() {
   const personalId = responseData?.value?.id || responseData?.value?.ID || responseData?.value?.Id
@@ -32,15 +35,32 @@ async function checkTerms() {
   }
 }
 
+async function checkAvanceF() {
+  const personalId = responseData?.value?.id || responseData?.value?.ID || responseData?.value?.Id
+  if (!personalId) return
+  checkingF.value = true
+  try {
+    const res = await axios.get(`/api/forma/avance-f-estado/${encodeURIComponent(personalId)}`)
+    hasAvanceF.value = !!res?.data?.hasAvanceF
+  } catch (e) {
+    console.warn('No se pudo verificar avance F', e)
+    hasAvanceF.value = false
+  } finally {
+    checkingF.value = false
+  }
+}
+
 onMounted(() => {
   if (responseData?.value) {
     checkTerms()
+    checkAvanceF()
   }
 })
 
 watch(responseData, (val) => {
   if (val) {
     checkTerms()
+    checkAvanceF()
   }
 })
 </script>
@@ -57,8 +77,9 @@ watch(responseData, (val) => {
           <Inicio />
         </template>
         <template v-else>
-          <!-- Paso 3: Formulario de dones -->
-          <Formation/>
+          <!-- Paso 3: Si ya avanzó F, mostrar resumen; si no, mostrar formulario de dones -->
+          <CompletedFormation v-if="hasAvanceF" />
+          <Formation v-else />
         </template>
       </template>
     </v-container>
