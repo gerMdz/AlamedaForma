@@ -1,6 +1,9 @@
 <template>
   <div class="vue-app">
     <SaludoForma />
+    <div class="mt-2" v-if="store.responseData && store.responseData.value" style="width:100%; max-width:1280px; padding: 0 12px;">
+      <v-btn size="small" variant="text" color="secondary" @click="switchUser">Cambiar de persona</v-btn>
+    </div>
     <template v-if="loaded && hasActive">
       <!-- Si está en modo resultados, mostramos solo la pantalla de resultados (dentro de FormaContent) -->
       <template v-if="store.resultsMode && store.resultsMode.value">
@@ -43,6 +46,10 @@ const fetchEstado = async () => {
   } finally {
     loaded.value = true
   }
+}
+
+const switchUser = () => {
+  try { store.clearAll(); } catch(e) { /* noop */ }
 }
 
 onMounted(() => {

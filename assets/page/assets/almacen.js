@@ -38,5 +38,16 @@ export const store = {
         const v = !!val;
         this.resultsMode.value = v;
         try { localStorage.setItem('resultsMode', v ? 'true' : 'false'); } catch(e) { /* noop */ }
+    },
+    clearAll() {
+        try {
+            localStorage.removeItem('responseData');
+            localStorage.removeItem('termsAccepted');
+            localStorage.removeItem('resultsMode');
+        } catch(e) { /* noop */ }
+        this.responseData.value = null;
+        this.setTermsAccepted(false);
+        this.setResultsMode(false);
+        try { if (this.editPersonalMode) this.editPersonalMode.value = false; } catch(e) { /* noop */ }
     }
 };

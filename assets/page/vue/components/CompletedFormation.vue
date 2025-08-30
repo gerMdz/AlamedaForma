@@ -2,9 +2,13 @@
   <v-container class="mt-6">
     <v-row>
       <v-col cols="12">
-        <v-alert type="success" class="mb-4">
+        <v-alert type="success" class="mb-2">
           Ya registraste tus resultados de Formación. Aquí está tu resumen.
         </v-alert>
+        <div class="text-right mb-4">
+          <v-btn size="small" variant="text" color="secondary"
+                 @click="switchUser">Completar nuevo test</v-btn>
+        </div>
       </v-col>
     </v-row>
     <SavedResults v-if="savedData" :data="savedData" />
@@ -35,6 +39,10 @@ async function loadLatest() {
     console.warn('No se pudieron cargar los últimos resultados de formación', e)
     savedData.value = { person, formations: [] }
   }
+}
+
+const switchUser = () => {
+  try { store.clearAll(); } catch(e) { /* noop */ }
 }
 
 onMounted(() => {
