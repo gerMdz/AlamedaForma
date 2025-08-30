@@ -1,7 +1,9 @@
 <template>
   <v-container fluid class="personal-container">
     <h1 class="text-center mt-10">Te damos la bienvenida a F.O.R.M.A.</h1>
-    <h3 class="text-center mt-2">Te pedimos que completes tus datos para iniciar con el test</h3>
+    <!-- Instrucciones visibles justo antes del formulario de datos personales -->
+    <InstructionsInline />
+
     <VForm @submit.prevent="submit">
       <v-row>
         <v-col cols="12">
@@ -124,6 +126,7 @@ import {email as emailValidator, required} from '@vuelidate/validators'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import {store}  from "../../assets/almacen";
+import InstructionsInline from './InstructionsInline.vue'
 
 
 const  nombre= ref('');
