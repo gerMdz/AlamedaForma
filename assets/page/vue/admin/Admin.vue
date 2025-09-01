@@ -9,6 +9,9 @@
     <template v-else-if="isInstructionsEditRoute">
       <InstruccionesEditar :id="instructionId" />
     </template>
+    <template v-else-if="isDetalleOrientacionRoute">
+      <DetalleOrientacion />
+    </template>
     <template v-else>
       <h1 class="title">Panel de Administración</h1>
       <p class="subtitle">Acceso a las distintas configuraciones</p>
@@ -41,6 +44,13 @@
             <p>Crear, editar y deshabilitar formularios habilitados (FormularioHabilitacion)</p>
           </div>
         </a>
+
+        <a class="card" href="/admin#detalle-orientacion">
+          <div class="card-body">
+            <h2>Detalle de Orientación</h2>
+            <p>Administrar DetalleOrientacion (DetalleOrientacionController)</p>
+          </div>
+        </a>
       </div>
     </template>
   </div>
@@ -51,6 +61,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import FormulariosHabilitacion from './FormulariosHabilitacion.vue'
 import Instrucciones from './Instrucciones.vue'
 import InstruccionesEditar from './InstruccionesEditar.vue'
+import DetalleOrientacion from './DetalleOrientacion.vue'
 
 const currentHash = ref(typeof window !== 'undefined' ? window.location.hash : '')
 
@@ -73,6 +84,7 @@ onBeforeUnmount(() => {
 const isFHRoute = computed(() => currentHash.value === '#formularios-habilitacion')
 const isInstructionsRoute = computed(() => currentHash.value === '#instrucciones')
 const isInstructionsEditRoute = computed(() => currentHash.value.startsWith('#instrucciones-editar:'))
+const isDetalleOrientacionRoute = computed(() => currentHash.value === '#detalle-orientacion')
 const instructionId = computed(() => {
   if (!isInstructionsEditRoute.value) return ''
   return currentHash.value.split(':')[1] || ''
