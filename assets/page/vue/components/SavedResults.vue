@@ -102,6 +102,31 @@
         </v-card>
       </v-col>
     </v-row>
+      <v-row class="mt-6">
+      <v-col cols="12">
+        <v-card>
+          <v-tabs v-model="tab" bg-color="primary" dark>
+            <v-tab value="results">Resultados F (Formación)</v-tab>
+            <v-tab value="orientacion" :disabled="!canOpenOrientacion">O (Orientación)</v-tab>
+          </v-tabs>
+          <v-card-text>
+            <v-window v-model="tab">
+              <v-window-item value="results">
+                <!-- existing content is above in this file; kept as main summary -->
+                <!-- Intentionally blank: results are the cards already shown -->
+                <div class="text-body-2 text-disabled">Arriba se muestran tus resultados de Formación.</div>
+              </v-window-item>
+              <v-window-item value="orientacion">
+                <Orientacion v-if="canOpenOrientacion" :email="person?.email" :phone="person?.phone" />
+                <v-alert v-else type="info" class="mt-2">
+                  Para completar Orientación primero debes terminar Formación.
+                </v-alert>
+              </v-window-item>
+            </v-window>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -109,6 +134,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { defineProps } from 'vue'
 import axios from 'axios'
+import Orientacion from './Orientacion.vue'
 
 const props = defineProps({
   data: { type: Object, default: () => ({}) }
@@ -116,6 +142,13 @@ const props = defineProps({
 
 const person = computed(() => props.data?.person || {})
 const formations = computed(() => props.data?.formations || [])
+
+// Gate: allow opening O (Orientación) only if user finished F (Formación)
+const hasCompletedFormation = computed(() => Array.isArray(formations.value) && formations.value.length >= 3)
+const canOpenOrientacion = computed(() => hasCompletedFormation.value)
+
+// Tabs state
+const tab = ref('results')
 
 // Estado (legacy) de tooltips – desactivados; usamos diálogos
 const openedTooltips = ref({})

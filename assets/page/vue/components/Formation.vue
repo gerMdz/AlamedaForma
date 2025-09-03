@@ -60,7 +60,7 @@ const lastFiveMissing = computed(() => {
   const all = [...items.value, ...items2.value, ...items3.value, ...items4.value];
   const missing = all.filter(q => q && q.selected === undefined);
   // sort by orden ascending to be clear and pick first 5
-  missing.sort((a,b) => (a.orden||0) - (b.orden||0));
+  missing.sort((a, b) => (a.orden || 0) - (b.orden || 0));
   return missing.slice(0, 5);
 });
 
@@ -128,7 +128,7 @@ const checkComplete = (() => {
     nextTick(() => {
       const el = resultsSectionRef.value || document.getElementById('results-section');
       if (el && el.scrollIntoView) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.scrollIntoView({behavior: 'smooth', block: 'start'});
       }
     });
   }
@@ -222,7 +222,29 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid class="fill-height" style="max-width: 1280px; margin: 0 auto;">
+
+    <div class="intro">
+      <h1 class="title text-center">[F]ormación espiritual</h1>
+      <p class="text-left mb-2"> Empezamos con la Formación Espiritual, que te ayudará y orientará para conocerte un poco mejor
+        y saber cuales
+        son tus preferencias espirituales con las que más te identificas.<br/>
+        <b>Lee las siguientes 72 declaraciones, la cuales están agrupadas en 4 grupos de 18 preguntas cada uno. Califica
+          cada
+          pregunta seleccionando cualquiera de las siguientes opciones:</b>
+      </p>
+      <ul class="subtitle text-left mt-1 mb-2" style="list-style: none; padding-left: 0; margin-left: 0;">
+        <li>0 – Casi nunca</li>
+        <li>1 – Un poco</li>
+        <li>2 – Moderadamente</li>
+        <li>3 – Considerablemente</li>
+        <li>4 – Mucho</li>
+      </ul>
+
+      <p class="text-left mt-1">
+        Toma en cuenta que Muy Poco no es "malo" y Mucho no es "bueno" precisamente.
+      </p>
+    </div>
     <v-expansion-panels class="my-1" variant="accordion">
       <v-expansion-panel title="Preguntas 1 - 18" class="bg-primary my-1">
         <v-expansion-panel-text>
@@ -422,33 +444,33 @@ onMounted(async () => {
 
       </v-col>
     </v-row>
-<!--    <v-row>-->
-<!--      <v-col cols="12" sm="6" md="4" v-for="don in orderedDones.slice(0, 3)" :key="don.id">-->
-<!--        <v-card class="mx-auto my-12 bg-light-blue-accent-3 d-flex-->
-<!--                flex-column justify-space-between"-->
-<!--                max-width="374"-->
-<!--        >-->
-<!--          <v-card-item class="bg-blue-accent-3">-->
-<!--            <v-card-title>{{ don.name }}</v-card-title>-->
-<!--          </v-card-item>-->
-<!--          <div class="d-flex flex-column align-center">-->
-<!--            <v-card-text>-->
-<!--              {{ don.description }}-->
-<!--            </v-card-text>-->
-<!--          </div>-->
+    <!--    <v-row>-->
+    <!--      <v-col cols="12" sm="6" md="4" v-for="don in orderedDones.slice(0, 3)" :key="don.id">-->
+    <!--        <v-card class="mx-auto my-12 bg-light-blue-accent-3 d-flex-->
+    <!--                flex-column justify-space-between"-->
+    <!--                max-width="374"-->
+    <!--        >-->
+    <!--          <v-card-item class="bg-blue-accent-3">-->
+    <!--            <v-card-title>{{ don.name }}</v-card-title>-->
+    <!--          </v-card-item>-->
+    <!--          <div class="d-flex flex-column align-center">-->
+    <!--            <v-card-text>-->
+    <!--              {{ don.description }}-->
+    <!--            </v-card-text>-->
+    <!--          </div>-->
 
-<!--          <div class="d-flex justify-center align-center mb-0 bg-blue-accent-3">-->
-<!--            <v-chip-group v-model="selection">-->
-<!--              {{ getComputedValue(don.identifier) }} %-->
-<!--            </v-chip-group>-->
-<!--          </div>-->
-<!--          <v-btn outlined color="primary" @click="openDialog(don)">-->
-<!--            <v-icon small class="mr-1">$info</v-icon>-->
-<!--            Ver descripción del don-->
-<!--          </v-btn>-->
-<!--        </v-card>-->
-<!--      </v-col>-->
-<!--    </v-row>-->
+    <!--          <div class="d-flex justify-center align-center mb-0 bg-blue-accent-3">-->
+    <!--            <v-chip-group v-model="selection">-->
+    <!--              {{ getComputedValue(don.identifier) }} %-->
+    <!--            </v-chip-group>-->
+    <!--          </div>-->
+    <!--          <v-btn outlined color="primary" @click="openDialog(don)">-->
+    <!--            <v-icon small class="mr-1">$info</v-icon>-->
+    <!--            Ver descripción del don-->
+    <!--          </v-btn>-->
+    <!--        </v-card>-->
+    <!--      </v-col>-->
+    <!--    </v-row>-->
 
     <v-row v-if="!isAllPanelsComplete">
 

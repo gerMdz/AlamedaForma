@@ -2,11 +2,22 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
 use App\Repository\DetalleOrientacionRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(uriTemplate: '/detalle-orientacion'),
+        new Get(uriTemplate: '/detalle-orientacion/{id}')
+    ],
+    normalizationContext: ['groups' => ['do:read']]
+)]
 #[ORM\Entity(repositoryClass: DetalleOrientacionRepository::class)]
 class DetalleOrientacion
 {
@@ -14,18 +25,22 @@ class DetalleOrientacion
     #[ORM\Column(type: 'custom_uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Groups(['do:read'])]
     private ?Uuid $id = null;
 
     #[ORM\Column]
+    #[Groups(['do:read'])]
     private ?int $orden = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['do:read'])]
     private ?string $descripcion = null;
 
     #[ORM\Column(length: 255, unique: true)]
     private ?string $identifier = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['do:read'])]
     private ?DateTimeImmutable $deletedAt = null;
 
     public function __construct()
