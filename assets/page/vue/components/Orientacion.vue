@@ -170,11 +170,11 @@ const save = async () => {
 
       <v-row v-else>
         <v-col v-for="d in detalles" :key="d.id" cols="12" sm="6" md="4">
-          <v-checkbox :label="d.descripcion"
-                      :value="d.id"
-                      :model-value="selected.includes(d.id)"
-                      @update:modelValue="() => toggleSelect(d.id)"
-                      :disabled="!selected.includes(d.id) && !canSelectMore"
+          <v-checkbox
+            :label="d.descripcion"
+            :value="d.id"
+            v-model="selected"
+            :disabled="!selected.includes(d.id) && !canSelectMore"
           />
         </v-col>
       </v-row>
