@@ -1,9 +1,11 @@
 <script setup>
 import {ref, onMounted, computed} from 'vue'
 import axios from "../../../vendor/axios/axios.index";
+const emit = defineEmits(['saved'])
 
 // Props with identity to fetch exact same persona as SavedResults
 const props = defineProps({
+  personaId: { type: String, default: '' },
   email: { type: String, default: '' },
   phone: { type: String, default: '' }
 })
@@ -38,7 +40,21 @@ const toggleSelect = (id) => {
 }
 
 const fetchPersonaActiva = async () => {
-  // Query the backend with email+phone to ensure we fetch the same active person
+  // Prefer exact ID if provided by parent component
+  if (props.personaId) {
+    try {
+      const res = await axios.get(`api/personales/${props.personaId}`)
+      if (res?.data) {
+        persona.value = res.data
+        return
+      }
+    } catch (e) {
+      // If item endpoint fails, at least set a minimal persona with the given id
+      persona.value = { id: props.personaId, email: props.email || null, phone: props.phone || null }
+      return
+    }
+  }
+  // Fallback: try to resolve by email+phone
   const params = {}
   if (props.email && props.phone) {
     params.email = props.email
@@ -125,6 +141,22 @@ const save = async () => {
     await Promise.all(posts)
 
     successMsg.value = 'Resultados guardados correctamente.'
+
+    // Emitir evento al padre con un resumen para ocultar el formulario y mostrar los datos guardados
+    const summary = {
+      action_1: action_1.value || null,
+      action_2: action_2.value || null,
+      action_3: action_3.value || null,
+      trabajar: trabajar.value || null,
+      resolver: resolver.value || null,
+      selectedIds: [...selected.value],
+      selectedLabels: detalles.value
+        .filter(d => selected.value.includes(d.id))
+        .map(d => d.descripcion),
+      personalOrientacionId: po.id,
+      personaId: persona.value?.id || null,
+    }
+    emit('saved', summary)
   } catch (e) {
     console.error(e)
     // backend enforces max 3 y constraints

@@ -5,6 +5,7 @@ namespace App\Entity;
 use AllowDynamicProperties;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
 use App\Repository\InicioRepository;
 use App\Repository\PersonalesRepository;
 use App\State\InicioStateProvider;
@@ -20,9 +21,12 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new GetCollection(
             uriTemplate: '/personales',
+            provider: PersonalStateProvider::class
+        ),
+        new Get(
+            uriTemplate: '/personales/{id}'
         )
-    ],
-    provider: PersonalStateProvider::class
+    ]
 )]
 #[AllowDynamicProperties]
 #[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_personales_email_phone', columns: ['email','phone'])])]
