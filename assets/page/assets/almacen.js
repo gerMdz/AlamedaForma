@@ -6,6 +6,10 @@ export const store = {
     termsAccepted: ref(false),
     resultsMode: ref(false),
     editPersonalMode: ref(false),
+    // Flags de habilitación por identificador
+    hasT: ref(false),
+    hasF: ref(false),
+    hasO: ref(false),
     hydrate() {
         try {
             const ta = localStorage.getItem('termsAccepted');
@@ -38,6 +42,12 @@ export const store = {
         const v = !!val;
         this.resultsMode.value = v;
         try { localStorage.setItem('resultsMode', v ? 'true' : 'false'); } catch(e) { /* noop */ }
+    },
+    setHabilitacionFlags(flags) {
+        const f = flags || {};
+        this.hasT.value = !!(f.T || f.t);
+        this.hasF.value = !!(f.F || f.f);
+        this.hasO.value = !!(f.O || f.o);
     },
     clearAll() {
         try {

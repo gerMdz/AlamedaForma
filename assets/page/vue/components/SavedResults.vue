@@ -22,7 +22,7 @@
         <v-card>
           <v-tabs v-model="tab" class="better-tabs" bg-color="transparent" grow>
             <v-tab value="results" prepend-icon="mdi-school">Resultados F (Formación)</v-tab>
-            <v-tab value="orientacion" :disabled="!canOpenOrientacion" prepend-icon="mdi-compass-outline">O (Orientación)</v-tab>
+            <v-tab v-if="store.hasO && store.hasO.value" value="orientacion" :disabled="!canOpenOrientacion" prepend-icon="mdi-compass-outline">O (Orientación)</v-tab>
           </v-tabs>
           <v-card-text>
             <v-window v-model="tab">
@@ -115,7 +115,7 @@
                   </v-col>
                 </v-row>
               </v-window-item>
-              <v-window-item value="orientacion">
+              <v-window-item v-if="store.hasO && store.hasO.value" value="orientacion">
                 <div v-if="orientacionSaved" class="mt-2">
                   <v-alert type="success" class="mb-4">Se guardaron tus datos de Orientación.</v-alert>
                   <v-card title="Tu Orientación guardada">
@@ -173,6 +173,7 @@ import { computed, ref, onMounted } from 'vue'
 import { defineProps } from 'vue'
 import axios from 'axios'
 import Orientacion from './Orientacion.vue'
+import { store } from '../../assets/almacen'
 
 const props = defineProps({
   data: { type: Object, default: () => ({}) }

@@ -38,6 +38,12 @@ async function checkTerms() {
 }
 
 async function checkAvanceF() {
+  // Solo aplica si F está habilitado
+  if (!(store.hasF && store.hasF.value)) {
+    hasAvanceF.value = false
+    try { store.setResultsMode(false) } catch(_) {}
+    return
+  }
   const personalId = responseData?.value?.id || responseData?.value?.ID || responseData?.value?.Id
   if (!personalId) return
   checkingF.value = true
@@ -76,7 +82,7 @@ watch(responseData, (val) => {
 
 <template>
   <v-container fluid class="fill-height">
-    <template v-if="resultsMode || hasAvanceF">
+    <template v-if="(resultsMode || hasAvanceF) && (store.hasF && store.hasF.value)">
       <!-- Resultados reemplazan a las otras pantallas -->
       <CompletedFormation />
     </template>
@@ -90,8 +96,8 @@ watch(responseData, (val) => {
             <Inicio />
           </template>
           <template v-else>
-            <!-- Paso 3: Formulario de dones -->
-            <Formation />
+            <!-- Paso 3: Formulario de dones (solo si F está habilitado) -->
+            <Formation v-if="store.hasF && store.hasF.value" />
           </template>
         </template>
       </v-container>

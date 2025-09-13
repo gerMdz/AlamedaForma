@@ -30,16 +30,28 @@ class FormularioHabilitacionController extends AbstractController
         $serialized = array_map(function (FormularioHabilitacion $f) {
             return [
                 'id' => $f->getId(),
+                'identifier' => $f->getIdentifier(),
                 'nombreFormulario' => $f->getNombreFormulario(),
                 'activoDesde' => $f->getActivoDesde()?->format(DATE_ATOM),
                 'activoHasta' => $f->getActivoHasta()?->format(DATE_ATOM),
             ];
         }, $items);
 
+        // Flags por identificador
+        $identifiers = array_map(static fn($x) => strtoupper((string)($x['identifier'] ?? '')), $serialized);
+        $hasT = in_array('T', $identifiers, true);
+        $hasF = in_array('F', $identifiers, true);
+        $hasO = in_array('O', $identifiers, true);
+
         return new JsonResponse([
             'hasActive' => count($items) > 0,
             'count' => count($items),
             'items' => $serialized,
+            'flags' => [
+                'T' => $hasT,
+                'F' => $hasF,
+                'O' => $hasO,
+            ],
         ]);
     }
 
@@ -57,6 +69,7 @@ class FormularioHabilitacionController extends AbstractController
         $serialized = array_map(function (FormularioHabilitacion $f) {
             return [
                 'id' => $f->getId(),
+                'identifier' => $f->getIdentifier(),
                 'nombreFormulario' => $f->getNombreFormulario(),
                 'activoDesde' => $f->getActivoDesde()?->format(DATE_ATOM),
                 'activoHasta' => $f->getActivoHasta()?->format(DATE_ATOM),

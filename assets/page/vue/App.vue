@@ -41,9 +41,11 @@ const fetchEstado = async () => {
   try {
     const res = await axios.get('/api/formularios-habilitacion/activo')
     hasActive.value = !!res.data?.hasActive
+    try { store.setHabilitacionFlags(res?.data?.flags || {}); } catch(_) { /* noop */ }
   } catch (e) {
     console.error('Error consultando formularios habilitados', e)
     hasActive.value = false
+    try { store.setHabilitacionFlags({ T:false, F:false, O:false }); } catch(_) { /* noop */ }
   } finally {
     loaded.value = true
   }
