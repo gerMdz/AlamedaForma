@@ -1,13 +1,14 @@
 <script setup>
 import {ref, onMounted, computed} from 'vue'
 import axios from "../../../vendor/axios/axios.index";
+
 const emit = defineEmits(['saved'])
 
 // Props with identity to fetch exact same persona as SavedResults
 const props = defineProps({
-  personaId: { type: String, default: '' },
-  email: { type: String, default: '' },
-  phone: { type: String, default: '' }
+  personaId: {type: String, default: ''},
+  email: {type: String, default: ''},
+  phone: {type: String, default: ''}
 })
 
 // Active person (as per project pattern, usually the last created or selected one)
@@ -23,6 +24,90 @@ const action_2 = ref('')
 const action_3 = ref('')
 const trabajar = ref('')
 const resolver = ref('')
+
+// Sugerencias para el campo "trabajar"
+const suggestionsDialog = ref(false)
+const suggestions = [
+  'Bebés/Niños pequeños',
+  'Mujeres',
+  'Niños pequeños',
+  'Hombres',
+  'Niños en edad preescolar',
+  'Solteros',
+  'Niños de primaria',
+  'Padres o madres solteros',
+  'Alumnos de secundaria',
+  'Familias',
+  'Parejas',
+  'Universitarios y jóvenes profesionales',
+  'Adultos mayores 60+',
+  'Matrimonios jóvenes',
+  'Otro'
+]
+
+function addSuggestion(s) {
+  const current = (trabajar.value || '').trim()
+  if (!current) {
+    trabajar.value = s
+    return
+  }
+  const parts = current.split(',').map(t => t.trim()).filter(Boolean)
+  if (!parts.includes(s)) {
+    trabajar.value = current + ', ' + s
+  }
+}
+
+// Sugerencias para el campo "resolver"
+const resolverSuggestionsDialog = ref(false)
+const resolverSuggestions = [
+  'Crianza',
+  'Evangelismo',
+  'Familias/Matrimonio',
+  'Evangelización',
+  'Misiones',
+  'Niños en situación de riesgo',
+  'Comunión',
+  'Abuso/Violencia',
+  'Movilización de personas para el ministerio',
+  'Administración financiera',
+  'Adoración',
+  'Recuperación tras el divorcio',
+  'Política',
+  'Discapacidades y/o apoyo',
+  'Cuestiones raciales',
+  'Sordera',
+  'Negocios y economía',
+  'Ceguera',
+  'Esfuerzos de ayuda humanitaria',
+  'Ley y/o sistema de justicia',
+  'Ética',
+  'Santidad de la vida',
+  'Salud y/o condición física',
+  'Personas sin hogar',
+  'Ciencia y/o tecnología',
+  'Recuperación de adicciones a drogas y alcohol',
+  'Medio ambiente',
+  'Recuperación de comportamientos compulsivos',
+  'Asuntos internacionales y globales',
+  'Enfermedad y/o lesiones',
+  'Problemas municipales, provinciales o del país ',
+  'Sexualidad y/o cuestiones de género',
+  'Problemas de la comunidad/vecindario',
+  'Educación',
+  'Otro'
+]
+
+function addResolverSuggestion(s) {
+  const current = (resolver.value || '').trim()
+  if (!current) {
+    resolver.value = s
+    return
+  }
+  const parts = current.split(',').map(t => t.trim()).filter(Boolean)
+  if (!parts.includes(s)) {
+    resolver.value = current + ', ' + s
+  }
+}
 
 // DetalleOrientacion list and selection (max 3)
 const detalles = ref([])
@@ -50,7 +135,7 @@ const fetchPersonaActiva = async () => {
       }
     } catch (e) {
       // If item endpoint fails, at least set a minimal persona with the given id
-      persona.value = { id: props.personaId, email: props.email || null, phone: props.phone || null }
+      persona.value = {id: props.personaId, email: props.email || null, phone: props.phone || null}
       return
     }
   }
@@ -60,7 +145,7 @@ const fetchPersonaActiva = async () => {
     params.email = props.email
     params.phone = props.phone
   }
-  const res = await axios.get('api/personales', { params })
+  const res = await axios.get('api/personales', {params})
   const list = res?.data?.member || []
   if (list.length > 0) {
     persona.value = list[0]
@@ -76,14 +161,14 @@ const fetchDetalles = async () => {
     const list = res?.data?.member || []
     // filter activos => deletedAt == null
     detalles.value = list.filter(d => !d.deletedAt)
-      .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+        .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
   } catch (e) {
     // fallback: try a custom endpoint name if configured differently
     try {
       const res2 = await axios.get('api/detalle-orientaciones')
       const list2 = res2?.data?.member || []
       detalles.value = list2.filter(d => !d.deletedAt)
-        .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+          .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
     } catch (err) {
       console.error(err)
       errorMsg.value = 'No fue posible cargar las opciones de orientación.'
@@ -151,8 +236,8 @@ const save = async () => {
       resolver: resolver.value || null,
       selectedIds: [...selected.value],
       selectedLabels: detalles.value
-        .filter(d => selected.value.includes(d.id))
-        .map(d => d.descripcion),
+          .filter(d => selected.value.includes(d.id))
+          .map(d => d.descripcion),
       personalOrientacionId: po.id,
       personaId: persona.value?.id || null,
     }
@@ -179,16 +264,77 @@ const save = async () => {
     </div>
 
     <div class="mb-6">
-      <p class="font-weight-medium mb-2">Tres cosas que me encanta hacer que traen alegría y satisfacción a mi vida:</p>
-      <v-textarea v-model="action_1" auto-grow rows="2" variant="outlined" class="mb-3" label="Acción 1" />
-      <v-textarea v-model="action_2" auto-grow rows="2" variant="outlined" class="mb-3" label="Acción 2" />
-      <v-textarea v-model="action_3" auto-grow rows="2" variant="outlined" class="mb-3" label="Acción 3" />
-
+      <p class="font-weight-medium mb-2">Si yo supiera que no podría fallar, yo trataría de hacer con mi vida lo
+        siguiente para Dios:</p>
+      <v-textarea v-model="action_1" auto-grow rows="2" variant="outlined" class="mb-3" label="Mis acciones"/>
+      <!--      <v-textarea v-model="action_2" auto-grow rows="2" variant="outlined" class="mb-3" label="Acción 2" />-->
+      <!--      <v-textarea v-model="action_3" auto-grow rows="2" variant="outlined" class="mb-3" label="Acción 3" />-->
+      <p class="font-weight-medium mb-2">
+        Con quien me gusta trabajar mas (edad y tipo de personas):
+        <v-tooltip text="Sugerencias" location="top">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" icon="mdi-help-circle" variant="text" size="small" class="ml-2" @click="suggestionsDialog = true"></v-btn>
+          </template>
+        </v-tooltip>
+      </p>
       <v-textarea v-model="trabajar" auto-grow rows="2" variant="outlined" class="mb-3"
-                  label="Con quién me gusta más trabajar, y la edad o el tipo de personas" />
+                  label="Con quién me gusta más trabajar, y la edad o el tipo de personas"/>
 
+      <v-dialog v-model="suggestionsDialog" max-width="600">
+        <v-card>
+          <v-card-title>Sugerencias de respuestas</v-card-title>
+          <v-card-text>
+            <p>Selecciona una o varias opciones que describan con quién te gusta trabajar. Se añadirán al campo.</p>
+            <div class="d-flex flex-wrap">
+              <v-chip
+                v-for="s in suggestions"
+                :key="s"
+                class="ma-1"
+                variant="outlined"
+                @click="addSuggestion(s)"
+              >{{ s }}</v-chip>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text="Cerrar" @click="suggestionsDialog = false"></v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <p class="font-weight-medium mb-2">
+        Asuntos de la iglesia, ministerios o necesidades que más me entusiasman o
+        conciernen:
+        <v-tooltip text="Sugerencias" location="top">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" icon="mdi-help-circle" variant="text" size="small" class="ml-2" @click="resolverSuggestionsDialog = true"></v-btn>
+          </template>
+        </v-tooltip>
+      </p>
       <v-textarea v-model="resolver" auto-grow rows="2" variant="outlined" class="mb-3"
-                  label="Problemas, ministerios o posibles necesidades de la Iglesia que me apasiona resolver o me preocupan" />
+                  label="Problemas, ministerios o posibles necesidades de la Iglesia que me apasiona resolver o me preocupan"/>
+
+      <v-dialog v-model="resolverSuggestionsDialog" max-width="700">
+        <v-card>
+          <v-card-title>Sugerencias de temas</v-card-title>
+          <v-card-text>
+            <p>Selecciona una o varias opciones que describan los asuntos, ministerios o necesidades que más te entusiasman o te preocupan. Se añadirán al campo.</p>
+            <div class="d-flex flex-wrap">
+              <v-chip
+                v-for="s in resolverSuggestions"
+                :key="s"
+                class="ma-1"
+                variant="outlined"
+                @click="addResolverSuggestion(s)"
+              >{{ s }}</v-chip>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text="Cerrar" @click="resolverSuggestionsDialog = false"></v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
 
     <div class="mb-4">
@@ -198,15 +344,15 @@ const save = async () => {
       <v-alert v-if="errorMsg" type="error" class="my-2">{{ errorMsg }}</v-alert>
       <v-alert v-if="successMsg" type="success" class="my-2">{{ successMsg }}</v-alert>
 
-      <v-skeleton-loader v-if="loading" type="list-item@6" class="my-3" />
+      <v-skeleton-loader v-if="loading" type="list-item@6" class="my-3"/>
 
       <v-row v-else>
         <v-col v-for="d in detalles" :key="d.id" cols="12" sm="6" md="4">
           <v-checkbox
-            :label="d.descripcion"
-            :value="d.id"
-            v-model="selected"
-            :disabled="!selected.includes(d.id) && !canSelectMore"
+              :label="d.descripcion"
+              :value="d.id"
+              v-model="selected"
+              :disabled="!selected.includes(d.id) && !canSelectMore"
           />
         </v-col>
       </v-row>
@@ -221,5 +367,7 @@ const save = async () => {
 </template>
 
 <style scoped>
-.caption { color: #666; }
+.caption {
+  color: #666;
+}
 </style>

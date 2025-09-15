@@ -122,7 +122,7 @@
                     <v-card-text>
                       <v-row v-if="orientacionSummary">
                         <v-col v-if="orientacionSummary?.action_1" cols="12" md="4">
-                          <strong>Acción 1:</strong>
+                          <strong>Mis acciones:</strong>
                           <div v-html="formatParagraphs(orientacionSummary.action_1)"></div>
                         </v-col>
                         <v-col v-if="orientacionSummary?.action_2" cols="12" md="4">
