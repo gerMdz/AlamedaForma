@@ -17,12 +17,14 @@
         </v-card>
       </v-col>
     </v-row>
-      <v-row class="mt-6">
+    <v-row class="mt-6">
       <v-col cols="12">
         <v-card>
           <v-tabs v-model="tab" class="better-tabs" bg-color="transparent" grow>
             <v-tab value="results" prepend-icon="mdi-school">Resultados F (Formación)</v-tab>
-            <v-tab v-if="store.hasO && store.hasO.value" value="orientacion" :disabled="!canOpenOrientacion" prepend-icon="mdi-compass-outline">O (Orientación)</v-tab>
+            <v-tab v-if="store.hasO && store.hasO.value" value="orientacion" :disabled="!canOpenOrientacion"
+                   prepend-icon="mdi-compass-outline">O (Orientación)
+            </v-tab>
           </v-tabs>
           <v-card-text>
             <v-window v-model="tab">
@@ -36,34 +38,35 @@
                             <div class="d-flex align-center" style="gap: 6px;">
                               <strong>Don:</strong>
                               <span>{{ getDonName(pf) }}</span>
-                              <v-tooltip v-if="false" location="top" open-delay="200" :offset="[0,8]" v-model:opened="openedTooltips[idx]" close-on-content-click="false" eager>
+                              <v-tooltip v-if="false" location="top" open-delay="200" :offset="[0,8]"
+                                         v-model:opened="openedTooltips[idx]" close-on-content-click="false" eager>
                                 <template #activator="{ props: tip }">
                                   <span class="d-flex align-center" style="gap: 4px;">
                                     <span
-                                      v-bind="tip"
-                                      class="text-primary don-name-activator"
-                                      role="button"
-                                      tabindex="0"
-                                      :aria-label="`Ver descripción de ${getDonName(pf)}`"
-                                      :aria-expanded="!!openedTooltips[idx]"
-                                      @touchstart.prevent.stop="toggleTooltip(idx)"
-                                      @click="toggleTooltip(idx)"
-                                      @keydown.enter.prevent="toggleTooltip(idx)"
-                                      @keydown.space.prevent="toggleTooltip(idx)"
+                                        v-bind="tip"
+                                        class="text-primary don-name-activator"
+                                        role="button"
+                                        tabindex="0"
+                                        :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                                        :aria-expanded="!!openedTooltips[idx]"
+                                        @touchstart.prevent.stop="toggleTooltip(idx)"
+                                        @click="toggleTooltip(idx)"
+                                        @keydown.enter.prevent="toggleTooltip(idx)"
+                                        @keydown.space.prevent="toggleTooltip(idx)"
                                     >
                                       {{ getDonName(pf) }}
                                     </span>
                                     <v-btn
-                                      v-bind="tip"
-                                      icon="mdi-information-outline"
-                                      size="x-small"
-                                      variant="text"
-                                      density="comfortable"
-                                      class="don-info-icon"
-                                      :aria-label="`Ver descripción de ${getDonName(pf)}`"
-                                      :aria-expanded="!!openedTooltips[idx]"
-                                      @touchstart.prevent.stop="toggleTooltip(idx)"
-                                      @click.stop.prevent="toggleTooltip(idx)"
+                                        v-bind="tip"
+                                        icon="mdi-information-outline"
+                                        size="x-small"
+                                        variant="text"
+                                        density="comfortable"
+                                        class="don-info-icon"
+                                        :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                                        :aria-expanded="!!openedTooltips[idx]"
+                                        @touchstart.prevent.stop="toggleTooltip(idx)"
+                                        @click.stop.prevent="toggleTooltip(idx)"
                                     />
                                   </span>
                                 </template>
@@ -78,15 +81,15 @@
                               </v-tooltip>
                               <!-- Modal compacto para descripción del don -->
                               <v-btn
-                                icon="mdi-information-outline"
-                                size="x-small"
-                                variant="text"
-                                color="primary"
-                                density="comfortable"
-                                class="don-info-icon"
-                                :aria-label="`Ver descripción de ${getDonName(pf)}`"
-                                @touchstart.prevent.stop="openDialog(idx)"
-                                @click.stop.prevent="openDialog(idx)"
+                                  icon="mdi-information-outline"
+                                  size="x-small"
+                                  variant="text"
+                                  color="primary"
+                                  density="comfortable"
+                                  class="don-info-icon"
+                                  :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                                  @touchstart.prevent.stop="openDialog(idx)"
+                                  @click.stop.prevent="openDialog(idx)"
                               />
                               <v-dialog v-model="openedDialogs[idx]" max-width="420" :scrim="true">
                                 <v-card>
@@ -106,7 +109,9 @@
                             <div><strong>Porcentaje:</strong> {{ pf?.percentDon }} %</div>
                           </v-list-item-title>
                           <v-list-item-subtitle>
-                            <span v-if="pf?.commentDon && pf.commentDon.trim().length > 0"><strong>Comentario:</strong> {{ pf.commentDon }}</span>
+                            <span v-if="pf?.commentDon && pf.commentDon.trim().length > 0"><strong>Comentario:</strong> {{
+                                pf.commentDon
+                              }}</span>
                             <span v-else class="text-disabled">(Sin comentario)</span>
                           </v-list-item-subtitle>
                         </v-list-item>
@@ -155,7 +160,8 @@
                     </v-card-text>
                   </v-card>
                 </div>
-                <Orientacion v-else-if="canOpenOrientacion" :persona-id="person?.id" :email="person?.email" :phone="person?.phone" @saved="onOrientacionSaved" />
+                <Orientacion v-else-if="canOpenOrientacion" :persona-id="person?.id" :email="person?.email"
+                             :phone="person?.phone" @saved="onOrientacionSaved"/>
                 <v-alert v-else type="info" class="mt-2">
                   Para completar Orientación primero debes terminar Formación.
                 </v-alert>
@@ -169,14 +175,14 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
-import { defineProps } from 'vue'
+import {computed, ref, onMounted} from 'vue'
+import {defineProps} from 'vue'
 import axios from 'axios'
 import Orientacion from './Orientacion.vue'
-import { store } from '../../assets/almacen'
+import {store} from '../../assets/almacen'
 
 const props = defineProps({
-  data: { type: Object, default: () => ({}) }
+  data: {type: Object, default: () => ({})}
 })
 
 const person = computed(() => props.data?.person || {})
@@ -286,7 +292,7 @@ onMounted(async () => {
     const list = Array.isArray(res?.data?.member) ? res.data.member : []
     const map = {}
     for (const d of list) {
-      const info = { name: d?.name || d?.identifier || '', description: d?.description || '' }
+      const info = {name: d?.name || d?.identifier || '', description: d?.description || ''}
       // aceptar varias llaves para resolver
       if (d?.id != null) map[String(d.id)] = info
       if (d?.identifier) map[String(d.identifier)] = info
@@ -298,13 +304,15 @@ onMounted(async () => {
     console.warn('No se pudo cargar el catálogo de dones', e)
   }
 })
+
 // Formatea la descripción respetando saltos de línea y espacios básicos
 function escapeHtml(str) {
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
 }
+
 const formatDescription = (text) => {
   const safe = escapeHtml(text || '')
   // Convertir saltos de línea a <br> para mantener formato básico
@@ -349,11 +357,11 @@ async function loadDetalleOrientacionCatalog() {
     for (const d of list) {
       const id = d?.id != null ? String(d.id) : (d?.['@id'] ? String(d['@id']) : null)
       if (!id) continue
-      map[id] = { descripcion: d?.descripcion || '' }
+      map[id] = {descripcion: d?.descripcion || ''}
       // también aceptar la variante de solo UUID (cola) si vino como IRI
       if (d?.['@id']) {
         const tail = String(d['@id']).substring(String(d['@id']).lastIndexOf('/') + 1)
-        if (tail) map[tail] = { descripcion: d?.descripcion || '' }
+        if (tail) map[tail] = {descripcion: d?.descripcion || ''}
       }
     }
     doInfoMap.value = map
@@ -371,7 +379,7 @@ async function getPersonaId() {
   const phone = p?.phone
   if (email && phone) {
     try {
-      const res = await axios.get('api/personales', { params: { email, phone } })
+      const res = await axios.get('api/personales', {params: {email, phone}})
       const list = Array.isArray(res?.data?.member) ? res.data.member : []
       if (list.length > 0) return list[0]?.id || null
     } catch (e) {
@@ -386,7 +394,7 @@ async function tryLoadOrientacionSaved() {
     const personaId = await getPersonaId()
     if (!personaId) return
     // Intentar filtrar por persona; si el backend no filtra, de todos modos filtramos client-side
-    const res = await axios.get('api/personal-orientacion', { params: { persona: `/api/personales/${personaId}` } })
+    const res = await axios.get('api/personal-orientacion', {params: {persona: `/api/personales/${personaId}`}})
     const list = Array.isArray(res?.data?.member) ? res.data.member : []
     const samePersona = list.filter(po => {
       const rel = po?.persona
@@ -406,7 +414,7 @@ async function tryLoadOrientacionSaved() {
     // Cargar detalles
     let detRes
     try {
-      detRes = await axios.get('api/personal-orientacion-detalle', { params: { personalOrientacion: `/api/personal-orientacion/${po.id}` } })
+      detRes = await axios.get('api/personal-orientacion-detalle', {params: {personalOrientacion: `/api/personal-orientacion/${po.id}`}})
     } catch (e) {
       detRes = await axios.get('api/personal-orientacion-detalle')
     }
@@ -462,13 +470,16 @@ onMounted(async () => {
   cursor: help;
   text-decoration: underline dotted;
 }
+
 .don-tooltip-card {
   padding-right: 4px;
   z-index: 3000;
 }
+
 .don-info-icon :deep(.v-btn__content) {
   pointer-events: none; /* allow button wrapper to handle events uniformly */
 }
+
 .don-tooltip-card :deep(.v-card-text) {
   white-space: normal;
   line-height: 1.4;
@@ -480,27 +491,33 @@ onMounted(async () => {
   background-color: transparent;
   padding: 8px 8px 0;
 }
+
 .better-tabs :deep(.v-slide-group__content) {
   gap: 8px;
 }
+
 .better-tabs :deep(.v-tabs-slider) {
   display: none; /* hide the thin default slider to emphasize pill selection */
 }
+
 .better-tabs :deep(.v-tab) {
-  border: 1px solid rgba(0,0,0,0.12);
-  background-color: rgba(0,0,0,0.04);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: rgba(0, 0, 0, 0.04);
   border-radius: 999px;
   text-transform: none;
   font-weight: 600;
-  color: rgba(0,0,0,0.8);
+  font-size: 1.1rem; /* increase tab label size for better readability */
+  color: rgba(0, 0, 0, 0.8);
 }
+
 .better-tabs :deep(.v-tab:hover) {
-  background-color: rgba(0,0,0,0.06);
+  background-color: rgba(0, 0, 0, 0.06);
 }
+
 .better-tabs :deep(.v-tab.v-tab--selected) {
   background-color: #1976d2; /* primary fallback */
   color: white;
   border-color: transparent;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 </style>
