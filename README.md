@@ -47,3 +47,48 @@ Un agradecimiento especial a las siguientes herramientas y sus equipos de desarr
 ## Licencia
 
 Este proyecto está licenciado bajo la licencia (proporcionar detalles de la licencia).
+
+## Resolver error de git pull con package-lock.json
+
+Si en el servidor ves este error al hacer `git pull`:
+
+```
+error: No es posible hacer pull porque tienes archivos sin fusionar.
+ayuda: Corrígelos en el árbol de trabajo y entonces usa 'git add/rm <archivo>',
+ayuda: como sea apropiado, para marcar la resolución y realizar un commit.
+fatal: Saliendo porque existe un conflicto sin resolver.
+```
+
+Normalmente el conflicto está en `package-lock.json`. Aquí tienes varias soluciones, de la más simple a la más cuidadosa.
+
+1) Si NO tienes cambios locales que necesites conservar (servidor de solo despliegue)
+- Este método descarta todo lo local y deja la copia idéntica a `origin/main`.
+- Comandos:
+  - `git merge --abort` (si el merge está en curso)
+  - `git fetch origin`
+  - `git reset --hard origin/main`
+  - Opcional para borrar archivos no versionados: `git clean -fd`
+  - Instalar dependencias tal como están fijadas en el lockfile: `npm ci --omit=dev`
+
+2) Resolver el conflicto manteniendo la versión remota del lockfile
+- Útil si quieres terminar el merge sin descartar otros cambios locales, pero aceptando el `package-lock.json` del repositorio remoto.
+- Comandos (desde el estado de conflicto):
+  - `git checkout --theirs package-lock.json`
+  - `git add package-lock.json`
+  - `git commit -m "Resolve merge: keep remote package-lock.json"`
+  - `npm ci --omit=dev` (en servidores) o `npm ci` (en dev)
+
+3) Regenerar el lockfile desde package.json
+- Útil si quieres que el lockfile se reconstruya con tu versión de Node/npm.
+- Comandos:
+  - `git merge --abort` (si el merge está en curso)
+  - `rm -rf node_modules package-lock.json`
+  - `npm install`
+  - `git add package-lock.json`
+  - `git commit -m "Regenerate package-lock.json from package.json"`
+
+Buenas prácticas para evitar futuros conflictos con package-lock.json
+- En servidores de producción o staging: usa `npm ci --omit=dev` y evita ejecutar `npm install` para no modificar el lockfile.
+- Haz cambios de dependencias solo en tu entorno de desarrollo y sube ambos archivos: `package.json` y `package-lock.json`.
+- Evita hacer commits desde el servidor. Mantén el servidor como un espejo de la rama principal.
+- Si los conflictos con `package-lock.json` son frecuentes, considera instalar el merge driver de npm en tu entorno de desarrollo: `npx npm-merge-driver install --global` (requiere configuración local; no es obligatorio en el servidor).
