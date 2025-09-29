@@ -5,7 +5,6 @@
     "@fontsource/roboto-condensed": "^5.0.15",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@hotwired/stimulus": "^3.0.0",
-    "@mdi/font": "^7.4.47",
     "@symfony/webpack-encore": "^5.1.0",
     "@vue/compiler-sfc": "^3.4.35",
     "chartjs-plugin-zoom": "^2.0.1",
@@ -27,11 +26,13 @@
   "engines": {
     "node": ">=18"
   },
+  "packageManager": "npm@10",
   "scripts": {
     "dev": "vite",
     "build": "vite build"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@tinymce/tinymce-vue": "^6.0.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vuelidate/core": "^2.0.3",
