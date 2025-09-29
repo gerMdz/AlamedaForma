@@ -2,6 +2,20 @@
 
 El Generador de formularios FORMA es un proyecto codificado en PHP 8.1 que permite generar formularios para el concepto de FORMA utilizado en algunas iglesias cristianas.
 
+## Requisitos
+
+- Node.js 18 LTS o superior (se recomienda 18.x o 20.x). Este proyecto usa Vite 5, que requiere Node >= 18.
+- npm 9 o superior (recomendado) o el que viene con tu Node 18 LTS.
+
+Cómo verificar:
+- `node -v` → debe mostrar v18.x.x (o mayor)
+- `npm -v`
+- Opcional: `npx vite --version` para confirmar que Vite está disponible
+
+Notas de compatibilidad:
+- Con Node 18 no deberías tener problemas con Vite 5 ni con `@vitejs/plugin-vue` actuales.
+- En devDependencies existen paquetes heredados (por ejemplo `node-sass` y `fibers`) que ya no son necesarios para Vite y pueden fallar su instalación en algunos entornos. Si no los usas, se pueden eliminar; si solo vas a ejecutar en servidor (no compilar assets), puedes instalar sin dependencias de desarrollo: `npm ci --omit=dev`.
+
 ## Instalación
 
 1. Clona el repositorio en tu entorno local.
