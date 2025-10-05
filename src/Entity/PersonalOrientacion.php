@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
@@ -12,6 +14,7 @@ use App\Repository\PersonalOrientacionRepository;
 use App\State\PersonalOrientacionProcessor;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -25,8 +28,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
     normalizationContext: ['groups' => ['po:read']],
     denormalizationContext: ['groups' => ['po:write']]
 )]
-#[ORM\Table(name: 'personal_orientacion')]
+#[ApiFilter(SearchFilter::class, properties: ['persona' => 'exact'])]
+#[ORM\Table(name: 'personal_orientacion', uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_personal_orientacion_persona', columns: ['persona_id'])])]
 #[ORM\Entity(repositoryClass: PersonalOrientacionRepository::class)]
+#[UniqueEntity(fields: ['persona'], message: 'Ya existe una Orientación para esta persona.')]
 class PersonalOrientacion
 {
     #[ORM\Id]

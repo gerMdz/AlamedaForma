@@ -24,8 +24,30 @@ class PersonalOrientacionProcessor implements ProcessorInterface
         }
 
         $now = new DateTimeImmutable();
+
+        // Upsert por persona: si viene un POST sin id pero con persona ya existente, actualizamos en lugar de crear
+        if ($data->getId() === null && $data->getPersona() !== null) {
+            $repo = $this->em->getRepository(PersonalOrientacion::class);
+            $existing = $repo->findOneBy(['persona' => $data->getPersona()]);
+            if ($existing instanceof PersonalOrientacion) {
+                // Copiar campos editables
+                $existing
+                    ->setAction1($data->getAction1())
+                    ->setAction2($data->getAction2())
+                    ->setAction3($data->getAction3())
+                    ->setTrabajar($data->getTrabajar())
+                    ->setResolver($data->getResolver())
+                ;
+                // mantener createdAt original, solo actualizar updatedAt
+                $existing->setUpdatedAt($now);
+
+                $this->em->flush();
+                return $existing;
+            }
+        }
+
         if ($data->getId() === null) {
-            // Creating
+            // Crear nuevo registro
             $data->setCreatedAt($now);
         }
         $data->setUpdatedAt($now);

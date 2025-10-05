@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
@@ -26,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['pod:read']],
     denormalizationContext: ['groups' => ['pod:write']]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['personalOrientacion' => 'exact'])]
 #[ORM\Table(name: 'personal_orientacion_detalle')]
 #[ORM\UniqueConstraint(name: 'uniq_po_detalle', columns: ['personal_orientacion_id','detalle_orientacion_id'])]
 #[ORM\UniqueConstraint(name: 'uniq_po_posicion', columns: ['personal_orientacion_id','posicion'])]
