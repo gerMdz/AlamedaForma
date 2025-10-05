@@ -4,17 +4,17 @@ El Generador de formularios FORMA es un proyecto codificado en PHP 8.1 que permi
 
 ## Requisitos
 
-- Node.js 18 LTS o superior (se recomienda 18.x o 20.x). Este proyecto usa Vite 5, que requiere Node >= 18.
-- npm 9 o superior (recomendado) o el que viene con tu Node 18 LTS.
+- Node.js 22 LTS recomendado (compatible con >=20 <23). Este proyecto usa Vite 5, que requiere Node >= 18; hemos probado y recomendado Node 22.
+- npm 10 o superior (o el que viene con tu Node 22 LTS).
 
-Cómo verificar:
-- `node -v` → debe mostrar v18.x.x (o mayor)
+Cómo verificar y usar la versión fijada:
+- `node -v` → debería mostrar v22.x.x (usa `.nvmrc` para fijar la versión: `nvm use` o `nvm install` la primera vez).
 - `npm -v`
 - Opcional: `npx vite --version` para confirmar que Vite está disponible
 
 Notas de compatibilidad:
-- Con Node 18 no deberías tener problemas con Vite 5 ni con `@vitejs/plugin-vue` actuales.
-- En devDependencies existen paquetes heredados (por ejemplo `node-sass` y `fibers`) que ya no son necesarios para Vite y pueden fallar su instalación en algunos entornos. Si no los usas, se pueden eliminar; si solo vas a ejecutar en servidor (no compilar assets), puedes instalar sin dependencias de desarrollo: `npm ci --omit=dev`.
+- Con Node 22 no deberías tener problemas con Vite 5 ni con `@vitejs/plugin-vue` actuales.
+- Se eliminaron dependencias nativas obsoletas (`node-sass`, `fibers`) que fallaban en Node >=18. Si ejecutas en servidores sin compilar assets, instala sin dependencias de desarrollo: `npm ci --omit=dev`.
 
 ## Instalación
 
@@ -92,3 +92,41 @@ Buenas prácticas para evitar futuros conflictos con package-lock.json
 - Haz cambios de dependencias solo en tu entorno de desarrollo y sube ambos archivos: `package.json` y `package-lock.json`.
 - Evita hacer commits desde el servidor. Mantén el servidor como un espejo de la rama principal.
 - Si los conflictos con `package-lock.json` son frecuentes, considera instalar el merge driver de npm en tu entorno de desarrollo: `npx npm-merge-driver install --global` (requiere configuración local; no es obligatorio en el servidor).
+
+
+## Notas para Docker/Kubernetes (construcción de assets)
+
+Este repositorio incluye `.nvmrc` con Node 22 y usa Vite 5. Si necesitas construir assets en contenedores o clusters:
+
+- Imagen base recomendada para construir assets: `node:22-bookworm` (o `node:22-alpine` si tu entorno usa musl; en ese caso asegúrate de que todas las dependencias tengan binarios para Alpine).
+- Comandos de build: `npm ci && npm run build`. Esto genera `public/build` (ver `vite.config.js`).
+
+Ejemplo de Dockerfile multi-stage simplificado:
+
+```Dockerfile
+# Etapa de build de frontend
+FROM node:22-bookworm AS assets
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Etapa de runtime PHP (ajusta la imagen a tus necesidades)
+FROM php:8.3-apache
+# Configura DocumentRoot si es necesario y extensiones PHP según Symfony
+WORKDIR /var/www/html
+COPY . .
+# Copia los assets construidos por Vite
+COPY --from=assets /app/public/build /var/www/html/public/build
+# Asegura permisos adecuados para Symfony (var/, etc.)
+```
+
+Notas para Kubernetes:
+- Lo más común es construir los assets en CI y publicar una imagen ya con `public/build` embebido (como en el Dockerfile anterior).
+- Alternativamente, puedes usar un `initContainer` con `node:22` que ejecute `npm ci && npm run build` y volcar `public/build` en un `emptyDir` compartido con el contenedor principal. Sin embargo, esta opción hace el build en tiempo de despliegue y suele ser más lenta.
+
+Buenas prácticas:
+- En servidores/containers de producción: usa `npm ci --omit=dev` si por alguna razón instalas deps (no recomendado en runtime). Lo ideal es generar los assets en CI.
+- Evita compilar assets en caliente en producción. Compílalos en CI y versiona el resultado dentro de la imagen.
+- Mantén sincronizados `package.json`/`package-lock.json`. Con Node 22, usa npm 10.
