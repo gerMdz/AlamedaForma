@@ -77,6 +77,23 @@ const fetchHabilidades = async () => {
 // Cargar datos existentes de PersonalRecursos y PRH
 const pr = ref(null) // PersonalRecursos actual
 
+// Extraer ID desde IRI o desde objeto expandido
+const extractId = (val) => {
+  if (!val) return null
+  if (typeof val === 'string') {
+    const parts = val.split('/')
+    return parts[parts.length - 1] || null
+  }
+  if (typeof val === 'object') {
+    if (val.id) return val.id
+    if (typeof val['@id'] === 'string') {
+      const parts = val['@id'].split('/')
+      return parts[parts.length - 1] || null
+    }
+  }
+  return null
+}
+
 const fetchExistingRecursos = async () => {
   if (!persona.value?.id) return
   try {
@@ -102,8 +119,8 @@ const fetchExistingPRH = async () => {
     const iriPR = `/api/personal-recursos/${pr.value.id}`
     const res = await axios.get('api/personal-recursos-habilidades', {params: {personalRecursos: iriPR}})
     const list = res?.data?.member || []
-    // preseleccionar habilidades
-    selectedHabIds.value = list.map(x => x?.habilidad?.id).filter(Boolean)
+    // preseleccionar habilidades (acepta IRI o objeto)
+    selectedHabIds.value = list.map(x => extractId(x?.habilidad)).filter(Boolean)
   } catch (e) {
     // ignore
   }
@@ -172,11 +189,14 @@ const save = async () => {
       current = curRes?.data?.member || []
     } catch (e) {}
 
-    const currentHabIds = new Set(current.map(x => x?.habilidad?.id).filter(Boolean))
+    const currentHabIds = new Set(current.map(x => extractId(x?.habilidad)).filter(Boolean))
     const selectedSet = new Set(selectedHabIds.value)
 
     const toAdd = [...selectedSet].filter(id => !currentHabIds.has(id))
-    const toRemove = current.filter(x => x?.habilidad?.id && !selectedSet.has(x.habilidad.id))
+    const toRemove = current.filter(x => {
+      const hid = extractId(x?.habilidad)
+      return hid && !selectedSet.has(hid)
+    })
 
     // Agregar nuevos (con IRIs)
     const addPromises = toAdd.map(hid => axios.post('api/personal-recursos-habilidades', {
@@ -220,28 +240,58 @@ const save = async () => {
 
     <!-- Vista de resultados si ya hay Avance R y no estamos editando -->
     <template v-if="hasAvanceR && !editMode">
-      <h2 class="section-title">[R]ecursos Personales</h2>
-      <v-card variant="outlined" class="mb-4">
-        <v-card-title>Resumen de tus recursos</v-card-title>
+      <div class="w-100">
+      <!-- Encabezado consistente con otros resúmenes -->
+      <v-sheet color="primary" class="text-white py-3 px-4 mb-3">
+        <div class="d-flex align-center" style="gap:8px;">
+          <v-icon icon="mdi-hammer-wrench" size="20" class="me-1"></v-icon>
+          <span class="font-weight-medium">Resumen R (Recursos y habilidades)</span>
+        </div>
+      </v-sheet>
+
+      <v-card class="mb-4">
         <v-card-text>
-          <div class="mb-3"><strong>1. Vocación:</strong><div>{{ vocacion || '—' }}</div></div>
-          <div class="mb-3"><strong>2. Trabajos / experiencia:</strong><div>{{ trabajos || '—' }}</div></div>
-          <div class="mb-3"><strong>3. Clases o seminarios:</strong><div>{{ clases || '—' }}</div></div>
-          <div class="mb-3"><strong>4. Contribución personal:</strong><div>{{ contribucion || '—' }}</div></div>
-          <div class="mb-3"><strong>5. Habilidades seleccionadas:</strong>
-            <ul class="mt-1">
-              <li v-for="hid in selectedHabIds" :key="hid">
-                {{ (habilidades.find(h => h.id === hid)?.nombre) || 'Habilidad' }}
-                <div class="text-caption text-medium-emphasis">{{ (habilidades.find(h => h.id === hid)?.discripcion) || '' }}</div>
-              </li>
-            </ul>
+          <v-row dense>
+            <v-col cols="12" md="6">
+              <v-card variant="outlined" class="pa-3 mb-3">
+                <div class="text-subtitle-2 text-medium-emphasis">1. Vocación</div>
+                <div class="text-body-2">{{ vocacion || '—' }}</div>
+              </v-card>
+              <v-card variant="outlined" class="pa-3">
+                <div class="text-subtitle-2 text-medium-emphasis">3. Clases o seminarios</div>
+                <div class="text-body-2">{{ clases || '—' }}</div>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-card variant="outlined" class="pa-3 mb-3">
+                <div class="text-subtitle-2 text-medium-emphasis">2. Trabajos / experiencia</div>
+                <div class="text-body-2">{{ trabajos || '—' }}</div>
+              </v-card>
+              <v-card variant="outlined" class="pa-3">
+                <div class="text-subtitle-2 text-medium-emphasis">4. Contribución personal</div>
+                <div class="text-body-2">{{ contribucion || '—' }}</div>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <div class="mt-4">
+            <div class="text-subtitle-2 mb-2"><strong>5. Habilidades seleccionadas</strong></div>
             <div v-if="selectedHabIds.length === 0" class="text-medium-emphasis">No seleccionaste habilidades.</div>
+            <div v-else class="grid-table">
+              <div class="grid-header">Habilidad</div>
+              <div class="grid-header">Descripción</div>
+              <template v-for="hid in selectedHabIds" :key="hid">
+                <div class="grid-cell">{{ (habilidades.find(h => h.id === hid)?.nombre) || 'Habilidad' }}</div>
+                <div class="grid-cell text-medium-emphasis">{{ (habilidades.find(h => h.id === hid)?.discripcion) || '' }}</div>
+              </template>
+            </div>
           </div>
         </v-card-text>
         <v-card-actions class="d-flex justify-end" v-if="false">
           <v-btn color="primary" @click="editMode = true">Editar</v-btn>
         </v-card-actions>
       </v-card>
+      </div>
     </template>
 
     <!-- Formulario de carga/edición -->
@@ -331,5 +381,45 @@ const save = async () => {
 .question-block > p {
   margin-bottom: 8px;
   font-weight: 600;
+}
+</style>
+
+
+<style scoped>
+/* Tabla ligera para listas (sin usar <table>) */
+.grid-table {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.grid-header {
+  background: rgba(0,0,0,0.04);
+  font-weight: 600;
+  padding: 8px 12px;
+}
+.grid-cell {
+  padding: 8px 12px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+/* separador vertical entre columnas en filas de datos */
+.grid-table > .grid-cell:nth-child(4n+1),
+.grid-table > .grid-cell:nth-child(4n+3) { /* primera col de cada fila de datos */
+  border-right: 1px solid rgba(0,0,0,0.06);
+}
+
+@media (max-width: 600px) {
+  .grid-table {
+    grid-template-columns: 1fr; /* stack in mobile for readability */
+  }
+  /* Ocultar cabecera de descripción en móvil y dejar la de nombre */
+  .grid-table .grid-header:nth-child(2) {
+    display: none;
+  }
+  /* En móvil, añadir separador bajo cada nombre para diferenciar bloques */
+  .grid-table > .grid-cell {
+    border-right: none !important;
+  }
 }
 </style>
