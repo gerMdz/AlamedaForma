@@ -167,9 +167,9 @@
 
                             <v-col v-if="orientacionSummary?.selectedLabels?.length" cols="12" class="mt-4">
                               <strong>Mis 3 pasiones principales:</strong>
-                              <v-list density="compact">
-                                <v-list-item v-for="(label, i) in orientacionSummary.selectedLabels" :key="i">
-                                  <v-list-item-title>{{ i + 1 }}. {{ label }}</v-list-item-title>
+                              <v-list density="compact" class="passion-list">
+                                <v-list-item v-for="(label, i) in orientacionSummary.selectedLabels" :key="i" class="passion-item">
+                                  <v-list-item-title class="wrap-title">{{ i + 1 }}. {{ label }}</v-list-item-title>
                                 </v-list-item>
                               </v-list>
                             </v-col>
@@ -564,4 +564,30 @@ onMounted(async () => {
     min-width: auto;
   }
 }
+.wrap-title {
+  white-space: normal; /* allow multi-line */
+  overflow: visible;
+  text-overflow: clip;
+  word-break: break-word; /* prevent overflow on long words */
+}
+
+/* Visual separation for passions list */
+.passion-list :deep(.v-list-item) {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+.passion-list :deep(.v-list-item:last-child) {
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .passion-list :deep(.v-list-item) {
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+}
+
 </style>
