@@ -9,26 +9,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { defineProps } from 'vue'
 
-const hasActive = ref(false)
-const loaded = ref(false)
+const props = defineProps({
+  hasActive: { type: Boolean, default: false },
+  loaded: { type: Boolean, default: false }
+})
 
-const fetchEstado = async () => {
-  try {
-    const res = await axios.get('/api/formularios-habilitacion/activo')
-    hasActive.value = !!res.data?.hasActive
-  } catch (e) {
-    // On error, be safe and show greeting (assume no active)
-    console.error('Error consultando formularios habilitados', e)
-    hasActive.value = false
-  } finally {
-    loaded.value = true
-  }
-}
-
-onMounted(fetchEstado)
+const hasActive = props.hasActive
+const loaded = props.loaded
 </script>
 
 <style scoped>

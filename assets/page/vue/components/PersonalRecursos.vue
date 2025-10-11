@@ -16,6 +16,10 @@ const saving = ref(false)
 const errorMsg = ref('')
 const successMsg = ref('')
 
+// Modo resultados para R segun AvanceForma
+const hasAvanceR = ref(false)
+const editMode = ref(false) // permitir editar después de ver resultados
+
 // Campos de texto
 const vocacion = ref('')
 const trabajos = ref('')
@@ -105,6 +109,16 @@ const fetchExistingPRH = async () => {
   }
 }
 
+const fetchAvanceR = async () => {
+  if (!persona.value?.id) return
+  try {
+    const res = await axios.get(`api/forma/avance-r-estado/${encodeURIComponent(persona.value.id)}`)
+    hasAvanceR.value = !!res?.data?.hasAvanceR
+  } catch (e) {
+    hasAvanceR.value = false
+  }
+}
+
 onMounted(async () => {
   loading.value = true
   errorMsg.value = ''
@@ -113,6 +127,7 @@ onMounted(async () => {
     await fetchHabilidades()
     await fetchExistingRecursos()
     await fetchExistingPRH()
+    await fetchAvanceR()
   } finally {
     loading.value = false
   }
@@ -135,7 +150,7 @@ const save = async () => {
   try {
     // 1) Upsert PersonalRecursos con el controlador custom (acepta persona UUID)
     const upsertPayload = {
-      persona: persona.value.id,
+      persona: `/api/personales/${persona.value.id}`,
       vocacion: vocacion.value || null,
       trabajos: trabajos.value || null,
       clases: clases.value || null,
@@ -173,7 +188,14 @@ const save = async () => {
 
     await Promise.all([...addPromises, ...delPromises])
 
+    // 3) Registrar avance R (idempotente)
+    try {
+      await axios.post('api/forma/registrar-avance-r', { personalId: persona.value.id })
+    } catch (_) { /* noop */ }
+
     successMsg.value = 'Recursos guardados correctamente.'
+    hasAvanceR.value = true
+    editMode.value = false
 
     emit('saved', {
       personaId: persona.value.id,
@@ -194,59 +216,120 @@ const save = async () => {
 </script>
 
 <template>
-  <v-container fluid class="fill-height" style="max-width: 960px; margin: 0 auto;">
-    <h1 class="text-center">[R]ecursos Personales</h1>
+  <v-container fluid class="fill-height" style="max-width: 1280px; margin: 0 auto;">
 
-    <div class="mb-6">
-      <p class="font-weight-medium mb-2">1. Mi vocación es la siguiente:</p>
-      <v-textarea v-model="vocacion" auto-grow rows="2" variant="outlined" label="Mi vocación"></v-textarea>
-    </div>
+    <!-- Vista de resultados si ya hay Avance R y no estamos editando -->
+    <template v-if="hasAvanceR && !editMode">
+      <h2 class="section-title">[R]ecursos Personales</h2>
+      <v-card variant="outlined" class="mb-4">
+        <v-card-title>Resumen de tus recursos</v-card-title>
+        <v-card-text>
+          <div class="mb-3"><strong>1. Vocación:</strong><div>{{ vocacion || '—' }}</div></div>
+          <div class="mb-3"><strong>2. Trabajos / experiencia:</strong><div>{{ trabajos || '—' }}</div></div>
+          <div class="mb-3"><strong>3. Clases o seminarios:</strong><div>{{ clases || '—' }}</div></div>
+          <div class="mb-3"><strong>4. Contribución personal:</strong><div>{{ contribucion || '—' }}</div></div>
+          <div class="mb-3"><strong>5. Habilidades seleccionadas:</strong>
+            <ul class="mt-1">
+              <li v-for="hid in selectedHabIds" :key="hid">
+                {{ (habilidades.find(h => h.id === hid)?.nombre) || 'Habilidad' }}
+                <div class="text-caption text-medium-emphasis">{{ (habilidades.find(h => h.id === hid)?.discripcion) || '' }}</div>
+              </li>
+            </ul>
+            <div v-if="selectedHabIds.length === 0" class="text-medium-emphasis">No seleccionaste habilidades.</div>
+          </div>
+        </v-card-text>
+        <v-card-actions class="d-flex justify-end" v-if="false">
+          <v-btn color="primary" @click="editMode = true">Editar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
 
-    <div class="mb-6">
-      <p class="font-weight-medium mb-2">2. Otros trabajos o habilidades en las cuales yo tengo experiencia:</p>
-      <v-textarea v-model="trabajos" auto-grow rows="2" variant="outlined" label="Trabajos o habilidades"></v-textarea>
-    </div>
+    <!-- Formulario de carga/edición -->
+    <template v-else>
+      <h2 class="section-title">[R]ecursos Personales</h2>
+      <div class="question-block mb-6">
+        <p class="font-weight-medium mb-2">1. Mi vocación es la siguiente:</p>
+        <v-textarea v-model="vocacion" auto-grow rows="2" variant="outlined" label="Mi vocación" class="mb-0"></v-textarea>
+      </div>
 
-    <div class="mb-6">
-      <p class="font-weight-medium mb-2">3. He dado clases o seminarios en:</p>
-      <v-textarea v-model="clases" auto-grow rows="2" variant="outlined" label="Clases o seminarios"></v-textarea>
-    </div>
+      <div class="question-block mb-6">
+        <p class="font-weight-medium mb-2">2. Otros trabajos o habilidades en las cuales yo tengo experiencia:</p>
+        <v-textarea v-model="trabajos" auto-grow rows="2" variant="outlined" label="Trabajos o habilidades" class="mb-0"></v-textarea>
+      </div>
 
-    <div class="mb-6">
-      <p class="font-weight-medium mb-2">4. Mi contribución personal de mayor valor es:</p>
-      <v-textarea v-model="contribucion" auto-grow rows="2" variant="outlined" label="Contribución de mayor valor"></v-textarea>
-    </div>
+      <div class="question-block mb-6">
+        <p class="font-weight-medium mb-2">3. He dado clases o seminarios en:</p>
+        <v-textarea v-model="clases" auto-grow rows="2" variant="outlined" label="Clases o seminarios" class="mb-0"></v-textarea>
+      </div>
 
-    <div class="mb-6">
-      <p class="font-weight-medium mb-2">5. Selecciona hasta {{ maxHabs }} habilidades con las que te identificas:</p>
-      <div v-if="habilidades.length === 0" class="text-medium-emphasis">No hay habilidades activas.</div>
-      <v-row>
-        <v-col v-for="h in habilidades" :key="h.id" cols="12" md="6">
-          <v-card variant="outlined" class="pa-3">
-            <div class="d-flex align-center">
-              <v-checkbox
-                :model-value="selectedHabIds.includes(h.id)"
-                :label="h.nombre"
-                :disabled="!selectedHabIds.includes(h.id) && !canSelectMore"
-                hide-details
-                @change="() => toggleHab(h.id)"
-              />
-            </div>
-            <div class="text-body-2 text-medium-emphasis">{{ h.discripcion }}</div>
-          </v-card>
-        </v-col>
-      </v-row>
-      <div class="mt-2">Seleccionadas: {{ selectedHabIds.length }} / {{ maxHabs }}</div>
-    </div>
+      <div class="question-block mb-6">
+        <p class="font-weight-medium mb-2">4. Mi contribución personal de mayor valor es:</p>
+        <v-textarea v-model="contribucion" auto-grow rows="2" variant="outlined" label="Contribución de mayor valor" class="mb-0"></v-textarea>
+      </div>
 
-    <v-alert v-if="errorMsg" type="error" class="mb-3">{{ errorMsg }}</v-alert>
-    <v-alert v-if="successMsg" type="success" class="mb-3">{{ successMsg }}</v-alert>
+      <div class="mb-6">
+        <p class="font-weight-medium mb-2">5. Selecciona hasta {{ maxHabs }} habilidades con las que te identificas:</p>
+        <div v-if="habilidades.length === 0" class="text-medium-emphasis">No hay habilidades activas.</div>
+        <v-row>
+          <v-col v-for="h in habilidades" :key="h.id" cols="12" md="4">
+            <v-card variant="outlined" class="pa-3">
+              <div class="d-flex align-center">
+                <v-checkbox
+                  :model-value="selectedHabIds.includes(h.id)"
+                  :label="h.nombre"
+                  :disabled="!selectedHabIds.includes(h.id) && !canSelectMore"
+                  hide-details
+                  @change="() => toggleHab(h.id)"
+                />
+              </div>
+              <div class="text-body-2 text-medium-emphasis">{{ h.discripcion }}</div>
+            </v-card>
+          </v-col>
+        </v-row>
+        <div class="mt-2">Seleccionadas: {{ selectedHabIds.length }} / {{ maxHabs }}</div>
+      </div>
 
-    <div class="d-flex justify-end">
-      <v-btn color="primary" :loading="saving" :disabled="loading || saving" @click="save">Guardar</v-btn>
-    </div>
+      <v-alert v-if="errorMsg" type="error" class="mb-3">{{ errorMsg }}</v-alert>
+      <v-alert v-if="successMsg" type="success" class="mb-3">{{ successMsg }}</v-alert>
+
+      <div class="d-flex justify-end">
+        <v-btn color="primary" :loading="saving" :disabled="loading || saving" @click="save">Guardar</v-btn>
+      </div>
+    </template>
   </v-container>
 </template>
 
 <style scoped>
+/* Asegurar apilado vertical y separación visual marcada */
+.section-title {
+  display: block; /* fuerza bloque completo */
+  width: 100%;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: rgba(0,0,0,0.85);
+  margin: 8px 0 18px; /* mayor separación del contenido */
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(0,0,0,0.08);
+}
+
+.question-block {
+  display: block; /* evita que se alinee en la misma fila */
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.035);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+
+/* Aumentar el aire entre bloques consecutivos */
+.question-block + .question-block {
+  margin-top: 16px;
+}
+
+/* Mejorar legibilidad del encabezado de cada pregunta */
+.question-block > p {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
 </style>

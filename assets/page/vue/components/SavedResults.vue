@@ -1,13 +1,13 @@
 <template>
-  <v-container class="mt-6">
-    <v-row>
+  <v-container class="mt-2">
+    <v-row v-if="showHeader">
       <v-col cols="12">
         <v-alert type="success" class="mb-4">Se guardaron tus resultados.</v-alert>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row v-if="showPerson" justify="center">
       <v-col cols="12" md="6">
-        <v-card title="Datos de la persona" class="mb-4">
+        <v-card title="Datos de la persona **" class="mb-4">
           <v-card-text>
             <div><strong>Nombre:</strong> {{ person?.nombre }} {{ person?.apellido }}</div>
             <div><strong>Email:</strong> {{ person?.email }}</div>
@@ -17,20 +17,30 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row class="mt-6">
+    <v-row class="mt-1">
       <v-col cols="12">
         <v-card>
           <v-tabs v-model="tab" class="better-tabs" bg-color="transparent" grow>
-            <v-tab value="results" prepend-icon="mdi-school">Resultados F (Formación)</v-tab>
+            <v-tab value="results" prepend-icon="mdi-school">Resumen F
+              (Formación)
+            </v-tab>
             <v-tab v-if="store.hasO && store.hasO.value" value="orientacion" :disabled="!canOpenOrientacion"
                    prepend-icon="mdi-compass-outline">O (Orientación)
+            </v-tab>
+            <v-tab v-if="store.hasR && store.hasR.value" value="recursos" prepend-icon="mdi-hammer-wrench">R (Recursos y habilidades)
             </v-tab>
           </v-tabs>
           <v-card-text>
             <v-window v-model="tab">
               <v-window-item value="results">
-                <v-row>
-                  <v-col cols="12" md="8" class="mx-auto">
+                <v-row class="mt-2">
+                  <v-col cols="12" md="11" class="mx-auto">
+                    <v-sheet color="primary" class="text-white py-3 px-4">
+                      <div class="d-flex align-center" style="gap:8px;">
+                        <v-icon icon="mdi-school" size="20" class="me-1"></v-icon>
+                        <span class="font-weight-medium">Resumen F (Formación)</span>
+                      </div>
+                    </v-sheet>
                     <v-card title="Tus 3 dones guardados">
                       <v-list>
                         <v-list-item v-for="(pf, idx) in formations" :key="idx">
@@ -121,50 +131,65 @@
                 </v-row>
               </v-window-item>
               <v-window-item v-if="store.hasO && store.hasO.value" value="orientacion">
-                <div v-if="orientacionSaved" class="mt-2">
-                  <v-alert type="success" class="mb-4">Se guardaron tus datos de Orientación.</v-alert>
-                  <v-card title="Tu Orientación guardada">
-                    <v-card-text>
-                      <v-row v-if="orientacionSummary">
-                        <v-col v-if="orientacionSummary?.action_1" cols="12" md="4">
-                          <strong>Mis acciones:</strong>
-                          <div v-html="formatParagraphs(orientacionSummary.action_1)"></div>
-                        </v-col>
-                        <v-col v-if="orientacionSummary?.action_2" cols="12" md="4">
-                          <strong>Acción 2:</strong>
-                          <div v-html="formatParagraphs(orientacionSummary.action_2)"></div>
-                        </v-col>
-                        <v-col v-if="orientacionSummary?.action_3" cols="12" md="4">
-                          <strong>Acción 3:</strong>
-                          <div v-html="formatParagraphs(orientacionSummary.action_3)"></div>
-                        </v-col>
+                <div v-if="orientacionSaved" class="mt-1">
+                  <v-row class="mt-2">
+                    <v-col cols="12" md="11" class="mx-auto">
+                      <v-sheet color="primary" class="text-white py-3 px-4">
+                        <div class="d-flex align-center" style="gap:8px;">
+                          <v-icon icon="mdi-compass-outline" size="20" class="me-1"></v-icon>
+                          <span class="font-weight-medium">Resumen O (Orientación)</span>
+                        </div>
+                      </v-sheet>
+                      <v-card>
+                        <v-card-text>
+                          <v-row v-if="orientacionSummary">
+                            <v-col v-if="orientacionSummary?.action_1" cols="12" md="4">
+                              <strong>Mis acciones:</strong>
+                              <div v-html="formatParagraphs(orientacionSummary.action_1)"></div>
+                            </v-col>
+                            <v-col v-if="orientacionSummary?.action_2" cols="12" md="4">
+                              <strong>Acción 2:</strong>
+                              <div v-html="formatParagraphs(orientacionSummary.action_2)"></div>
+                            </v-col>
+                            <v-col v-if="orientacionSummary?.action_3" cols="12" md="4">
+                              <strong>Acción 3:</strong>
+                              <div v-html="formatParagraphs(orientacionSummary.action_3)"></div>
+                            </v-col>
 
-                        <v-col v-if="orientacionSummary?.trabajar" cols="12" md="6" class="mt-2">
-                          <strong>Con quién me gusta trabajar:</strong>
-                          <div v-html="formatParagraphs(orientacionSummary.trabajar)"></div>
-                        </v-col>
-                        <v-col v-if="orientacionSummary?.resolver" cols="12" md="6" class="mt-2">
-                          <strong>Problemas que me apasiona resolver:</strong>
-                          <div v-html="formatParagraphs(orientacionSummary.resolver)"></div>
-                        </v-col>
+                            <v-col v-if="orientacionSummary?.trabajar" cols="12" md="6" class="mt-2">
+                              <strong>Con quién me gusta trabajar:</strong>
+                              <div v-html="formatParagraphs(orientacionSummary.trabajar)"></div>
+                            </v-col>
+                            <v-col v-if="orientacionSummary?.resolver" cols="12" md="6" class="mt-2">
+                              <strong>Problemas que me apasiona resolver:</strong>
+                              <div v-html="formatParagraphs(orientacionSummary.resolver)"></div>
+                            </v-col>
 
-                        <v-col v-if="orientacionSummary?.selectedLabels?.length" cols="12" class="mt-4">
-                          <strong>Mis 3 pasiones principales:</strong>
-                          <v-list density="compact">
-                            <v-list-item v-for="(label, i) in orientacionSummary.selectedLabels" :key="i">
-                              <v-list-item-title>{{ i + 1 }}. {{ label }}</v-list-item-title>
-                            </v-list-item>
-                          </v-list>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-                  </v-card>
+                            <v-col v-if="orientacionSummary?.selectedLabels?.length" cols="12" class="mt-4">
+                              <strong>Mis 3 pasiones principales:</strong>
+                              <v-list density="compact">
+                                <v-list-item v-for="(label, i) in orientacionSummary.selectedLabels" :key="i">
+                                  <v-list-item-title>{{ i + 1 }}. {{ label }}</v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
                 </div>
-                <Orientacion v-else-if="canOpenOrientacion" :persona-id="person?.id" :email="person?.email"
-                             :phone="person?.phone" @saved="onOrientacionSaved"/>
+                <Orientacion v-else-if="canOpenOrientacion" :persona-id="person?.id" :email="person?.email" :phone="person?.phone" @saved="onOrientacionSaved"/>
                 <v-alert v-else type="info" class="mt-2">
                   Para completar Orientación primero debes terminar Formación.
                 </v-alert>
+              </v-window-item>
+              <v-window-item v-if="store.hasR && store.hasR.value" value="recursos">
+                <v-row class="mt-2">
+                  <v-col cols="12">
+                    <PersonalRecursos :persona-id="person?.id" :email="person?.email" :phone="person?.phone" />
+                  </v-col>
+                </v-row>
               </v-window-item>
             </v-window>
           </v-card-text>
@@ -179,10 +204,13 @@ import {computed, ref, onMounted} from 'vue'
 import {defineProps} from 'vue'
 import axios from 'axios'
 import Orientacion from './Orientacion.vue'
+import PersonalRecursos from './PersonalRecursos.vue'
 import {store} from '../../assets/almacen'
 
 const props = defineProps({
-  data: {type: Object, default: () => ({})}
+  data: {type: Object, default: () => ({})},
+  showHeader: {type: Boolean, default: true},
+  showPerson: {type: Boolean, default: true}
 })
 
 const person = computed(() => props.data?.person || {})

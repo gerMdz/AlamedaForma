@@ -8,6 +8,7 @@ use App\Entity\Personales;
 use App\Repository\AvanceFormaRepository;
 use App\Repository\FormularioHabilitacionRepository;
 use App\Repository\PersonalesRepository;
+use App\Repository\PersonalOrientacionRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -68,6 +69,7 @@ class AvanceFormaPublicController extends AbstractController
         private readonly FormularioHabilitacionRepository $formRepo,
         private readonly AvanceFormaRepository $avanceRepo,
         private readonly EntityManagerInterface $em,
+        private readonly PersonalOrientacionRepository $personalOrientacionRepo,
     ) {}
 
     /**
@@ -87,6 +89,139 @@ class AvanceFormaPublicController extends AbstractController
         }
         $existing = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formF]);
         return new JsonResponse(['hasAvanceF' => (bool)$existing], 200);
+    }
+
+    /**
+     * Consulta si la persona ya completó Orientación (identifier = "O").
+     */
+    #[Route('/avance-o-estado/{personalId}', name: 'api_forma_avance_o_estado', methods: ['GET'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function avanceOEstado(string $personalId): JsonResponse
+    {
+        $persona = $this->personalesRepo->find($personalId);
+        if (!$persona) {
+            return new JsonResponse(['error' => 'Persona no encontrada'], 404);
+        }
+        $formO = $this->formRepo->findOneBy(['identifier' => 'O'], ['activoDesde' => 'DESC']);
+        if (!$formO) {
+            return new JsonResponse(['hasAvanceO' => false], 200);
+        }
+        $existing = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formO]);
+        return new JsonResponse(['hasAvanceO' => (bool)$existing], 200);
+    }
+
+    /**
+     * Consulta si la persona ya completó Recursos (identifier = "R").
+     */
+    #[Route('/avance-r-estado/{personalId}', name: 'api_forma_avance_r_estado', methods: ['GET'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function avanceREstado(string $personalId): JsonResponse
+    {
+        $persona = $this->personalesRepo->find($personalId);
+        if (!$persona) {
+            return new JsonResponse(['error' => 'Persona no encontrada'], 404);
+        }
+        $formR = $this->formRepo->findOneBy(['identifier' => 'R'], ['activoDesde' => 'DESC']);
+        if (!$formR) {
+            return new JsonResponse(['hasAvanceR' => false], 200);
+        }
+        $existing = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formR]);
+        return new JsonResponse(['hasAvanceR' => (bool)$existing], 200);
+    }
+
+    /**
+     * Registra avance para Orientación (identifier = "O"). Idempotente.
+     */
+    #[Route('/registrar-avance-o', name: 'api_forma_registrar_avance_o', methods: ['POST'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function registrarAvanceO(Request $request): JsonResponse
+    {
+        $payload = json_decode((string)$request->getContent(), true);
+        if (!is_array($payload)) {
+            return new JsonResponse(['error' => 'JSON inválido'], 400);
+        }
+        $personalId = $payload['personalId'] ?? null;
+        if (!$personalId) {
+            return new JsonResponse(['error' => 'personalId es requerido'], 400);
+        }
+        /** @var Personales|null $persona */
+        $persona = $this->personalesRepo->find($personalId);
+        if (!$persona) {
+            return new JsonResponse(['error' => 'Persona no encontrada'], 404);
+        }
+        /** @var FormularioHabilitacion|null $formO */
+        $formO = $this->formRepo->findOneBy(['identifier' => 'O'], ['activoDesde' => 'DESC']);
+        if (!$formO) {
+            return new JsonResponse(['error' => 'Formulario de Orientación (O) no configurado'], 404);
+        }
+        $existing = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formO]);
+        if ($existing) {
+            return new JsonResponse([
+                'ok' => true,
+                'alreadyRegistered' => true,
+                'fechaEtapa' => $existing->getFechaEtapa()?->format(DATE_ATOM),
+            ], 200);
+        }
+        // Intentar tomar la fecha de creación de PersonalOrientacion si existe
+        $po = $this->personalOrientacionRepo->findOneBy(['persona' => $persona]);
+        $fecha = $po?->getCreatedAt() ?: new DateTimeImmutable();
+        $avance = (new AvanceForma())
+            ->setPersona($persona)
+            ->setFormulario($formO)
+            ->setFechaEtapa($fecha);
+        $this->em->persist($avance);
+        $this->em->flush();
+        return new JsonResponse([
+            'ok' => true,
+            'alreadyRegistered' => false,
+            'fechaEtapa' => $avance->getFechaEtapa()->format(DATE_ATOM),
+        ], 201);
+    }
+
+    /**
+     * Registra avance para Recursos (identifier = "R"). Idempotente.
+     */
+    #[Route('/registrar-avance-r', name: 'api_forma_registrar_avance_r', methods: ['POST'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function registrarAvanceR(Request $request): JsonResponse
+    {
+        $payload = json_decode((string)$request->getContent(), true);
+        if (!is_array($payload)) {
+            return new JsonResponse(['error' => 'JSON inválido'], 400);
+        }
+        $personalId = $payload['personalId'] ?? null;
+        if (!$personalId) {
+            return new JsonResponse(['error' => 'personalId es requerido'], 400);
+        }
+        /** @var Personales|null $persona */
+        $persona = $this->personalesRepo->find($personalId);
+        if (!$persona) {
+            return new JsonResponse(['error' => 'Persona no encontrada'], 404);
+        }
+        /** @var FormularioHabilitacion|null $formR */
+        $formR = $this->formRepo->findOneBy(['identifier' => 'R'], ['activoDesde' => 'DESC']);
+        if (!$formR) {
+            return new JsonResponse(['error' => 'Formulario de Recursos (R) no configurado'], 404);
+        }
+        $existing = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formR]);
+        if ($existing) {
+            return new JsonResponse([
+                'ok' => true,
+                'alreadyRegistered' => true,
+                'fechaEtapa' => $existing->getFechaEtapa()?->format(DATE_ATOM),
+            ], 200);
+        }
+        $avance = (new AvanceForma())
+            ->setPersona($persona)
+            ->setFormulario($formR)
+            ->setFechaEtapa(new DateTimeImmutable());
+        $this->em->persist($avance);
+        $this->em->flush();
+        return new JsonResponse([
+            'ok' => true,
+            'alreadyRegistered' => false,
+            'fechaEtapa' => $avance->getFechaEtapa()->format(DATE_ATOM),
+        ], 201);
     }
 
     /**

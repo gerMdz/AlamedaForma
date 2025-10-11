@@ -1,17 +1,6 @@
 <template>
   <v-container class="mt-6">
-    <v-row>
-      <v-col cols="12">
-        <v-alert type="success" class="mb-2">
-          Ya registraste tus resultados de Formación. Aquí está tu resumen.
-        </v-alert>
-        <div class="text-right mb-4">
-          <v-btn size="small" variant="text" color="secondary"
-                 @click="switchUser">Completar nuevo test</v-btn>
-        </div>
-      </v-col>
-    </v-row>
-    <SavedResults v-if="savedData" :data="savedData" />
+    <SavedResults v-if="savedData" :data="savedData" :show-header="false" :show-person="false" />
     <v-row v-else>
       <v-col cols="12">
         <v-alert type="info">Cargando resultados guardados...</v-alert>

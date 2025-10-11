@@ -4,6 +4,8 @@ namespace App\Controller\Api;
 
 use App\Entity\PersonalRecursos;
 use App\Entity\Personales;
+use App\Repository\AvanceFormaRepository;
+use App\Repository\FormularioHabilitacionRepository;
 use App\Repository\PersonalRecursosRepository;
 use App\Repository\PersonalesRepository;
 use DateTimeImmutable;
@@ -19,6 +21,8 @@ class PersonalRecursosController extends AbstractController
     public function __construct(
         private readonly PersonalesRepository $personalesRepo,
         private readonly PersonalRecursosRepository $recursosRepo,
+        private readonly AvanceFormaRepository $avanceRepo,
+        private readonly FormularioHabilitacionRepository $formRepo,
         private readonly EntityManagerInterface $em
     ) {
     }
@@ -45,6 +49,21 @@ class PersonalRecursosController extends AbstractController
 
         // Buscar si ya existe registro de recursos para esta persona
         $recursos = $this->recursosRepo->findOneBy(['persona' => $persona]);
+
+        // Lock: si ya existe Avance para 'R', no permitir modificaciones
+        $formR = $this->formRepo->findOneBy(['identifier' => 'R'], ['activoDesde' => 'DESC']);
+        if ($formR) {
+            $avance = $this->avanceRepo->findOneBy(['persona' => $persona, 'formulario' => $formR]);
+            if ($avance) {
+                if ($recursos) {
+                    // Devolver el registro existente sin cambios
+                    return $this->json($recursos, 200);
+                }
+                // No hay recursos creados aún pero el avance R ya está registrado: retornar 409
+                return new JsonResponse(['error' => 'El formulario R ya fue completado; no se puede crear ni editar.'], 409);
+            }
+        }
+
         $now = new DateTimeImmutable();
 
         $created = false;

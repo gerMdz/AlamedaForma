@@ -16,6 +16,18 @@ class PersonalUpdateController extends AbstractController
     {
     }
 
+    #[Route('/api/personal/{id}', name: 'api_personal_get', methods: ['GET'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function get(string $id): JsonResponse
+    {
+        /** @var Personales|null $persona */
+        $persona = $this->repo->find($id);
+        if (!$persona) {
+            return new JsonResponse(['error' => 'Persona no encontrada'], 404);
+        }
+        return $this->json($persona, 200);
+    }
+
     #[Route('/api/personal/{id}', name: 'api_personal_update', methods: ['PATCH','PUT'])]
     #[IsGranted('PUBLIC_ACCESS')]
     public function update(string $id, Request $request): JsonResponse

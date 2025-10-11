@@ -10,6 +10,7 @@ export const store = {
     hasT: ref(false),
     hasF: ref(false),
     hasO: ref(false),
+    hasR: ref(false),
     hydrate() {
         try {
             const ta = localStorage.getItem('termsAccepted');
@@ -48,6 +49,7 @@ export const store = {
         this.hasT.value = !!(f.T || f.t);
         this.hasF.value = !!(f.F || f.f);
         this.hasO.value = !!(f.O || f.o);
+        this.hasR.value = !!(f.R || f.r);
     },
     clearAll() {
         try {
