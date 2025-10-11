@@ -20,7 +20,7 @@
     <v-row class="mt-1">
       <v-col cols="12">
         <v-card>
-          <v-tabs v-model="tab" class="better-tabs" bg-color="transparent" grow>
+          <v-tabs v-model="tab" class="better-tabs" bg-color="transparent" :grow="mdAndUp" :show-arrows="smAndDown" :density="tabsDensity">
             <v-tab value="results" prepend-icon="mdi-school">Resumen F
               (Formación)
             </v-tab>
@@ -206,6 +206,10 @@ import axios from 'axios'
 import Orientacion from './Orientacion.vue'
 import PersonalRecursos from './PersonalRecursos.vue'
 import {store} from '../../assets/almacen'
+import { useDisplay } from 'vuetify'
+
+const { mdAndUp, smAndDown } = useDisplay()
+const tabsDensity = computed(() => smAndDown.value ? 'compact' : 'comfortable')
 
 const props = defineProps({
   data: {type: Object, default: () => ({})},
@@ -547,5 +551,17 @@ onMounted(async () => {
   color: white;
   border-color: transparent;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile tweaks: make tabs smaller and allow horizontal scroll */
+@media (max-width: 600px) {
+  .better-tabs :deep(.v-slide-group__container) {
+    overflow-x: auto;
+  }
+  .better-tabs :deep(.v-tab) {
+    font-size: 0.95rem;
+    padding-inline: 10px;
+    min-width: auto;
+  }
 }
 </style>
