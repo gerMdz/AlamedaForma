@@ -19,9 +19,8 @@ class PersonalidadController extends AbstractController
     #[Route('/', name: 'app_personalidad_index', methods: ['GET'])]
     public function index(PersonalidadRepository $personalidadRepository): Response
     {
-        return $this->render('personalidad/index.html.twig', [
-            'personalidads' => $personalidadRepository->findAll(),
-        ]);
+        // Redirige al panel de administración en la nueva vista basada en Vue
+        return $this->redirect('/admin#personalidad');
     }
 
     #[Route('/new', name: 'app_personalidad_new', methods: ['GET', 'POST'])]

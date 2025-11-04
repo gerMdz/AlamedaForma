@@ -9,17 +9,17 @@ use Doctrine\Persistence\ObjectManager;
 class PersonalidadFixtures extends Fixture
 {
     public array $personalidades = [
+        ["Argumentador", "Divertido", "Paciente", "Lógico",],
         ["Enérgico", "Vivaz", "Modesto", "Discreto",],
-        ["Agresivo", "Emotivo", "Complaciente", "Constante",],
         ["Directo", "Animoso", "Agradable", "Acertado",],
+        ["Agresivo", "Emotivo", "Complaciente", "Constante",],
         ["Tenaz", "Compasivo", "Dócil", "Perfeccionista",],
         ["Atrevido", "Impulsivo", "Amable", "Precavido",],
         ["Competitivo", "Expresivo", "Sustentador", "Preciso",],
         ["Arriesgado", "Hablador", "Relajado", "Objetivo",],
-        ["Argumentador", "Divertido", "Paciente", "Lógico",],
         ["Audaz", "Espontáneo", "Estable", "Organizado",],
         ["Dirigente", "Optimista", "Apacible", "Concienzudo",],
-        ["Cándido", "Alegre", "Leal", "Serio",],
+        ["Decisivo", "Alegre", "Leal", "Serio",],
         ["Independiente", "Entusiasta", "Buen oidor", "Altas norma"],
 
     ];

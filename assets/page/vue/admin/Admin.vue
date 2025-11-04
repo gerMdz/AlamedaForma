@@ -15,6 +15,12 @@
     <template v-else-if="isHabilidadesRoute">
       <Habilidades />
     </template>
+    <template v-else-if="isPersonalidadRoute">
+      <Personalidad />
+    </template>
+    <template v-else-if="isIntroExtroRoute">
+      <IntroExtro />
+    </template>
     <template v-else>
       <h1 class="title">Panel de Administración</h1>
       <p class="subtitle">Acceso a las distintas configuraciones</p>
@@ -34,10 +40,17 @@
           </div>
         </a>
 
-        <a class="card" href="/personalidad">
+        <a class="card" href="/admin#personalidad">
           <div class="card-body">
             <h2>Personalidad</h2>
             <p>Administrar configuraciones de Personalidad (PersonalidadController)</p>
+          </div>
+        </a>
+
+        <a class="card" href="/admin#intro-extro">
+          <div class="card-body">
+            <h2>Intro/Extro</h2>
+            <p>Administrar configuraciones de IntroExtro (IntroExtroController)</p>
           </div>
         </a>
 
@@ -73,6 +86,8 @@ import Instrucciones from './Instrucciones.vue'
 import InstruccionesEditar from './InstruccionesEditar.vue'
 import DetalleOrientacion from './DetalleOrientacion.vue'
 import Habilidades from './Habilidades.vue'
+import Personalidad from './Personalidad.vue'
+import IntroExtro from './IntroExtro.vue'
 
 const currentHash = ref(typeof window !== 'undefined' ? window.location.hash : '')
 
@@ -97,6 +112,8 @@ const isInstructionsRoute = computed(() => currentHash.value === '#instrucciones
 const isInstructionsEditRoute = computed(() => currentHash.value.startsWith('#instrucciones-editar:'))
 const isDetalleOrientacionRoute = computed(() => currentHash.value === '#detalle-orientacion')
 const isHabilidadesRoute = computed(() => currentHash.value === '#habilidades')
+const isPersonalidadRoute = computed(() => currentHash.value === '#personalidad')
+const isIntroExtroRoute = computed(() => currentHash.value === '#intro-extro')
 const instructionId = computed(() => {
   if (!isInstructionsEditRoute.value) return ''
   return currentHash.value.split(':')[1] || ''
