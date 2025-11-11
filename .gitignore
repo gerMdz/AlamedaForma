@@ -33,3 +33,4 @@
 /.php-version
 /datas/
 /src/DoctrineMigrations/
+/sqls/

@@ -31,12 +31,11 @@ use Symfony\Component\Uid\Uuid;
 #[AllowDynamicProperties]
 #[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_personales_email_phone', columns: ['email','phone'])])]
 #[ORM\Entity(repositoryClass: PersonalesRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Personales
 {
     #[ORM\Id]
     #[ORM\Column(type: 'custom_uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Groups('personal:read')]
     private ?Uuid $id = null;
 
@@ -180,5 +179,13 @@ class Personales
         }
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function initializeId(): void
+    {
+        if ($this->id === null) {
+            $this->id = Uuid::v7();
+        }
     }
 }
