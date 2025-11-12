@@ -11,8 +11,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Uuid;
+use Throwable;
 
 #[Route('/api/personal-intro-extro')]
 class PersonalIntroExtroController extends AbstractController
@@ -76,7 +78,7 @@ class PersonalIntroExtroController extends AbstractController
         // Buscar la persona
         try {
             $uuid = Uuid::fromString($personId);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('personId no es un UUID válido.', Response::HTTP_BAD_REQUEST, [
                 'field' => 'personId',
                 'value' => $personId,

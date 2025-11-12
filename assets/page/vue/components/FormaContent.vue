@@ -8,6 +8,7 @@ import CompletedFormation from "./CompletedFormation.vue";
 import Inicio from "./Inicio.vue";
 import PersonalRecursos from "./PersonalRecursos.vue";
 import Orientacion from "./Orientacion.vue";
+import MiPersonalidad from "./MiPersonalidad.vue";
 import axios from 'axios'
 
 const responseData = store.responseData
@@ -50,7 +51,7 @@ async function hydratePerson(val) {
   }
 }
 
-// Tabs for Formación (F), Orientación (O) y Recursos (R)
+// Tabs para Formación (F), Orientación (O), Recursos (R) y Mi Personalidad (M)
 const activeTab = ref('F')
 function selectDefaultTab() {
   if (store.hasF && store.hasF.value) {
@@ -59,6 +60,8 @@ function selectDefaultTab() {
     activeTab.value = 'O'
   } else if (store.hasR && store.hasR.value) {
     activeTab.value = 'R'
+  } else if (store.hasM && store.hasM.value) {
+    activeTab.value = 'M'
   }
 }
 
@@ -156,7 +159,7 @@ watch(responseData, async (val) => {
 })
 
 // adjust default tab when flags change
-watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, store.hasR && store.hasR.value], () => {
+watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, store.hasR && store.hasR.value, store.hasM && store.hasM.value], () => {
   selectDefaultTab()
   // recheck avance R if R becomes enabled
   checkAvanceR()
@@ -197,20 +200,20 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
             </v-row>
           </div>
 
-          <!-- Pestañas para Formación, Orientación y Recursos (según habilitación) -->
-          <!-- Cuando estamos en modo resultados, mostramos únicamente el resumen con sus propias tabs (con iconos) -->
-          <div v-if="(resultsMode || hasAvanceF)">
-            <CompletedFormation />
-          </div>
-          <div v-else-if="(store.hasF && store.hasF.value) || (store.hasO && store.hasO.value) || (store.hasR && store.hasR.value)" class="mt-6">
+          <!-- Tabs visibles siempre que haya alguna sección habilitada. Si hay resultados de F, se muestra el resumen dentro de la pestaña F. -->
+          <div v-if="(store.hasF && store.hasF.value) || (store.hasO && store.hasO.value) || (store.hasR && store.hasR.value) || (store.hasM && store.hasM.value)" class="mt-6">
             <v-tabs v-model="activeTab" grow>
               <v-tab v-if="store.hasF && store.hasF.value" value="F" :class="['forma-tab', { 'is-active': activeTab==='F' }]">[F]ormación</v-tab>
               <v-tab v-if="store.hasO && store.hasO.value" value="O" :class="['forma-tab', { 'is-active': activeTab==='O' }]">[O]rientación</v-tab>
               <v-tab v-if="store.hasR && store.hasR.value" value="R" :class="['forma-tab', { 'is-active': activeTab==='R' }]">[R]ecursos y Habilidades</v-tab>
+              <v-tab v-if="store.hasM && store.hasM.value" value="M" :class="['forma-tab', { 'is-active': activeTab==='M' }]">[M]i Personalidad</v-tab>
             </v-tabs>
             <v-window v-model="activeTab" class="mt-4">
               <v-window-item v-if="store.hasF && store.hasF.value" value="F">
-                <template v-if="store.hasF && store.hasF.value">
+                <template v-if="resultsMode || hasAvanceF">
+                  <CompletedFormation />
+                </template>
+                <template v-else>
                   <Formation />
                 </template>
               </v-window-item>
@@ -219,6 +222,9 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
               </v-window-item>
               <v-window-item v-if="store.hasR && store.hasR.value" value="R">
                 <PersonalRecursos :persona-id="pid" :email="pemail" :phone="pphone" />
+              </v-window-item>
+              <v-window-item v-if="store.hasM && store.hasM.value" value="M">
+                <MiPersonalidad :persona-id="pid" :email="pemail" :phone="pphone" />
               </v-window-item>
             </v-window>
           </div>

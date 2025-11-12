@@ -12,10 +12,19 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/personalidad')]
-#[IsGranted('ROLE_USER')]
 class PersonalidadCrudController extends AbstractController
 {
+    #[Route('', name: 'api_personalidad_collection', methods: ['GET'])]
+    #[IsGranted('PUBLIC_ACCESS')]
+    public function collection(PersonalidadRepository $repo): JsonResponse
+    {
+        $items = $repo->createQueryBuilder('p')->orderBy('p.id', 'ASC')->getQuery()->getResult();
+        $serialized = array_map(fn(Personalidad $e) => $this->serializeEntity($e), $items);
+        return $this->json($serialized);
+    }
+
     #[Route('', name: 'api_personalidad_create', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function create(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = $this->getJsonData($request);

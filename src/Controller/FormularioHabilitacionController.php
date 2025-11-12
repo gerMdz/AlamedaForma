@@ -7,7 +7,7 @@ use App\Repository\FormularioHabilitacionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class FormularioHabilitacionController extends AbstractController
 {
@@ -43,6 +43,7 @@ class FormularioHabilitacionController extends AbstractController
         $hasF = in_array('F', $identifiers, true);
         $hasO = in_array('O', $identifiers, true);
         $hasR = in_array('R', $identifiers, true);
+        $hasM = in_array('M', $identifiers, true);
 
         return new JsonResponse([
             'hasActive' => count($items) > 0,
@@ -53,6 +54,7 @@ class FormularioHabilitacionController extends AbstractController
                 'F' => $hasF,
                 'O' => $hasO,
                 'R' => $hasR,
+                'M' => $hasM,
             ],
         ]);
     }

@@ -12,10 +12,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/intro-extro')]
-#[IsGranted('ROLE_USER')]
 class IntroExtroCrudController extends AbstractController
 {
     #[Route('', name: 'api_intro_extro_collection', methods: ['GET'])]
+    #[IsGranted('PUBLIC_ACCESS')]
     public function collection(Request $request, IntroExtroRepository $repo): JsonResponse
     {
         $activoParam = strtolower((string)($request->query->get('activo', 'true')));
