@@ -172,10 +172,15 @@
                             <div class="mb-3">Perfil DISC (escala 12–48 con banda intermedia 28–32):</div>
                             <div class="disc-chart-container wider">
                               <DiscProfileChart
-                                :d="discTotals.d"
-                                :i="discTotals.i"
-                                :s="discTotals.s"
-                                :c="discTotals.c"
+                                :d="discChartVals.d"
+                                :i="discChartVals.i"
+                                :s="discChartVals.s"
+                                :c="discChartVals.c"
+                                :raw-d="discTotals.d"
+                                :raw-i="discTotals.i"
+                                :raw-s="discTotals.s"
+                                :raw-c="discTotals.c"
+                                label-mode="normalized"
                               />
                             </div>
                             <v-row class="mt-4">
@@ -344,6 +349,26 @@ const getDonDescription = (pf) => {
 const discLoading = ref(false)
 const discError = ref('')
 const discTotals = ref(null) // { d,i,s,c }
+
+// Normalización 0–120 -> 12–48 para dibujar el perfil clásico
+const normalizeTo48 = (v) => {
+  const n = Number(v) || 0
+  const clamped = Math.max(0, Math.min(120, n))
+  return Math.round(12 + clamped * 0.3)
+}
+
+const discChartVals = computed(() => {
+  const d = discTotals.value?.d ?? 0
+  const i = discTotals.value?.i ?? 0
+  const s = discTotals.value?.s ?? 0
+  const c = discTotals.value?.c ?? 0
+  return {
+    d: normalizeTo48(d),
+    i: normalizeTo48(i),
+    s: normalizeTo48(s),
+    c: normalizeTo48(c),
+  }
+})
 
 async function fetchDiscResults() {
   if (!person?.value?.id) return
