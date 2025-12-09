@@ -1,5 +1,6 @@
 <template>
-  <v-container class="mt-2">
+  <!-- Hacemos el contenedor fluido para permitir más ancho en desktop -->
+  <v-container class="mt-2" fluid>
     <v-row v-if="showHeader">
       <v-col cols="12">
         <v-alert type="success" class="mb-4">Se guardaron tus resultados.</v-alert>
@@ -7,7 +8,7 @@
     </v-row>
     <v-row v-if="showPerson" justify="center">
       <v-col cols="12" md="6">
-        <v-card title="Datos de la persona **" class="mb-4">
+        <v-card title="Datos de la persona" class="mb-4">
           <v-card-text>
             <div><strong>Nombre:</strong> {{ person?.nombre }} {{ person?.apellido }}</div>
             <div><strong>Email:</strong> {{ person?.email }}</div>
@@ -20,86 +21,39 @@
     <v-row class="mt-1">
       <v-col cols="12">
         <v-card>
-          <v-tabs v-model="tab" class="better-tabs" bg-color="transparent" :grow="mdAndUp" :show-arrows="smAndDown" :density="tabsDensity">
-            <v-tab value="results" prepend-icon="mdi-school">Resumen F
-              (Formación)
-            </v-tab>
-            <v-tab v-if="store.hasO && store.hasO.value" value="orientacion" :disabled="!canOpenOrientacion"
-                   prepend-icon="mdi-compass-outline">O (Orientación)
-            </v-tab>
-            <v-tab v-if="store.hasR && store.hasR.value" value="recursos" prepend-icon="mdi-hammer-wrench">R (Recursos y habilidades)
-            </v-tab>
-          </v-tabs>
           <v-card-text>
-            <v-window v-model="tab">
-              <v-window-item value="results">
-                <v-row class="mt-2">
-                  <v-col cols="12" md="11" class="mx-auto">
-                    <v-sheet color="primary" class="text-white py-3 px-4">
-                      <div class="d-flex align-center" style="gap:8px;">
-                        <v-icon icon="mdi-school" size="20" class="me-1"></v-icon>
-                        <span class="font-weight-medium">Resumen F (Formación)</span>
-                      </div>
-                    </v-sheet>
-                    <v-card title="Tus 3 dones guardados">
-                      <v-list>
-                        <v-list-item v-for="(pf, idx) in formations" :key="idx">
-                          <v-list-item-title>
+            <!-- Mostrar SOLO el contenido de la pestaña superior seleccionada -->
+            <template v-if="activeTab === 'F'">
+              <v-row class="section-block">
+                <!-- Ensanchamos el área de resultados para ocupar todo el ancho disponible en desktop -->
+                <v-col cols="12" md="12" class="mx-auto">
+                  <v-sheet color="primary" class="text-white py-3 px-4">
+                    <div class="d-flex align-center" style="gap:8px;">
+                      <v-icon icon="mdi-school" size="20" class="me-1"></v-icon>
+                      <span class="font-weight-medium">Resumen F (Formación)</span>
+                    </div>
+                  </v-sheet>
+                  <v-card class="mt-2">
+                    <v-card-text>
+                      <div class="mb-3">Tus 3 dones guardados:</div>
+                      <v-list density="compact" class="passion-list">
+                        <v-list-item v-for="(pf, idx) in formations" :key="idx" class="passion-item">
+                          <v-list-item-title class="wrap-title">
                             <div class="d-flex align-center" style="gap: 6px;">
-                              <strong>Don:</strong>
+                              <strong>{{ idx + 1 }}.</strong>
+                              <span class="mr-1">Don:</span>
                               <span>{{ getDonName(pf) }}</span>
-                              <v-tooltip v-if="false" location="top" open-delay="200" :offset="[0,8]"
-                                         v-model:opened="openedTooltips[idx]" close-on-content-click="false" eager>
-                                <template #activator="{ props: tip }">
-                                  <span class="d-flex align-center" style="gap: 4px;">
-                                    <span
-                                        v-bind="tip"
-                                        class="text-primary don-name-activator"
-                                        role="button"
-                                        tabindex="0"
-                                        :aria-label="`Ver descripción de ${getDonName(pf)}`"
-                                        :aria-expanded="!!openedTooltips[idx]"
-                                        @touchstart.prevent.stop="toggleTooltip(idx)"
-                                        @click="toggleTooltip(idx)"
-                                        @keydown.enter.prevent="toggleTooltip(idx)"
-                                        @keydown.space.prevent="toggleTooltip(idx)"
-                                    >
-                                      {{ getDonName(pf) }}
-                                    </span>
-                                    <v-btn
-                                        v-bind="tip"
-                                        icon="mdi-information-outline"
-                                        size="x-small"
-                                        variant="text"
-                                        density="comfortable"
-                                        class="don-info-icon"
-                                        :aria-label="`Ver descripción de ${getDonName(pf)}`"
-                                        :aria-expanded="!!openedTooltips[idx]"
-                                        @touchstart.prevent.stop="toggleTooltip(idx)"
-                                        @click.stop.prevent="toggleTooltip(idx)"
-                                    />
-                                  </span>
-                                </template>
-                                <v-card class="don-tooltip-card" max-width="360">
-                                  <v-card-title class="text-subtitle-1">
-                                    Descripción de {{ getDonName(pf) }}
-                                  </v-card-title>
-                                  <v-card-text>
-                                    <div v-html="formatDescription(getDonDescription(pf))"></div>
-                                  </v-card-text>
-                                </v-card>
-                              </v-tooltip>
                               <!-- Modal compacto para descripción del don -->
                               <v-btn
-                                  icon="mdi-information-outline"
-                                  size="x-small"
-                                  variant="text"
-                                  color="primary"
-                                  density="comfortable"
-                                  class="don-info-icon"
-                                  :aria-label="`Ver descripción de ${getDonName(pf)}`"
-                                  @touchstart.prevent.stop="openDialog(idx)"
-                                  @click.stop.prevent="openDialog(idx)"
+                                icon="mdi-information-outline"
+                                size="x-small"
+                                variant="text"
+                                color="primary"
+                                density="comfortable"
+                                class="don-info-icon"
+                                :aria-label="`Ver descripción de ${getDonName(pf)}`"
+                                @touchstart.prevent.stop="openDialog(idx)"
+                                @click.stop.prevent="openDialog(idx)"
                               />
                               <v-dialog v-model="openedDialogs[idx]" max-width="420" :scrim="true">
                                 <v-card>
@@ -116,100 +70,170 @@
                                 </v-card>
                               </v-dialog>
                             </div>
-                            <div><strong>Porcentaje:</strong> {{ pf?.percentDon }} %</div>
+                            <div class="text-medium-emphasis mt-1"><strong>Porcentaje:</strong> {{ pf?.percentDon }} %</div>
+                            <div class="text-medium-emphasis mt-1">
+                              <strong>Comentario:</strong>
+                              <span v-if="pf?.commentDon && pf.commentDon.trim().length > 0">{{ pf.commentDon }}</span>
+                              <span v-else class="text-disabled">(Sin comentario)</span>
+                            </div>
                           </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <span v-if="pf?.commentDon && pf.commentDon.trim().length > 0"><strong>Comentario:</strong> {{
-                                pf.commentDon
-                              }}</span>
-                            <span v-else class="text-disabled">(Sin comentario)</span>
-                          </v-list-item-subtitle>
                         </v-list-item>
                       </v-list>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-window-item>
-              <v-window-item v-if="store.hasO && store.hasO.value" value="orientacion">
-                <div v-if="orientacionSaved" class="mt-1">
-                  <v-row class="mt-2">
-                    <v-col cols="12" md="11" class="mx-auto">
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+              </template>
+
+              <template v-else-if="activeTab === 'O' && (store.hasO && store.hasO.value)">
+                  <div v-if="orientacionSaved">
+                    <v-row class="section-block">
+                      <v-col cols="12" md="12" class="mx-auto">
+                        <v-sheet color="primary" class="text-white py-3 px-4">
+                          <div class="d-flex align-center" style="gap:8px;">
+                            <v-icon icon="mdi-compass-outline" size="20" class="me-1"></v-icon>
+                            <span class="font-weight-medium">Resumen O (Orientación)</span>
+                          </div>
+                        </v-sheet>
+                        <v-card>
+                          <v-card-text>
+                            <v-row v-if="orientacionSummary">
+                              <v-col v-if="orientacionSummary?.action_1" cols="12" md="4">
+                                <strong>Mis acciones:</strong>
+                                <div v-html="formatParagraphs(orientacionSummary.action_1)"></div>
+                              </v-col>
+                              <v-col v-if="orientacionSummary?.action_2" cols="12" md="4">
+                                <strong>Acción 2:</strong>
+                                <div v-html="formatParagraphs(orientacionSummary.action_2)"></div>
+                              </v-col>
+                              <v-col v-if="orientacionSummary?.action_3" cols="12" md="4">
+                                <strong>Acción 3:</strong>
+                                <div v-html="formatParagraphs(orientacionSummary.action_3)"></div>
+                              </v-col>
+
+                              <v-col v-if="orientacionSummary?.trabajar" cols="12" md="6" class="mt-2">
+                                <strong>Con quién me gusta trabajar:</strong>
+                                <div v-html="formatParagraphs(orientacionSummary.trabajar)"></div>
+                              </v-col>
+                              <v-col v-if="orientacionSummary?.resolver" cols="12" md="6" class="mt-2">
+                                <strong>Problemas que me apasiona resolver:</strong>
+                                <div v-html="formatParagraphs(orientacionSummary.resolver)"></div>
+                              </v-col>
+
+                              <v-col v-if="orientacionSummary?.selectedLabels?.length" cols="12" class="mt-4">
+                                <strong>Mis 3 pasiones principales:</strong>
+                                <v-list density="compact" class="passion-list">
+                                  <v-list-item v-for="(label, i) in orientacionSummary.selectedLabels" :key="i" class="passion-item">
+                                    <v-list-item-title class="wrap-title">{{ i + 1 }}. {{ label }}</v-list-item-title>
+                                  </v-list-item>
+                                </v-list>
+                              </v-col>
+                            </v-row>
+                          </v-card-text>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+                  <Orientacion v-else-if="canOpenOrientacion" :persona-id="person?.id" :email="person?.email" :phone="person?.phone" @saved="onOrientacionSaved"/>
+                  <v-alert v-else type="info" class="mt-2">
+                    Para completar Orientación primero debes terminar Formación.
+                  </v-alert>
+              </template>
+
+              <template v-else-if="activeTab === 'R' && (store.hasR && store.hasR.value)">
+                  <v-row class="section-block">
+                    <v-col cols="12" md="12" class="mx-auto">
                       <v-sheet color="primary" class="text-white py-3 px-4">
                         <div class="d-flex align-center" style="gap:8px;">
-                          <v-icon icon="mdi-compass-outline" size="20" class="me-1"></v-icon>
-                          <span class="font-weight-medium">Resumen O (Orientación)</span>
+                          <v-icon icon="mdi-tools" size="20" class="me-1"></v-icon>
+                          <span class="font-weight-medium">Resumen R (Recursos y habilidades)</span>
                         </div>
                       </v-sheet>
-                      <v-card>
+                      <PersonalRecursos :persona-id="person?.id" :email="person?.email" :phone="person?.phone" />
+                    </v-col>
+                  </v-row>
+              </template>
+
+              <template v-else-if="activeTab === 'M' && (store.hasM && store.hasM.value)">
+                  <v-row class="section-block">
+                    <v-col cols="12" md="12" class="mx-auto">
+                      <v-sheet color="primary" class="text-white py-3 px-4">
+                        <div class="d-flex align-center" style="gap:8px;">
+                          <v-icon icon="mdi-account" size="20" class="me-1"></v-icon>
+                          <span class="font-weight-medium">Resumen M (Mi Personalidad)</span>
+                        </div>
+                      </v-sheet>
+                      <v-card class="mt-2">
                         <v-card-text>
-                          <v-row v-if="orientacionSummary">
-                            <v-col v-if="orientacionSummary?.action_1" cols="12" md="4">
-                              <strong>Mis acciones:</strong>
-                              <div v-html="formatParagraphs(orientacionSummary.action_1)"></div>
-                            </v-col>
-                            <v-col v-if="orientacionSummary?.action_2" cols="12" md="4">
-                              <strong>Acción 2:</strong>
-                              <div v-html="formatParagraphs(orientacionSummary.action_2)"></div>
-                            </v-col>
-                            <v-col v-if="orientacionSummary?.action_3" cols="12" md="4">
-                              <strong>Acción 3:</strong>
-                              <div v-html="formatParagraphs(orientacionSummary.action_3)"></div>
-                            </v-col>
+                          <v-progress-linear v-if="discLoading" indeterminate color="primary" class="mb-4" />
+                          <v-alert v-if="discError" type="error" variant="tonal" class="mb-2">{{ discError }}</v-alert>
+                          <v-alert v-else-if="!discLoading && !discTotals" type="info" variant="tonal" class="mb-2">Aún no hay resultados de Mi Personalidad para esta persona.</v-alert>
+                          <div v-else>
+                            <div class="mb-3">Perfil DISC (escala 12–48 con banda intermedia 28–32):</div>
+                            <div class="disc-chart-container wider">
+                              <DiscProfileChart
+                                :d="discTotals.d"
+                                :i="discTotals.i"
+                                :s="discTotals.s"
+                                :c="discTotals.c"
+                              />
+                            </div>
+                            <v-row class="mt-4">
+                              <v-col cols="6" sm="3"><strong>D:</strong> {{ discTotals.d }}</v-col>
+                              <v-col cols="6" sm="3"><strong>I:</strong> {{ discTotals.i }}</v-col>
+                              <v-col cols="6" sm="3"><strong>S:</strong> {{ discTotals.s }}</v-col>
+                              <v-col cols="6" sm="3"><strong>C:</strong> {{ discTotals.c }}</v-col>
+                            </v-row>
 
-                            <v-col v-if="orientacionSummary?.trabajar" cols="12" md="6" class="mt-2">
-                              <strong>Con quién me gusta trabajar:</strong>
-                              <div v-html="formatParagraphs(orientacionSummary.trabajar)"></div>
-                            </v-col>
-                            <v-col v-if="orientacionSummary?.resolver" cols="12" md="6" class="mt-2">
-                              <strong>Problemas que me apasiona resolver:</strong>
-                              <div v-html="formatParagraphs(orientacionSummary.resolver)"></div>
-                            </v-col>
-
-                            <v-col v-if="orientacionSummary?.selectedLabels?.length" cols="12" class="mt-4">
-                              <strong>Mis 3 pasiones principales:</strong>
-                              <v-list density="compact" class="passion-list">
-                                <v-list-item v-for="(label, i) in orientacionSummary.selectedLabels" :key="i" class="passion-item">
-                                  <v-list-item-title class="wrap-title">{{ i + 1 }}. {{ label }}</v-list-item-title>
+                            <!-- Intro / Extro resumen -->
+                            <v-divider class="my-6" />
+                            <div class="mb-3">Intro / Extro</div>
+                            <v-alert v-if="ieError" type="error" variant="tonal" class="mb-2">{{ ieError }}</v-alert>
+                            <v-progress-linear v-else-if="ieLoading" indeterminate color="primary" class="mb-2" />
+                            <div v-else>
+                              <div v-if="introExtroSummary.length === 0" class="text-medium-emphasis">No hay selecciones registradas.</div>
+                              <v-list v-else density="compact">
+                                <v-list-item v-for="(item, idx) in introExtroSummary" :key="item.id">
+                                  <v-list-item-title>
+                                    <strong>{{ idx + 1 }}.</strong>
+                                    <span class="ml-2">{{ item.intro }}</span>
+                                    <span class="mx-1">/</span>
+                                    <span>{{ item.extro }}</span>
+                                    <span class="mx-2">→</span>
+                                    <span class="font-weight-medium" :class="{
+                                      'text-primary': item.choice === 'intro',
+                                      'text-success': item.choice === 'extro',
+                                    }">
+                                      {{ item.choiceLabel }}
+                                    </span>
+                                  </v-list-item-title>
                                 </v-list-item>
                               </v-list>
-                            </v-col>
-                          </v-row>
+                            </div>
+                          </div>
                         </v-card-text>
                       </v-card>
                     </v-col>
                   </v-row>
-                </div>
-                <Orientacion v-else-if="canOpenOrientacion" :persona-id="person?.id" :email="person?.email" :phone="person?.phone" @saved="onOrientacionSaved"/>
-                <v-alert v-else type="info" class="mt-2">
-                  Para completar Orientación primero debes terminar Formación.
-                </v-alert>
-              </v-window-item>
-              <v-window-item v-if="store.hasR && store.hasR.value" value="recursos">
-                <v-row class="mt-2">
-                  <v-col cols="12">
-                    <PersonalRecursos :persona-id="person?.id" :email="person?.email" :phone="person?.phone" />
-                  </v-col>
-                </v-row>
-              </v-window-item>
-            </v-window>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
+              </template>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </template>
 
 <script setup>
 import {computed, ref, onMounted} from 'vue'
 import {defineProps} from 'vue'
-import axios from 'axios'
+import axios from '../../../vendor/axios/axios.index'
 import Orientacion from './Orientacion.vue'
 import PersonalRecursos from './PersonalRecursos.vue'
 import {store} from '../../assets/almacen'
-import { useDisplay } from 'vuetify'
+import DiscProfileChart from './DiscProfileChart.vue'
 
-const { mdAndUp, smAndDown } = useDisplay()
-const tabsDensity = computed(() => smAndDown.value ? 'compact' : 'comfortable')
+// Tab activa global (F/O/R/M) – usamos la del store
+const activeTab = computed(() => store.activeTab?.value || 'F')
 
 const props = defineProps({
   data: {type: Object, default: () => ({})},
@@ -224,8 +248,7 @@ const formations = computed(() => props.data?.formations || [])
 const hasCompletedFormation = computed(() => Array.isArray(formations.value) && formations.value.length >= 3)
 const canOpenOrientacion = computed(() => hasCompletedFormation.value)
 
-// Tabs state
-const tab = ref('results')
+// Ya no hay tabs internos; seguimos la pestaña global superior
 
 // Estado (legacy) de tooltips – desactivados; usamos diálogos
 const openedTooltips = ref({})
@@ -316,6 +339,100 @@ const getDonDescription = (pf) => {
   }
   return 'Sin descripción disponible'
 }
+
+// ==== Resultados M (Mi Personalidad — DISC) ====
+const discLoading = ref(false)
+const discError = ref('')
+const discTotals = ref(null) // { d,i,s,c }
+
+async function fetchDiscResults() {
+  if (!person?.value?.id) return
+  if (!(store.hasM && store.hasM.value)) return
+  discLoading.value = true
+  discError.value = ''
+  discTotals.value = null
+  try {
+    const res = await axios.get(`/api/personal-disc/by-person/${encodeURIComponent(person.value.id)}`)
+    const items = res?.data?.items || []
+    if (Array.isArray(items) && items.length > 0) {
+      const latest = items[0]
+      discTotals.value = { d: latest.d ?? 0, i: latest.i ?? 0, s: latest.s ?? 0, c: latest.c ?? 0 }
+    } else {
+      discTotals.value = null
+    }
+  } catch (e) {
+    console.error(e)
+    const status = e?.response?.status || 0
+    if (status === 401 || status === 403) discError.value = 'No autorizado para leer resultados de Mi Personalidad.'
+    else discError.value = 'No se pudieron cargar los resultados de Mi Personalidad.'
+  } finally {
+    discLoading.value = false
+  }
+}
+
+onMounted(() => {
+  try { fetchDiscResults() } catch(_) {}
+})
+
+// ==== Intro / Extro (Resumen en pestaña M) ====
+const ieLoading = ref(false)
+const ieError = ref('')
+const introExtroRows = ref([]) // catálogo: [{id,intro,extro,mitad}]
+const introExtroSummary = ref([]) // lista renderizable con choiceLabel
+
+async function fetchIntroExtroRows() {
+  const { data } = await axios.get('/api/intro-extro?activo=true')
+  return Array.isArray(data) ? data : []
+}
+
+async function fetchIntroExtroSnapshot(personId) {
+  const res = await axios.get(`/api/personal-intro-extro/by-person/${encodeURIComponent(personId)}`)
+  const items = res?.data?.items || []
+  if (items.length > 0) return items[0]?.introExtro || {}
+  return {}
+}
+
+async function loadIntroExtroForPerson() {
+  if (!person?.value?.id) return
+  if (!(store.hasM && store.hasM.value)) return
+  ieLoading.value = true
+  ieError.value = ''
+  introExtroSummary.value = []
+  try {
+    const [rows, snapshot] = await Promise.all([
+      fetchIntroExtroRows(),
+      fetchIntroExtroSnapshot(person.value.id),
+    ])
+    introExtroRows.value = rows
+    // Construir resumen legible
+    const out = []
+    for (const r of rows) {
+      const choice = snapshot?.[r.id] ?? null
+      if (choice === 'intro' || choice === 'extro' || choice === 'mitad') {
+        out.push({
+          id: r.id,
+          intro: r.intro,
+          extro: r.extro,
+          mitad: r.mitad,
+          choice,
+          choiceLabel: choice === 'intro' ? r.intro : choice === 'extro' ? r.extro : r.mitad,
+        })
+      }
+    }
+    introExtroSummary.value = out
+  } catch (e) {
+    console.error(e)
+    const status = e?.response?.status || 0
+    if (status === 401 || status === 403) ieError.value = 'No autorizado para leer Intro/Extro.'
+    else ieError.value = 'No se pudieron cargar Intro/Extro.'
+  } finally {
+    ieLoading.value = false
+  }
+}
+
+onMounted(() => {
+  try { loadIntroExtroForPerson() } catch(_) {}
+})
 
 onMounted(async () => {
   try {
@@ -497,6 +614,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.section-block {
+  /* Reducimos el margen para pegar más el encabezado a las tabs, como en O */
+  margin-top: 0px;
+}
+
 .don-name-activator {
   display: inline-block;
   cursor: help;
@@ -564,6 +686,20 @@ onMounted(async () => {
     min-width: auto;
   }
 }
+
+.disc-chart-container {
+  width: 100%;
+  height: 560px;
+  max-width: 100%; /* ocupar todo el ancho disponible como en O */
+  margin-inline: auto;
+}
+
+@media (max-width: 900px) {
+  .disc-chart-container { height: 420px; }
+}
+
+/* Variante explícita más ancha (por si queremos ajustar solo ciertos gráficos) */
+.disc-chart-container.wider { max-width: 100%; }
 .wrap-title {
   white-space: normal; /* allow multi-line */
   overflow: visible;

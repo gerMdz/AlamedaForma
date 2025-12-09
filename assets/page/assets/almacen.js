@@ -6,6 +6,8 @@ export const store = {
     termsAccepted: ref(false),
     resultsMode: ref(false),
     editPersonalMode: ref(false),
+    // Pestaña activa global (F, O, R, M) — única fuente de verdad
+    activeTab: ref('F'),
     // Flags de habilitación por identificador
     hasT: ref(false),
     hasF: ref(false),
@@ -20,6 +22,8 @@ export const store = {
             if (rd) this.responseData.value = JSON.parse(rd);
             const rm = localStorage.getItem('resultsMode');
             if (rm !== null) this.resultsMode.value = rm === 'true';
+            const at = localStorage.getItem('activeTab');
+            if (at && ['F','O','R','M'].includes(at)) this.activeTab.value = at;
         } catch(e) { /* noop */ }
     },
     setResponseData(data) {
@@ -44,6 +48,13 @@ export const store = {
         const v = !!val;
         this.resultsMode.value = v;
         try { localStorage.setItem('resultsMode', v ? 'true' : 'false'); } catch(e) { /* noop */ }
+    },
+    setActiveTab(val) {
+        const t = String(val || '').toUpperCase();
+        if (['F','O','R','M'].includes(t)) {
+            this.activeTab.value = t;
+            try { localStorage.setItem('activeTab', t); } catch(e) { /* noop */ }
+        }
     },
     setHabilitacionFlags(flags) {
         const f = flags || {};

@@ -57,7 +57,7 @@
         <v-divider class="my-8" />
 
         <!-- Bloque DISC -->
-        <v-sheet class="pa-4 mx-auto bg-transparent" rounded="lg" border="thin" elevation="0" style="width: 100%; max-width: 1280px;">
+        <v-sheet v-if="!savedTotals" class="pa-4 mx-auto bg-transparent" rounded="lg" border="thin" elevation="0" style="width: 100%; max-width: 1280px;">
           <FormPersonalidades
                       :persona-id="props.personaId || ''"
                       :intro-extro-ready="introExtroReady"
@@ -68,27 +68,48 @@
 
         <!-- Gráfico simple con las sumas DISC (se muestra luego de guardar) -->
         <div v-if="savedTotals" class="mt-8 mx-auto" style="width:100%; max-width: 960px;">
-          <v-card title="Resultados DISC" class="mb-4">
+          <v-card class="mb-4">
+            <v-card-title>Resultados DISC</v-card-title>
             <v-card-text>
-              <div class="mb-4">Visualización preliminar de tus resultados. Luego podemos refinar estilo/colores.</div>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <div class="mb-2"><strong>D:</strong> {{ savedTotals.d }}</div>
-                  <v-progress-linear :model-value="savedTotals.d" :max="120" color="red" height="12" rounded></v-progress-linear>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <div class="mb-2"><strong>I:</strong> {{ savedTotals.i }}</div>
-                  <v-progress-linear :model-value="savedTotals.i" :max="120" color="orange" height="12" rounded></v-progress-linear>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <div class="mb-2 mt-4"><strong>S:</strong> {{ savedTotals.s }}</div>
-                  <v-progress-linear :model-value="savedTotals.s" :max="120" color="green" height="12" rounded></v-progress-linear>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <div class="mb-2 mt-4"><strong>C:</strong> {{ savedTotals.c }}</div>
-                  <v-progress-linear :model-value="savedTotals.c" :max="120" color="blue" height="12" rounded></v-progress-linear>
-                </v-col>
-              </v-row>
+              <!-- Gráfico de líneas estilo PERFIL DISC (escala 12–48) -->
+              <DiscProfileChart
+                :d="chartVals.d"
+                :i="chartVals.i"
+                :s="chartVals.s"
+                :c="chartVals.c"
+                :raw-d="savedTotals?.d ?? null"
+                :raw-i="savedTotals?.i ?? null"
+                :raw-s="savedTotals?.s ?? null"
+                :raw-c="savedTotals?.c ?? null"
+                label-mode="normalized"
+              />
+            </v-card-text>
+          </v-card>
+
+          <!-- Resumen Intro/Extro (se mantiene visible junto al resultado) -->
+          <v-card class="mb-4">
+            <v-card-title>Intro / Extro</v-card-title>
+            <v-card-text>
+              <div v-if="introExtroSummary.length === 0" class="text-medium-emphasis">
+                No hay selecciones registradas.
+              </div>
+              <v-list v-else density="compact">
+                <v-list-item v-for="(item, idx) in introExtroSummary" :key="item.id">
+                  <v-list-item-title>
+                    <strong>{{ idx + 1 }}.</strong>
+                    <span class="ml-2">{{ item.intro }}</span>
+                    <span class="mx-1">/</span>
+                    <span>{{ item.extro }}</span>
+                    <span class="mx-2">→</span>
+                    <span class="font-weight-medium" :class="{
+                      'text-primary': item.choice === 'intro',
+                      'text-success': item.choice === 'extro',
+                    }">
+                      {{ item.choiceLabel }}
+                    </span>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
             </v-card-text>
           </v-card>
         </div>
@@ -101,6 +122,7 @@
 import { ref, onMounted, computed } from 'vue'
 import axios from '../../../vendor/axios/axios.index'
 import FormPersonalidades from './FormPersonalidades.vue'
+import DiscProfileChart from './DiscProfileChart.vue'
 
 const props = defineProps({
   personaId: { type: [String], required: false },
@@ -110,6 +132,7 @@ const props = defineProps({
 
 const loading = ref(false)
 const error = ref('')
+const savedTotals = ref(null)
 
 // Filas provenientes del catálogo IntroExtro
 const introExtroRows = ref([]) // [{id, intro, extro, mitad}]
@@ -139,6 +162,27 @@ const introExtroData = computed(() => {
   return out
 })
 
+// Resumen legible de las selecciones Intro/Extro para mostrar junto al gráfico
+const introExtroSummary = computed(() => {
+  const rows = introExtroRows.value || []
+  const sel = selectedByRow.value || {}
+  return rows.map(r => {
+    const choice = sel[r.id] ?? null
+    let choiceLabel = ''
+    if (choice === 'intro') choiceLabel = r.intro
+    else if (choice === 'extro') choiceLabel = r.extro
+    else if (choice === 'mitad') choiceLabel = r.mitad
+    return {
+      id: r.id,
+      intro: r.intro,
+      extro: r.extro,
+      mitad: r.mitad,
+      choice,
+      choiceLabel,
+    }
+  }).filter(it => it.choice)
+})
+
 async function fetchIntroExtro() {
   loading.value = true
   error.value = ''
@@ -154,6 +198,11 @@ async function fetchIntroExtro() {
       if (!(r.id in sel)) sel[r.id] = null
     }
     selectedByRow.value = sel
+
+    // Si hay persona, intentar recuperar el último snapshot guardado para pre-cargar selecciones
+    if (props.personaId) {
+      await loadExistingIntroExtro(props.personaId)
+    }
   } catch (e) {
     console.error(e)
     const status = e?.response?.status || e?.status || 0
@@ -172,12 +221,72 @@ function onRowChange(row) {
 }
 
 function onDiscSaved(payload){
-  // Tras guardar, se podría mostrar un gráfico con los totales D/I/S/C
-  console.log('DISC guardado', payload)
+  // Mostrar el gráfico con los totales D/I/S/C y ocultar el formulario
+  if (payload && typeof payload.d === 'number') {
+    savedTotals.value = { d: payload.d, i: payload.i, s: payload.s, c: payload.c }
+    // Opcional: desplazar a la sección de resultados
+    setTimeout(() => {
+      try { document?.querySelector('#app')?.scrollIntoView({ behavior: 'smooth' }) } catch(_) {}
+    }, 50)
+  }
 }
 
-onMounted(() => {
-  fetchIntroExtro()
+async function loadExistingIntroExtro(personId){
+  try {
+    const res = await axios.get(`/api/personal-intro-extro/by-person/${encodeURIComponent(personId)}`)
+    const items = res?.data?.items || []
+    if (items.length > 0) {
+      const latest = items[0]
+      const snapshot = latest?.introExtro || {}
+      const sel = { ...selectedByRow.value }
+      for (const k of Object.keys(snapshot)) {
+        sel[k] = snapshot[k]
+      }
+      selectedByRow.value = sel
+    }
+  } catch (e) {
+    // silencioso
+  }
+}
+
+async function loadSavedDisc(personId){
+  try {
+    const res = await axios.get(`/api/personal-disc/by-person/${encodeURIComponent(personId)}`)
+    const items = res?.data?.items || []
+    if (items.length > 0) {
+      const latest = items[0]
+      savedTotals.value = { d: latest.d, i: latest.i, s: latest.s, c: latest.c }
+    }
+  } catch (e) {
+    // silencioso
+  }
+}
+
+onMounted(async () => {
+  await fetchIntroExtro()
+  if (props.personaId) {
+    await loadSavedDisc(props.personaId)
+  }
+})
+
+// Normalización de 0–120 a escala 12–48 del gráfico de referencia
+const normalizeTo48 = (v) => {
+  const n = Number(v) || 0
+  const clamped = Math.max(0, Math.min(120, n))
+  return Math.round(12 + clamped * 0.3) // 0->12, 120->48
+}
+
+const chartVals = computed(() => {
+  const d = savedTotals.value?.d ?? 0
+  const i = savedTotals.value?.i ?? 0
+  const s = savedTotals.value?.s ?? 0
+  const c = savedTotals.value?.c ?? 0
+  return {
+    d: normalizeTo48(d),
+    i: normalizeTo48(i),
+    s: normalizeTo48(s),
+    c: normalizeTo48(c),
+  }
 })
 </script>
 

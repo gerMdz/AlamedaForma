@@ -31,6 +31,9 @@
     "@vuelidate/validators": "^2.0.4",
     "axios": "^1.8.2",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.6",
+    "chartjs-plugin-annotation": "^3.0.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "micromatch": "^4.0.7",
     "tinymce": "^6.0.0",
     "unplugin-vue-components": "^0.26.0",
@@ -38,6 +41,7 @@
     "vite-plugin-symfony": "^6.5.3",
     "vite-plugin-vuetify": "^2.0.3",
     "vuetify": "^3.6.8",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "vue-chartjs": "^5.3.1"
   }
 }

@@ -8,8 +8,11 @@ import CompletedFormation from "./CompletedFormation.vue";
 import Inicio from "./Inicio.vue";
 import PersonalRecursos from "./PersonalRecursos.vue";
 import Orientacion from "./Orientacion.vue";
+import OrientacionSummary from './OrientacionSummary.vue'
 import MiPersonalidad from "./MiPersonalidad.vue";
-import axios from 'axios'
+import DiscProfileChart from './DiscProfileChart.vue'
+// Usar la instancia configurada de axios (autenticación/cabeceras) para evitar inconsistencias
+import axios from '../../../vendor/axios/axios.index'
 
 const responseData = store.responseData
 
@@ -52,7 +55,13 @@ async function hydratePerson(val) {
 }
 
 // Tabs para Formación (F), Orientación (O), Recursos (R) y Mi Personalidad (M)
-const activeTab = ref('F')
+// Única fuente de verdad (persistida) en el store
+const activeTab = computed({
+  get: () => store.activeTab?.value || 'F',
+  set: (v) => {
+    try { store.setActiveTab(v) } catch(_) {}
+  }
+})
 function selectDefaultTab() {
   if (store.hasF && store.hasF.value) {
     activeTab.value = 'F'
@@ -134,6 +143,132 @@ async function checkAvanceR() {
   }
 }
 
+// ====== Estado de Orientación guardada (para mutar entre formulario y resumen) ======
+const orientacionLoading = ref(false)
+const orientacionSummary = ref(null)
+const orientacionError = ref('')
+const hasOrientacion = computed(() => !!orientacionSummary.value)
+
+// Helpers para cargar catálogo y etiquetas de DetalleOrientacion (para las 3 pasiones)
+const doInfoMap = ref({}) // id -> { descripcion }
+function valueToId(x) {
+  if (!x) return null
+  if (typeof x === 'string') {
+    if (x.startsWith('/')) return x.substring(x.lastIndexOf('/') + 1)
+    return x
+  }
+  if (typeof x === 'object') {
+    if (x.id != null) return String(x.id)
+    if (x['@id']) return String(x['@id']).substring(String(x['@id']).lastIndexOf('/') + 1)
+  }
+  return null
+}
+
+async function loadDetalleOrientacionCatalog() {
+  try {
+    const res = await axios.get('api/detalle-orientacion')
+    const list = Array.isArray(res?.data?.member) ? res.data.member : []
+    const map = {}
+    for (const d of list) {
+      const info = { descripcion: d?.descripcion || d?.name || d?.identifier || '' }
+      if (d?.id != null) map[String(d.id)] = info
+      if (d?.identifier) map[String(d.identifier)] = info
+      if (d?.['@id']) {
+        const tail = String(d['@id']).substring(String(d['@id']).lastIndexOf('/') + 1)
+        if (tail) map[tail] = info
+      }
+    }
+    doInfoMap.value = map
+  } catch (e) {
+    // silencio; el resumen se mostrará sin etiquetas si falla
+    doInfoMap.value = {}
+  }
+}
+
+async function fetchOrientacionResumen() {
+  orientacionLoading.value = true
+  orientacionError.value = ''
+  orientacionSummary.value = null
+  try {
+    const personalId = responseData?.value?.id || responseData?.value?.ID || responseData?.value?.Id
+    if (!personalId) return
+    // Obtener registros de personal-orientacion para la persona
+    let res
+    try {
+      res = await axios.get('api/personal-orientacion', { params: { persona: `/api/personales/${personalId}` } })
+    } catch (e) {
+      res = await axios.get('api/personal-orientacion')
+    }
+    const list = Array.isArray(res?.data?.member) ? res.data.member : []
+    const samePersona = list.filter(po => {
+      const rel = po?.persona
+      if (typeof rel === 'string') return rel.endsWith('/' + personalId)
+      if (rel && typeof rel === 'object') return valueToId(rel) === String(personalId)
+      return false
+    })
+    if (samePersona.length === 0) return
+    samePersona.sort((a, b) => (new Date(b?.updatedAt || b?.createdAt || 0).getTime()) - (new Date(a?.updatedAt || a?.createdAt || 0).getTime()))
+    const po = samePersona[0]
+
+    // Cargar detalle (pasiones) y mapa de etiquetas
+    await loadDetalleOrientacionCatalog()
+    let detRes
+    try {
+      detRes = await axios.get('api/personal-orientacion-detalle', { params: { personalOrientacion: `/api/personal-orientacion/${po.id}` } })
+    } catch (e) {
+      detRes = await axios.get('api/personal-orientacion-detalle')
+    }
+    const detListRaw = Array.isArray(detRes?.data?.member) ? detRes.data.member : []
+    const detList = detListRaw.filter(pod => {
+      const rel = pod?.personalOrientacion
+      if (typeof rel === 'string') return rel.endsWith('/' + po.id)
+      if (rel && typeof rel === 'object') return valueToId(rel) === String(po.id)
+      return false
+    }).sort((a,b) => (a?.posicion||0) - (b?.posicion||0))
+    const selectedIds = detList.map(pod => valueToId(pod?.detalleOrientacion)).filter(Boolean)
+    const labels = selectedIds.map(id => doInfoMap.value[String(id)]?.descripcion || String(id))
+
+    orientacionSummary.value = {
+      action_1: po?.action_1 || null,
+      action_2: po?.action_2 || null,
+      action_3: po?.action_3 || null,
+      trabajar: po?.trabajar || null,
+      resolver: po?.resolver || null,
+      selectedLabels: labels,
+    }
+  } catch (e) {
+    // No bloquear; simplemente no hay resumen disponible
+    orientacionError.value = ''
+  } finally {
+    orientacionLoading.value = false
+  }
+}
+
+// ====== Estado DISC guardado (para mutar entre formulario y gráfico) ======
+const discLoading = ref(false)
+const discTotals = ref(null) // { d,i,s,c }
+const discError = ref('')
+
+async function fetchDiscResults() {
+  discLoading.value = true
+  discTotals.value = null
+  discError.value = ''
+  try {
+    const personalId = responseData?.value?.id || responseData?.value?.ID || responseData?.value?.Id
+    if (!personalId) return
+    const res = await axios.get(`/api/personal-disc/by-person/${encodeURIComponent(personalId)}`)
+    const items = res?.data?.items || []
+    if (Array.isArray(items) && items.length > 0) {
+      const latest = items[0]
+      discTotals.value = { d: latest?.d ?? 0, i: latest?.i ?? 0, s: latest?.s ?? 0, c: latest?.c ?? 0 }
+    }
+  } catch (e) {
+    discError.value = ''
+  } finally {
+    discLoading.value = false
+  }
+}
+
 onMounted(async () => {
   if (responseData?.value) {
     if (needsPersonHydration(responseData.value)) {
@@ -142,6 +277,8 @@ onMounted(async () => {
     checkTerms()
     checkAvanceF()
     checkAvanceR()
+    // cargar estados de orientación y DISC
+    try { await Promise.all([fetchOrientacionResumen(), fetchDiscResults()]) } catch(_) {}
   }
   // set default tab after flags are known
   selectDefaultTab()
@@ -155,6 +292,7 @@ watch(responseData, async (val) => {
     checkTerms()
     checkAvanceF()
     checkAvanceR()
+    try { await Promise.all([fetchOrientacionResumen(), fetchDiscResults()]) } catch(_) {}
   }
 })
 
@@ -188,7 +326,7 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
             </v-row>
             <v-row justify="center">
               <v-col cols="12" md="6">
-                <v-card title="Datos de la persona --" class="mb-4">
+                <v-card title="Datos de la persona" class="mb-4">
                   <v-card-text>
                     <div><strong>Nombre/s:</strong> {{ responseData?.nombre }} {{ responseData?.apellido }}</div>
                     <div><strong>Email:</strong> {{ responseData?.email }}</div>
@@ -208,7 +346,8 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
               <v-tab v-if="store.hasR && store.hasR.value" value="R" :class="['forma-tab', { 'is-active': activeTab==='R' }]">[R]ecursos y Habilidades</v-tab>
               <v-tab v-if="store.hasM && store.hasM.value" value="M" :class="['forma-tab', { 'is-active': activeTab==='M' }]">[M]i Personalidad</v-tab>
             </v-tabs>
-            <v-window v-model="activeTab" class="mt-4">
+            <!-- Reducimos el espacio entre tabs y encabezados para uniformar con O -->
+            <v-window v-model="activeTab" class="mt-0">
               <v-window-item v-if="store.hasF && store.hasF.value" value="F">
                 <template v-if="resultsMode || hasAvanceF">
                   <CompletedFormation />
@@ -218,13 +357,43 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
                 </template>
               </v-window-item>
               <v-window-item v-if="store.hasO && store.hasO.value" value="O">
-                <Orientacion :persona-id="pid" :email="pemail" :phone="pphone" />
+                <template v-if="hasOrientacion">
+                  <OrientacionSummary :summary="orientacionSummary" />
+                </template>
+                <template v-else>
+                  <Orientacion :persona-id="pid" :email="pemail" :phone="pphone" />
+                </template>
               </v-window-item>
               <v-window-item v-if="store.hasR && store.hasR.value" value="R">
+                <v-sheet color="primary" class="text-white py-3 px-4 mb-2">
+                  <div class="d-flex align-center" style="gap:8px;">
+                    <v-icon icon="mdi-tools" size="20" class="me-1"></v-icon>
+                    <span class="font-weight-medium">Resumen R (Recursos y habilidades)</span>
+                  </div>
+                </v-sheet>
                 <PersonalRecursos :persona-id="pid" :email="pemail" :phone="pphone" />
               </v-window-item>
               <v-window-item v-if="store.hasM && store.hasM.value" value="M">
-                <MiPersonalidad :persona-id="pid" :email="pemail" :phone="pphone" />
+                <template v-if="discTotals">
+                  <v-sheet color="primary" class="text-white py-3 px-4 mb-2">
+                    <div class="d-flex align-center" style="gap:8px;">
+                      <v-icon icon="mdi-account" size="20" class="me-1"></v-icon>
+                      <span class="font-weight-medium">Resumen M (Mi Personalidad)</span>
+                    </div>
+                  </v-sheet>
+                  <div class="disc-chart-container wider">
+                    <DiscProfileChart :d="discTotals.d" :i="discTotals.i" :s="discTotals.s" :c="discTotals.c" />
+                  </div>
+                  <v-row class="mt-4">
+                    <v-col cols="6" sm="3"><strong>D:</strong> {{ discTotals.d }}</v-col>
+                    <v-col cols="6" sm="3"><strong>I:</strong> {{ discTotals.i }}</v-col>
+                    <v-col cols="6" sm="3"><strong>S:</strong> {{ discTotals.s }}</v-col>
+                    <v-col cols="6" sm="3"><strong>C:</strong> {{ discTotals.c }}</v-col>
+                  </v-row>
+                </template>
+                <template v-else>
+                  <MiPersonalidad :persona-id="pid" :email="pemail" :phone="pphone" />
+                </template>
               </v-window-item>
             </v-window>
           </div>
@@ -240,5 +409,16 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
   font-weight: 700;
   color: #1976d2; /* primary-ish */
   border-bottom: 2px solid #1976d2;
+}
+
+.disc-chart-container {
+  width: 100%;
+  height: 560px;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+@media (max-width: 900px) {
+  .disc-chart-container { height: 420px; }
 }
 </style>

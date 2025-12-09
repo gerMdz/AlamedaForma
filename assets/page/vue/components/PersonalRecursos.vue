@@ -7,7 +7,10 @@ const emit = defineEmits(['saved'])
 const props = defineProps({
   personaId: {type: String, default: ''},
   email: {type: String, default: ''},
-  phone: {type: String, default: ''}
+  phone: {type: String, default: ''},
+  // Controla si este componente debe renderizar su propio encabezado de "Resumen R".
+  // Por defecto lo ocultamos para evitar duplicación cuando el padre ya muestra un encabezado.
+  showHeader: { type: Boolean, default: false },
 })
 
 const persona = ref(null)
@@ -241,8 +244,8 @@ const save = async () => {
     <!-- Vista de resultados si ya hay Avance R y no estamos editando -->
     <template v-if="hasAvanceR && !editMode">
       <div class="w-100">
-      <!-- Encabezado consistente con otros resúmenes -->
-      <v-sheet color="primary" class="text-white py-3 px-4 mb-3">
+      <!-- Encabezado (opcional) para evitar duplicaciones cuando el padre ya lo muestra -->
+      <v-sheet v-if="props.showHeader" color="primary" class="text-white py-3 px-4 mb-3">
         <div class="d-flex align-center" style="gap:8px;">
           <v-icon icon="mdi-hammer-wrench" size="20" class="me-1"></v-icon>
           <span class="font-weight-medium">Resumen R (Recursos y habilidades)</span>

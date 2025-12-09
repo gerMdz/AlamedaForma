@@ -26,7 +26,7 @@ class PersonalDiscController extends AbstractController
     }
 
     /**
-     * Crea un registro DISC para una persona.
+     * Crea o actualiza el registro DISC de una persona (1 por persona).
      *
      * Body esperado (application/json o form-data):
      * {
@@ -79,15 +79,24 @@ class PersonalDiscController extends AbstractController
             return $this->error('No se encontró la persona.', Response::HTTP_NOT_FOUND, ['personId' => $personId]);
         }
 
-        // Persistir
-        $entity = new PersonalDisc();
-        $entity->setPerson($person)
+        // Upsert: garantizar un único registro por persona
+        $entity = $this->discRepo->findOneBy(['person' => $person]);
+        $isCreate = false;
+        if (!$entity) {
+            $entity = new PersonalDisc();
+            $entity->setPerson($person);
+            $isCreate = true;
+        }
+
+        $entity
             ->setD((int) $d)
             ->setI((int) $i)
             ->setS((int) $s)
             ->setC((int) $c);
 
-        $this->em->persist($entity);
+        if ($isCreate) {
+            $this->em->persist($entity);
+        }
         $this->em->flush();
 
         return $this->json([
@@ -98,7 +107,8 @@ class PersonalDiscController extends AbstractController
             'i' => $entity->getI(),
             's' => $entity->getS(),
             'c' => $entity->getC(),
-        ], Response::HTTP_CREATED);
+            'updated' => !$isCreate,
+        ], $isCreate ? Response::HTTP_CREATED : Response::HTTP_OK);
     }
 
     /**

@@ -309,6 +309,8 @@ async function handleSubmit(event){
     const res = await axios.post('/api/personal-disc', discPayload)
 
     successMsg.value = 'Resultados guardados correctamente.'
+    // Limpiar borrador local para evitar reenvíos accidentales al recargar
+    try { localStorage.removeItem(draftKey.value) } catch(_){ }
     emit('saved', { ...discPayload, id: res?.data?.id || null })
   } catch (e) {
     console.error(e)
