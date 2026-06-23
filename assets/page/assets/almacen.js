@@ -14,6 +14,7 @@ export const store = {
     hasO: ref(false),
     hasR: ref(false),
     hasM: ref(false),
+    hasA: ref(false),
     hydrate() {
         try {
             const ta = localStorage.getItem('termsAccepted');
@@ -63,6 +64,7 @@ export const store = {
         this.hasO.value = !!(f.O || f.o);
         this.hasR.value = !!(f.R || f.r);
         this.hasM.value = !!(f.M || f.m);
+        this.hasA.value = !!(f.A || f.a);
     },
     clearAll() {
         try {

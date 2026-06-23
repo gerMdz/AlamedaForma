@@ -5,12 +5,14 @@ import {store} from "../../assets/almacen";
 import FormPersonalidades from "./FormPersonalidades.vue";
 import Formation from "./Formation.vue";
 import CompletedFormation from "./CompletedFormation.vue";
+import CompletedAntecedentes from "./CompletedAntecedentes.vue";
 import Inicio from "./Inicio.vue";
 import PersonalRecursos from "./PersonalRecursos.vue";
 import Orientacion from "./Orientacion.vue";
 import OrientacionSummary from './OrientacionSummary.vue'
 import MiPersonalidad from "./MiPersonalidad.vue";
 import DiscProfileChart from './DiscProfileChart.vue'
+import PersonalAntecedentes from "./PersonalAntecedentes.vue";
 // Usar la instancia configurada de axios (autenticación/cabeceras) para evitar inconsistencias
 import axios from '../../../vendor/axios/axios.index'
 
@@ -22,6 +24,8 @@ const checkingF = ref(false)
 const hasAvanceF = ref(false)
 const checkingR = ref(false)
 const hasAvanceR = ref(false)
+const checkingA = ref(false)
+const hasAvanceA = ref(false)
 // resultsMode is true either if backend says there is avance F or if user just saved
 const resultsMode = store.resultsMode
 
@@ -140,6 +144,26 @@ async function checkAvanceR() {
     hasAvanceR.value = false
   } finally {
     checkingR.value = false
+  }
+}
+
+async function checkAvanceA() {
+  // Aplica solo si A está habilitado
+  if (!(store.hasA && store.hasA.value)) {
+    hasAvanceA.value = false
+    return
+  }
+  const personalId = responseData?.value?.id || responseData?.value?.ID || responseData?.value?.Id
+  if (!personalId) return
+  checkingA.value = true
+  try {
+    const res = await axios.get(`/api/forma/avance-a-estado/${encodeURIComponent(personalId)}`)
+    hasAvanceA.value = !!res?.data?.hasAvanceA
+  } catch (e) {
+    console.warn('No se pudo verificar avance A', e)
+    hasAvanceA.value = false
+  } finally {
+    checkingA.value = false
   }
 }
 
@@ -277,6 +301,7 @@ onMounted(async () => {
     checkTerms()
     checkAvanceF()
     checkAvanceR()
+    checkAvanceA()
     // cargar estados de orientación y DISC
     try { await Promise.all([fetchOrientacionResumen(), fetchDiscResults()]) } catch(_) {}
   }
@@ -292,15 +317,17 @@ watch(responseData, async (val) => {
     checkTerms()
     checkAvanceF()
     checkAvanceR()
+    checkAvanceA()
     try { await Promise.all([fetchOrientacionResumen(), fetchDiscResults()]) } catch(_) {}
   }
 })
 
 // adjust default tab when flags change
-watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, store.hasR && store.hasR.value, store.hasM && store.hasM.value], () => {
+watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, store.hasR && store.hasR.value, store.hasM && store.hasM.value, store.hasA && store.hasA.value], () => {
   selectDefaultTab()
   // recheck avance R if R becomes enabled
   checkAvanceR()
+  checkAvanceA()
 })
 </script>
 
@@ -339,9 +366,10 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
           </div>
 
           <!-- Tabs visibles siempre que haya alguna sección habilitada. Si hay resultados de F, se muestra el resumen dentro de la pestaña F. -->
-          <div v-if="(store.hasF && store.hasF.value) || (store.hasO && store.hasO.value) || (store.hasR && store.hasR.value) || (store.hasM && store.hasM.value)" class="mt-6">
+          <div v-if="(store.hasF && store.hasF.value) || (store.hasO && store.hasO.value) || (store.hasR && store.hasR.value) || (store.hasM && store.hasM.value) || (store.hasA && store.hasA.value)" class="mt-6">
             <v-tabs v-model="activeTab" grow>
               <v-tab v-if="store.hasF && store.hasF.value" value="F" :class="['forma-tab', { 'is-active': activeTab==='F' }]">[F]ormación</v-tab>
+              <v-tab v-if="store.hasA && store.hasA.value" value="A" :class="['forma-tab', { 'is-active': activeTab==='A' }]">[A]ntecedentes</v-tab>
               <v-tab v-if="store.hasO && store.hasO.value" value="O" :class="['forma-tab', { 'is-active': activeTab==='O' }]">[O]rientación</v-tab>
               <v-tab v-if="store.hasR && store.hasR.value" value="R" :class="['forma-tab', { 'is-active': activeTab==='R' }]">[R]ecursos y Habilidades</v-tab>
               <v-tab v-if="store.hasM && store.hasM.value" value="M" :class="['forma-tab', { 'is-active': activeTab==='M' }]">[M]i Personalidad</v-tab>
@@ -354,6 +382,14 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
                 </template>
                 <template v-else>
                   <Formation />
+                </template>
+              </v-window-item>
+              <v-window-item v-if="store.hasA && store.hasA.value" value="A">
+                <template v-if="hasAvanceA">
+                  <CompletedAntecedentes @edit="hasAvanceA = false" />
+                </template>
+                <template v-else>
+                  <PersonalAntecedentes @saved="checkAvanceA" />
                 </template>
               </v-window-item>
               <v-window-item v-if="store.hasO && store.hasO.value" value="O">

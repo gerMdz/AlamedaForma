@@ -44,6 +44,7 @@ class FormularioHabilitacionController extends AbstractController
         $hasO = in_array('O', $identifiers, true);
         $hasR = in_array('R', $identifiers, true);
         $hasM = in_array('M', $identifiers, true);
+        $hasA = in_array('A', $identifiers, true);
 
         return new JsonResponse([
             'hasActive' => count($items) > 0,
@@ -55,6 +56,7 @@ class FormularioHabilitacionController extends AbstractController
                 'O' => $hasO,
                 'R' => $hasR,
                 'M' => $hasM,
+                'A' => $hasA,
             ],
         ]);
     }
