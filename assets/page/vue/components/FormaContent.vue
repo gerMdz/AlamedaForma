@@ -369,10 +369,10 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
           <div v-if="(store.hasF && store.hasF.value) || (store.hasO && store.hasO.value) || (store.hasR && store.hasR.value) || (store.hasM && store.hasM.value) || (store.hasA && store.hasA.value)" class="mt-6">
             <v-tabs v-model="activeTab" grow>
               <v-tab v-if="store.hasF && store.hasF.value" value="F" :class="['forma-tab', { 'is-active': activeTab==='F' }]">[F]ormación</v-tab>
-              <v-tab v-if="store.hasA && store.hasA.value" value="A" :class="['forma-tab', { 'is-active': activeTab==='A' }]">[A]ntecedentes</v-tab>
               <v-tab v-if="store.hasO && store.hasO.value" value="O" :class="['forma-tab', { 'is-active': activeTab==='O' }]">[O]rientación</v-tab>
               <v-tab v-if="store.hasR && store.hasR.value" value="R" :class="['forma-tab', { 'is-active': activeTab==='R' }]">[R]ecursos y Habilidades</v-tab>
               <v-tab v-if="store.hasM && store.hasM.value" value="M" :class="['forma-tab', { 'is-active': activeTab==='M' }]">[M]i Personalidad</v-tab>
+              <v-tab v-if="store.hasA && store.hasA.value" value="A" :class="['forma-tab', { 'is-active': activeTab==='A' }]">[A]ntecedentes</v-tab>
             </v-tabs>
             <!-- Reducimos el espacio entre tabs y encabezados para uniformar con O -->
             <v-window v-model="activeTab" class="mt-0">
@@ -384,14 +384,7 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
                   <Formation />
                 </template>
               </v-window-item>
-              <v-window-item v-if="store.hasA && store.hasA.value" value="A">
-                <template v-if="hasAvanceA">
-                  <CompletedAntecedentes @edit="hasAvanceA = false" />
-                </template>
-                <template v-else>
-                  <PersonalAntecedentes @saved="checkAvanceA" />
-                </template>
-              </v-window-item>
+
               <v-window-item v-if="store.hasO && store.hasO.value" value="O">
                 <template v-if="hasOrientacion">
                   <OrientacionSummary :summary="orientacionSummary" />
@@ -400,6 +393,7 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
                   <Orientacion :persona-id="pid" :email="pemail" :phone="pphone" />
                 </template>
               </v-window-item>
+
               <v-window-item v-if="store.hasR && store.hasR.value" value="R">
                 <v-sheet color="primary" class="text-white py-3 px-4 mb-2">
                   <div class="d-flex align-center" style="gap:8px;">
@@ -409,6 +403,7 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
                 </v-sheet>
                 <PersonalRecursos :persona-id="pid" :email="pemail" :phone="pphone" />
               </v-window-item>
+
               <v-window-item v-if="store.hasM && store.hasM.value" value="M">
                 <template v-if="discTotals">
                   <v-sheet color="primary" class="text-white py-3 px-4 mb-2">
@@ -429,6 +424,15 @@ watch(() => [store.hasF && store.hasF.value, store.hasO && store.hasO.value, sto
                 </template>
                 <template v-else>
                   <MiPersonalidad :persona-id="pid" :email="pemail" :phone="pphone" />
+                </template>
+              </v-window-item>
+
+              <v-window-item v-if="store.hasA && store.hasA.value" value="A">
+                <template v-if="hasAvanceA">
+                  <CompletedAntecedentes @edit="hasAvanceA = false" />
+                </template>
+                <template v-else>
+                  <PersonalAntecedentes @saved="checkAvanceA" />
                 </template>
               </v-window-item>
             </v-window>

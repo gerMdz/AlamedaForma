@@ -24,7 +24,7 @@ export const store = {
             const rm = localStorage.getItem('resultsMode');
             if (rm !== null) this.resultsMode.value = rm === 'true';
             const at = localStorage.getItem('activeTab');
-            if (at && ['F','O','R','M'].includes(at)) this.activeTab.value = at;
+            if (at && ['F','O','R','M', 'A'].includes(at)) this.activeTab.value = at;
         } catch(e) { /* noop */ }
     },
     setResponseData(data) {
@@ -52,7 +52,7 @@ export const store = {
     },
     setActiveTab(val) {
         const t = String(val || '').toUpperCase();
-        if (['F','O','R','M'].includes(t)) {
+        if (['F','O','R','M', 'A'].includes(t)) {
             this.activeTab.value = t;
             try { localStorage.setItem('activeTab', t); } catch(e) { /* noop */ }
         }

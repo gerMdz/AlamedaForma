@@ -21,12 +21,15 @@
     <template v-else-if="isIntroExtroRoute">
       <IntroExtro />
     </template>
+    <template v-else-if="isAntecedentesRoute">
+      <Antecedentes />
+    </template>
     <template v-else>
       <h1 class="title">Panel de Administración</h1>
       <p class="subtitle">Acceso a las distintas configuraciones</p>
 
       <div class="cards">
-        <a class="card" href="/admin/inicio">
+        <a class="card" href="/admin#inicio">
           <div class="card-body">
             <h2>Inicio</h2>
             <p>Gestionar contenidos de Inicio (InicioController)</p>
@@ -74,6 +77,16 @@
             <p>Administrar Habilidades (HabilidadesController)</p>
           </div>
         </a>
+
+        <a class="card" href="/admin#antecedentes">
+          <div class="card-body">
+            <h2>Antecedentes</h2>
+            <p>Administrar Antecedentes (AntecedentesController)</p>
+          </div>
+        </a>
+
+
+
       </div>
     </template>
   </div>
@@ -88,6 +101,7 @@ import DetalleOrientacion from './DetalleOrientacion.vue'
 import Habilidades from './Habilidades.vue'
 import Personalidad from './Personalidad.vue'
 import IntroExtro from './IntroExtro.vue'
+import Antecedentes from "~/page/vue/admin/Antecedentes.vue";
 
 const currentHash = ref(typeof window !== 'undefined' ? window.location.hash : '')
 
@@ -114,6 +128,7 @@ const isDetalleOrientacionRoute = computed(() => currentHash.value === '#detalle
 const isHabilidadesRoute = computed(() => currentHash.value === '#habilidades')
 const isPersonalidadRoute = computed(() => currentHash.value === '#personalidad')
 const isIntroExtroRoute = computed(() => currentHash.value === '#intro-extro')
+const isAntecedentesRoute = computed(() => currentHash.value === '#antecedentes')
 const instructionId = computed(() => {
   if (!isInstructionsEditRoute.value) return ''
   return currentHash.value.split(':')[1] || ''
