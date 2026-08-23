@@ -2,6 +2,46 @@
 
 El Generador de formularios FORMA es un proyecto codificado en PHP 8.1 que permite generar formularios para el concepto de FORMA utilizado en algunas iglesias cristianas.
 
+## Entidades y Modelo de Datos (FORMA)
+
+Las entidades del proyecto se encuentran en `src/Entity/` y están organizadas para soportar tanto la administración como el flujo de cada módulo de FORMA:
+
+### 1. Núcleo, Usuarios y Control de Flujo
+* `Personales`: Datos personales del participante (nombre, apellido, email, teléfono, grupo).
+* `User`: Usuarios con roles para la administración del sistema.
+* `Organization`: Información institucional / iglesia.
+* `Inicio`: Registro y validación de aceptación de términos y condiciones.
+* `FormularioHabilitacion`: Configuración dinámica para habilitar o deshabilitar módulos de FORMA.
+* `AvanceForma`: Registro del progreso y estado completado de cada participante por formulario.
+* `Instructions`: Textos e instrucciones configurables mostrados en la interfaz.
+
+### 2. [F] Formación (Dones Espirituales)
+* `Dones`: Catálogo de dones espirituales y preguntas de evaluación.
+* `Formacion`: Cuestionario base de dones.
+* `PersonalFormation`: Respuestas y cálculo de resultados de dones espirituales del usuario.
+
+### 3. [O] Orientación (Pasión y Áreas Ministeriales)
+* `DetalleOrientacion`: Catálogo de áreas de pasión, ministerios y grupos objetivo.
+* `PersonalOrientacion`: Registro principal de la orientación vocacional/ministerial de la persona.
+* `PersonalOrientacionDetalle`: Relación de opciones específicas y detalles elegidos.
+
+### 4. [R] Recursos y Habilidades
+* `Habilidades`: Catálogo de habilidades técnicas, manuales y profesionales.
+* `PersonalRecursos`: Registro de recursos personales, idiomas, herramientas y habilidades generales.
+* `PersonalRecursosHabilidades`: Relación entre el participante y las habilidades seleccionadas.
+
+### 5. [M] Mi Personalidad (DISC e Introversión/Extroversión)
+* `Personalidad`: Banco de reactivos y factores para el test DISC.
+* `IntroExtro`: Banco de preguntas para evaluar tendencia de introversión o extroversión.
+* `PersonalDisc`: Resultados cuantitativos calculados para el perfil DISC (D, I, S, C).
+* `PersonalIntroExtro`: Resultados del perfil de introversión/extroversión del usuario.
+
+### 6. [A] Antecedentes (Experiencias de Vida)
+* `Antecedentes`: Catálogo de tipos de antecedentes (experiencias formativas, laborales, dolorosas y espirituales).
+* `PersonalAntecedentes`: Registro de las vivencias y antecedentes completados por el participante.
+
+---
+
 ## Requisitos
 
 - Node.js 22 LTS recomendado (compatible con >=20 <23). Este proyecto usa Vite 5, que requiere Node >= 18; hemos probado y recomendado Node 22.
